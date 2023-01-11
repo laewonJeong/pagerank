@@ -37,16 +37,16 @@ void Pagerank::initial_pagerank_value(){
     cout << "Done" <<endl;
 }
 void Pagerank::thread_calc_pr(int i){
-    /*double tmp = 0;
-     for(int j=0;j<pagerank.num_of_vertex;j++){
-            if(i == j)
-                continue;
-            if(find(pagerank.graph[j].begin(), pagerank.graph[j].end(), i) != pagerank.graph[j].end())
+    double tmp = 0;
+    for(int j=0;j<pagerank.num_of_vertex;j++){
+        if(i == j)
+            continue;
+        if(find(pagerank.graph[j].begin(), pagerank.graph[j].end(), i) != pagerank.graph[j].end())
                 tmp += df*(pagerank.pr[j]/pagerank.graph[j].size());
-        }
-        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+    }
+    pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;*/
-    double my_pr = df*(pagerank.pr[i]/pagerank.graph[i].size());
+    //double my_pr = df*(pagerank.pr[i]/pagerank.graph[i].size());
 }
 void Pagerank::calc_pagerank_value(){
     vector<thread> worker;
