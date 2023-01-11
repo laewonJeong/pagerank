@@ -47,8 +47,6 @@ void Pagerank::thread_calc_pr(int i){
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;*/
     double my_pr = df*(pagerank.pr[i]/pagerank.graph[i].size());
-    myrdma1.rdma_comm("send", to_string(my_pr));
-    cout << pagerank.recv_buffer[0] << endl;
 }
 void Pagerank::calc_pagerank_value(){
     vector<thread> worker;
@@ -74,6 +72,8 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value();
+        myrdma1.rdma_comm("send", to_string(new_pr[0]));
+        cout << pagerank.recv_buffer[0] << endl;
         if(pagerank.pr==pagerank.new_pr)
             break;
         Pagerank::change_pagerank_value();
