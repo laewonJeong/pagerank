@@ -10,6 +10,7 @@
 #include <thread>
 
 #define df 0.85
+#define buf_size1 1024
 
 using namespace std;
 class Pagerank{
@@ -21,9 +22,13 @@ class Pagerank{
        void change_pagerank_value();
        void run_pagerank(int iter);
        int max_pr();
+       void init_connection(const char* ip, string server[], 
+                                        int number_of_server, int Port);
     private:
         vector<int> graph[4039];
         vector<double> pr;
         vector<double> new_pr;
         int num_of_vertex;
+        char send_buffer[4][buf_size1];
+        char recv_buffer[4][buf_size1];
 };

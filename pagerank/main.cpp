@@ -21,19 +21,16 @@ int main(int argc, char* argv[]){
         cerr << "node[0] is not server_ip" << endl;
         exit(1);
     }
-    myRDMA myrdma;
+    Pagerank pagerank;
 
-    myrdma.initialize_rdma_connection(argv[1], node, num_of_node, port,send_buffer,recv_buffer);
-    myrdma.create_rdma_info();
-    myrdma.send_info_change_qp();
+    pagerank.init_connection(argv[1], node, num_of_node, port);    
 
     cout <<"--------------------------------------------------" << endl;
     time_t start, end;
     start = time(NULL);
 
-    Pagerank pagerank;
     // Create graph data
-    string data_path = "/facebook_data.txt";
+    string data_path = "/home/lwjeong/pagerank/facebook_data.txt";
     pagerank.create_graph_data(data_path, 4039);
 
     // Initial pr value each vertex

@@ -1,5 +1,7 @@
 #include "pagerank.hpp"
+#include "../../includes/network/myRDMA.hpp"
 
+myRDMA myrdma1;
 Pagerank pagerank;
 void Pagerank::create_graph_data(string path, int num_of_vertex){
     cout << "creating graph data" <<endl;
@@ -35,7 +37,7 @@ void Pagerank::initial_pagerank_value(){
     cout << "Done" <<endl;
 }
 void Pagerank::thread_calc_pr(int i){
-    double tmp = 0;
+    /*double tmp = 0;
      for(int j=0;j<pagerank.num_of_vertex;j++){
             if(i == j)
                 continue;
@@ -43,7 +45,10 @@ void Pagerank::thread_calc_pr(int i){
                 tmp += df*(pagerank.pr[j]/pagerank.graph[j].size());
         }
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
-        //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;
+        //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;*/
+    double my_pr = df*(pagerank.pr[i]/pagerank.graph[i].size());
+    myrdma1.rdma_comm("send", to_string(my_pr));
+    cout << pagerank.recv_buffer[0] << endl;
 }
 void Pagerank::calc_pagerank_value(){
     vector<thread> worker;
@@ -88,4 +93,11 @@ int Pagerank::max_pr(){
         }
     }
     return important;
+}
+
+void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port)
+{
+    myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,pagerank.send_buffer,pagerank.recv_buffer);
+    myrdma1.create_rdma_info();
+    myrdma1.send_info_change_qp();
 }
