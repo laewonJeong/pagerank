@@ -72,7 +72,7 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value();
-        myrdma1.rdma_comm("send", to_string(pagerank.new_pr[0]));
+        myrdma1.rdma_comm("send", to_string(pagerank.new_pr[4038]));
         cout << pagerank.recv_buffer[0] << endl;
         if(pagerank.pr==pagerank.new_pr)
             break;
