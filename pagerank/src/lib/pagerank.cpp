@@ -57,6 +57,7 @@ void Pagerank::thread_calc_pr(int i){
                 tmp += df*(pagerank.pr[j]/pagerank.graph[j].size());
     }
     pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
+    cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;
 }
 
 void Pagerank::calc_pagerank_value(int start, int end){
@@ -87,7 +88,8 @@ void Pagerank::combine_pr(){
         a = split(tmp,'\n');
         //cout << "starting combine3" <<endl;
         for(int j=0;j<a.size();j++){
-            vector<string> b = split(a[j], ' ');
+            vector<string> b;
+            b = split(a[j], ' ');
             pagerank.new_pr[stoi(b[0])] = stod(b[1]);
         }
         //cout << "starting combine4" <<endl;

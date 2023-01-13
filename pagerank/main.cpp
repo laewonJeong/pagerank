@@ -21,8 +21,8 @@ int main(int argc, char* argv[]){
     }
     time_t start, end;
     
-    string data_path = "/home/lwjeong/git/pagerank/pagerank/test.txt";
-    int graph_data_vertex = 81306;
+    string data_path = "/home/lwjeong/git/pagerank/pagerank/facebook_data.txt";
+    int graph_data_vertex = 4039;
 
 
     Pagerank pagerank;

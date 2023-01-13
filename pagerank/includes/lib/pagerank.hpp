@@ -30,7 +30,7 @@ class Pagerank{
                             int number_of_server, int Port,
                             int number_of_vertex);
     private:
-        vector<int> graph[81306];
+        vector<int> graph[4039];
         vector<long double> pr;
         vector<long double> new_pr;
         vector<long double> my_pr;
