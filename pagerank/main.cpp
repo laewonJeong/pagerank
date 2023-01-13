@@ -3,11 +3,11 @@
 #include "myRDMA.hpp"
 
 #define port 40145
-#define num_of_node 4
+#define num_of_node 6
 #define server_ip "192.168.1.100"
 #define iter 100000
 
-string node[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103"};
+string node[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103","192.168.1.104","192.168.1.105"};
 
 using namespace std;
 int main(int argc, char* argv[]){
