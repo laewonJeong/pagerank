@@ -56,7 +56,7 @@ void Pagerank::thread_calc_pr(int i){
         if(find(pagerank.graph[j].begin(), pagerank.graph[j].end(), i) != pagerank.graph[j].end())
                 tmp += df*(pagerank.pr[j]/pagerank.graph[j].size());
     }
-    pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+    pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
 }
 
 void Pagerank::calc_pagerank_value(int start, int end){
