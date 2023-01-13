@@ -82,17 +82,14 @@ void Pagerank::change_pagerank_value(){
 }
 void Pagerank::combine_pr(){
     for(int i=0;i<5;i++){
-        cout << "starting combine2" <<endl;
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
-        a = split(tmp,'\n');
-        //cout << "starting combine3" <<endl;
+        a = split(tmp,' ');
         for(int j=0;j<a.size();j++){
-            vector<string> b;
-            b = split(a[j], ' ');
-            pagerank.new_pr[stoi(b[0])] = stod(b[1]);
+            if(j%2!=0){
+                pagerank.new_pr[stoi(a[j])] = stod(a[j+1]);
+            }
         }
-        //cout << "starting combine4" <<endl;
     }
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
@@ -103,7 +100,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     string message = "";
     for(int i=start;i<end;i++){
         message = message + to_string(i);
-        message = message + " " + to_string(pagerank.new_pr[i]) + "\n";
+        message = message + " " + to_string(pagerank.new_pr[i]) + " ";
     }
     myrdma1.rdma_comm("send", message);
 }
@@ -152,24 +149,4 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
         }
     }
     cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
-    /*if(server[0] == ip){
-        pagerank.start1 = 0;
-        pagerank.end1 = number_of_vertex/number_of_server;
-        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
-    }
-    else if(server[1] == ip){
-        pagerank.start1 = number_of_vertex/number_of_server;
-        pagerank.end1 = pagerank.start1 + number_of_vertex/number_of_server;
-        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
-    }
-    else if(server[2] == ip){
-        pagerank.start1 = number_of_vertex/number_of_server + number_of_vertex/number_of_server;
-        pagerank.end1 = pagerank.start1 + number_of_vertex/number_of_server;
-        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
-    }
-    else if(server[3] == ip){
-        pagerank.start1 = number_of_vertex/number_of_server+ number_of_vertex/number_of_server+ number_of_vertex/number_of_server;
-        pagerank.end1 = number_of_vertex;
-        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
-    }*/
 }
