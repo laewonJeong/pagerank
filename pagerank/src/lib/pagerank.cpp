@@ -82,7 +82,7 @@ void Pagerank::change_pagerank_value(){
 }
 void Pagerank::combine_pr(){
     for(int i=0;i<5;i++){
-        //cout << "starting combine2" <<endl;
+        cout << "starting combine2" <<endl;
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
         a = split(tmp,'\n');
@@ -151,6 +151,7 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
             pagerank.end1 = number_of_vertex;
         }
     }
+    cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
     /*if(server[0] == ip){
         pagerank.start1 = 0;
         pagerank.end1 = number_of_vertex/number_of_server;
