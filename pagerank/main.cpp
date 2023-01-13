@@ -22,8 +22,28 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     Pagerank pagerank;
-
-    pagerank.init_connection(argv[1], node, num_of_node, port);    
+    int start1, end1;
+    if(node[0] == argv[1]){
+        start1 = 0;
+        end1 = 4039/num_of_node;
+        cout << start1 << " " << end1 <<endl;
+    }
+    else if(node[1] == argv[1]){
+        start1 = 4039/num_of_node;
+        end1 = start1 + 4039/num_of_node;
+        cout << start1 << " " << end1 <<endl;
+    }
+    else if(node[2] == argv[1]){
+        start1 = 4039/num_of_node + 4039/num_of_node;
+        end1 = start1 + 4039/num_of_node;
+        cout << start1 << " " << end1 <<endl;
+    }
+    else if(node[3] == argv[1]){
+        start1 = 4039/num_of_node + 4039/num_of_node+ 4039/num_of_node;
+        end1 = start1 + 4039/num_of_node;
+        cout << start1 << " " << end1 <<endl;
+    }
+    //pagerank.init_connection(argv[1], node, num_of_node, port);    
 
     cout <<"--------------------------------------------------" << endl;
     time_t start, end;
@@ -37,7 +57,7 @@ int main(int argc, char* argv[]){
     pagerank.initial_pagerank_value();
 
     //calc pagerank
-    pagerank.run_pagerank(iter);
+    pagerank.run_pagerank(iter,start1,end1);
 
     // important thing
     int important = pagerank.max_pr();
@@ -47,10 +67,10 @@ int main(int argc, char* argv[]){
     end = time(NULL);
     cout << "수행시간: " <<(double)(end-start) <<"s" <<endl;
 
-    sleep(4);
+    /*sleep(4);
     while(1){
         cout << "Success Pagerank execution" << endl;
         sleep(1200); 
-    }
+    }*/
     
 }
