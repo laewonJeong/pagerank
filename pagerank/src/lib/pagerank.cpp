@@ -74,7 +74,7 @@ void Pagerank::calc_pagerank_value(int start, int end){
 
 void Pagerank::combine_pr(){
     cout << "start combine" << endl;
-    for (int i=0;i<6;i++){
+    for (int i=0;i<5;i++){
         char tcp_recv_buffer[buf_size1];
         //cout << "start combine" << endl;
         string s = tcp1.recv_message(sock_idx[i]);
