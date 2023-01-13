@@ -79,15 +79,18 @@ void Pagerank::change_pagerank_value(){
     }
 }
 void Pagerank::combine_pr(){
-    cout << "starting combine" <<endl;
-    vector<string> a;
+    cout << "starting combine1" <<endl;
     for(int i=0;i<3;i++){
+        //cout << "starting combine2" <<endl;
+        vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
         a = split(tmp,'\n');
+        //cout << "starting combine3" <<endl;
         for(int j=0;j<a.size();j++){
             vector<string> b = split(a[j], ' ');
             pagerank.new_pr[stoi(b[0])] = stod(b[1]);
         }
+        //cout << "starting combine4" <<endl;
     }
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
