@@ -76,7 +76,6 @@ void Pagerank::calc_pagerank_value(int start, int end){
 void Pagerank::change_pagerank_value(){
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         pagerank.pr[i] = pagerank.new_pr[i];
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
 }
 void Pagerank::combine_pr(){
@@ -90,6 +89,10 @@ void Pagerank::combine_pr(){
             pagerank.new_pr[stoi(b[0])] = stod(b[1]);
         }
     }
+    for(int i = 0;i<pagerank.num_of_vertex;i++){
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
+    }
+    
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
     string message = "";
