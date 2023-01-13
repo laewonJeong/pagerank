@@ -51,16 +51,16 @@ void Pagerank::initial_pagerank_value(){
     cout << "Done" <<endl;
 }
 void Pagerank::thread_calc_pr(int i){
-    /*double tmp = 0;
+    double tmp = 0;
     for(int j=0;j<pagerank.num_of_vertex;j++){
         if(i == j)
             continue;
         if(find(pagerank.graph[j].begin(), pagerank.graph[j].end(), i) != pagerank.graph[j].end())
                 tmp += df*(pagerank.pr[j]/pagerank.graph[j].size());
     }
-    pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;*/
+    pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;*/
-    pagerank.my_pr[i] = df*(pagerank.pr[i]/pagerank.graph[i].size());
+    //pagerank.my_pr[i] = df*(pagerank.pr[i]/pagerank.graph[i].size());
     
 }
 void Pagerank::calc_pagerank_value(int start, int end){
@@ -82,7 +82,7 @@ void Pagerank::calc_pagerank_value(int start, int end){
 void Pagerank::change_pagerank_value(){
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         pagerank.pr[i] = pagerank.new_pr[i];
-        cout << "my_pr[" <<i<<"]: " << pagerank.my_pr[i] <<endl;
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
 }
 void Pagerank::combine_pr(){
@@ -93,7 +93,7 @@ void Pagerank::combine_pr(){
         a = split(tmp,'\n');
         for(int j=0;j<a.size();j++){
             vector<string> b = split(a[j], ' ');
-            pagerank.my_pr[stoi(b[0])] = stod(b[1]);
+            pagerank.new_pr[stoi(b[0])] = stod(b[1]);
         }
     }
 }
@@ -127,11 +127,11 @@ void Pagerank::run_pagerank(int iter, int start, int end){
         string message = "";
         for(int i=start;i<end;i++){
             message = message + to_string(i);
-            message = message + " " + to_string(pagerank.my_pr[i]) + "\n";
+            message = message + " " + to_string(pagerank.new_pr[i]) + "\n";
         }
         myrdma1.rdma_comm("send", message);
         Pagerank::combine_pr();
-        Pagerank::update_pr();
+        //Pagerank::update_pr();
         //cout << pagerank.recv_buffer[0] << endl;
         if(pagerank.pr==pagerank.new_pr)
             break;
