@@ -77,7 +77,7 @@ void Pagerank::calc_pagerank_value(int start, int end){
 void Pagerank::change_pagerank_value(){
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         pagerank.pr[i] = pagerank.new_pr[i];
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
 }
 void Pagerank::combine_pr(){
