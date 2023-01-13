@@ -145,7 +145,10 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     for(int i=0;i<number_of_server;i++){
         if(ip == server[i]){
             pagerank.start1 = number_of_vertex/number_of_server*i;
-            pagerank.end1 = pagerank.start1 + (number_of_vertex/number_of_server*(i+1));
+            pagerank.end1 = pagerank.start1 + number_of_vertex/number_of_server;
+        }
+        if(ip == server[number_of_server-1]){
+            pagerank.end1 = number_of_vertex;
         }
     }
     /*if(server[0] == ip){
