@@ -86,9 +86,11 @@ void Pagerank::change_pagerank_value(){
     }
 }
 void Pagerank::combine_pr(){
+    cout << "starting combine" <<endl;
     vector<string> a;
     for(int i=0;i<3;i++){
-        a = split(pagerank.recv_buffer[i],'\n');
+        string tmp(pagerank.recv_buffer[i]);
+        a = split(tmp,'\n');
         for(int j=0;j<a.size();j++){
             vector<string> b = split(a[i], ' ');
             pagerank.new_pr[stoi(b[0])] = stod(b[1]);

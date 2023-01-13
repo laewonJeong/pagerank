@@ -10,7 +10,7 @@
 #include <thread>
 
 #define df 0.85
-#define buf_size1 1024
+#define buf_size1 104857
 
 using namespace std;
 class Pagerank{
