@@ -3,6 +3,19 @@
 
 myRDMA myrdma1;
 Pagerank pagerank;
+vector<string> split(string str, char Delimiter) {
+    istringstream iss(str);             // istringstream에 str을 담는다.
+    string buffer;                      // 구분자를 기준으로 절삭된 문자열이 담겨지는 버퍼
+ 
+    vector<string> result;
+ 
+    // istringstream은 istream을 상속받으므로 getline을 사용할 수 있다.
+    while (getline(iss, buffer, Delimiter)) {
+        result.push_back(buffer);               // 절삭된 문자열을 vector에 저장
+    }
+ 
+    return result;
+}
 void Pagerank::create_graph_data(string path, int num_of_vertex){
     cout << "creating graph data" <<endl;
     pagerank.num_of_vertex = num_of_vertex;
@@ -69,9 +82,19 @@ void Pagerank::calc_pagerank_value(int start, int end){
 void Pagerank::change_pagerank_value(){
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         pagerank.pr[i] = pagerank.new_pr[i];
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
 }
-
+void Pagerank::combine_pr(){
+    vector<string> a;
+    for(int i=0;i<3;i++){
+        a = split(pagerank.recv_buffer[i],'\n');
+        for(int j=0;j<a.size();j++){
+            vector<string> b = split(a[i], ' ');
+            pagerank.new_pr[stoi(b[0])] = stod(b[1]);
+        }
+    }
+}
 void Pagerank::run_pagerank(int iter, int start, int end){
     int step;
     for(int step =0; step < iter ;step++){
@@ -83,6 +106,7 @@ void Pagerank::run_pagerank(int iter, int start, int end){
             message = message + " " + to_string(pagerank.my_pr[i]) + "\n";
         }
         myrdma1.rdma_comm("send", message);
+        Pagerank::combine_pr();
         //cout << pagerank.recv_buffer[0] << endl;
         if(pagerank.pr==pagerank.new_pr)
             break;

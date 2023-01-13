@@ -43,7 +43,7 @@ int main(int argc, char* argv[]){
         end1 = start1 + 4039/num_of_node;
         cout << start1 << " " << end1 <<endl;
     }
-    //pagerank.init_connection(argv[1], node, num_of_node, port);    
+    pagerank.init_connection(argv[1], node, num_of_node, port);    
 
     cout <<"--------------------------------------------------" << endl;
     time_t start, end;
