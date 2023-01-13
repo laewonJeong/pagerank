@@ -4,16 +4,13 @@
 myRDMA myrdma1;
 Pagerank pagerank;
 vector<string> split(string str, char Delimiter) {
-    istringstream iss(str);             // istringstream에 str을 담는다.
-    string buffer;                      // 구분자를 기준으로 절삭된 문자열이 담겨지는 버퍼
- 
+    istringstream iss(str);             
+    string buffer;                     
     vector<string> result;
  
-    // istringstream은 istream을 상속받으므로 getline을 사용할 수 있다.
     while (getline(iss, buffer, Delimiter)) {
-        result.push_back(buffer);               // 절삭된 문자열을 vector에 저장
+        result.push_back(buffer);   
     }
- 
     return result;
 }
 void Pagerank::create_graph_data(string path, int num_of_vertex){
@@ -50,6 +47,7 @@ void Pagerank::initial_pagerank_value(){
     }
     cout << "Done" <<endl;
 }
+
 void Pagerank::thread_calc_pr(int i){
     double tmp = 0;
     for(int j=0;j<pagerank.num_of_vertex;j++){
@@ -59,19 +57,15 @@ void Pagerank::thread_calc_pr(int i){
                 tmp += df*(pagerank.pr[j]/pagerank.graph[j].size());
     }
     pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
-        //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;*/
-    //pagerank.my_pr[i] = df*(pagerank.pr[i]/pagerank.graph[i].size());
-    
 }
+
 void Pagerank::calc_pagerank_value(int start, int end){
     vector<thread> worker;
     int check = 0;
     for(int i=start;i<end;i++){
         worker.push_back(thread(&Pagerank::thread_calc_pr,i));
-        //Pagerank::thread_calc_pr(i);
     }
     for(int i=0;i<end-start;i++){
-        //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;
         worker[i].join();
     }
 
@@ -97,44 +91,23 @@ void Pagerank::combine_pr(){
         }
     }
 }
-void Pagerank::thread_update_pr(int i){
-    double tmp;
-    for(int j=0;j<pagerank.num_of_vertex;j++){
-        if(i == j)
-            continue;
-        if(find(pagerank.graph[j].begin(), pagerank.graph[j].end(), i) != pagerank.graph[j].end())
-                tmp += df*pagerank.my_pr[j];
-        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+void Pagerank::send_recv_pagerank_value(int start, int end){
+    string message = "";
+    for(int i=start;i<end;i++){
+        message = message + to_string(i);
+        message = message + " " + to_string(pagerank.new_pr[i]) + "\n";
     }
-}
-void Pagerank::update_pr(){
-    vector<thread> worker;
-    int check = 0;
-    for(int i=0;i<pagerank.num_of_vertex;i++){
-        worker.push_back(thread(&Pagerank::thread_update_pr,i));
-        //Pagerank::thread_calc_pr(i);
-    }
-    for(int i=0;i<pagerank.num_of_vertex;i++){
-        //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;
-        worker[i].join();
-    }
+    myrdma1.rdma_comm("write", message);
 }
 void Pagerank::run_pagerank(int iter, int start, int end){
     int step;
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value(start,end);
-        string message = "";
-        for(int i=start;i<end;i++){
-            message = message + to_string(i);
-            message = message + " " + to_string(pagerank.new_pr[i]) + "\n";
-        }
-        myrdma1.rdma_comm("send", message);
         Pagerank::combine_pr();
-        //Pagerank::update_pr();
-        //cout << pagerank.recv_buffer[0] << endl;
-        if(pagerank.pr==pagerank.new_pr)
+        if(pagerank.pr==pagerank.new_pr){
             break;
+        }
         Pagerank::change_pagerank_value();
     }
     cout << "Done." << endl;
