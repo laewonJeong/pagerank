@@ -1,6 +1,8 @@
 #include "pagerank.hpp"
 #include "../../includes/network/myRDMA.hpp"
+#include "../../includes/network/tcp.hpp"
 
+TCP tcp1;
 myRDMA myrdma1;
 Pagerank pagerank;
 vector<string> split(string str, char Delimiter) {
@@ -21,13 +23,9 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
 	ifstream file(path);
 	if(file.is_open()){
         while(getline(file, line)) {
-            vector<string> split;
-            istringstream ss(line);
-            string stringBuffer;
-            while(getline(ss, stringBuffer, ' ')){
-                split.push_back(stringBuffer);
-            }
-            pagerank.graph[stoi(split[0])].push_back(stoi(split[1]));
+            vector<string> s;
+            s = split(line, ' ');
+            pagerank.graph[stoi(s[0])].push_back(stoi(s[1]));
 		}
 		file.close();
         cout << "Done" <<endl;
@@ -43,7 +41,6 @@ void Pagerank::initial_pagerank_value(){
     for(int i=0;i<pagerank.num_of_vertex;i++){
         pagerank.pr.push_back(1.0/pagerank.num_of_vertex);
         pagerank.new_pr.push_back(0);
-        pagerank.my_pr.push_back(0.0);
     }
     cout << "Done" <<endl;
 }
@@ -74,14 +71,22 @@ void Pagerank::calc_pagerank_value(int start, int end){
     cout << endl;
 }
 
-void Pagerank::change_pagerank_value(){
-    //for(int i = 0;i<pagerank.num_of_vertex;i++){
-    pagerank.pr = pagerank.new_pr;
-        //cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-    //}
-}
 void Pagerank::combine_pr(){
-    for(int i=0;i<5;i++){
+    char tcp_recv_buffer[6][buf_size1];
+    for (int i=0;i<5;i++){
+        string s = tcp1.recv_message(i);
+        strcpy(tcp_recv_buffer[i], s.c_str());
+        vector<string> a;
+        string tmp(tcp_recv_buffer[i]);
+        a = split(tmp,' ');
+        for(int j=0;j<a.size();j++){
+            if(j%2==0){
+                pagerank.new_pr[stoi(a[j])] = stod(a[j+1]);
+            }
+        }
+    }
+
+    /*for(int i=0;i<5;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
         a = split(tmp,' ');
@@ -90,19 +95,29 @@ void Pagerank::combine_pr(){
                 pagerank.new_pr[stoi(a[j])] = stod(a[j+1]);
             }
         }
-    }
+    }*/
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
     
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
+    int *clnt_socks = tcp1.client_sock();
+    vector<int> sock_idx;
+    for(int idx=0; idx < 6; idx++){
+        if(clnt_socks[idx]!=0){
+            sock_idx.push_back(idx);
+        }
+    }
     string message = "";
     for(int i=start;i<end;i++){
         message = message + to_string(i);
         message = message + " " + to_string(pagerank.new_pr[i]) + " ";
     }
-    myrdma1.rdma_comm("send", message);
+    for(int i = 0;i<5;i++){
+        tcp1.send_msg(message.c_str(),sock_idx[i]);
+    }
+    //myrdma1.rdma_comm("send", message);
 }
 void Pagerank::run_pagerank(int iter){
     int step;

@@ -7,7 +7,8 @@
 #define server_ip "192.168.1.100"
 #define iter 100000
 
-string node[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103","192.168.1.104","192.168.1.105"};
+string node[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102",
+                            "192.168.1.103","192.168.1.104","192.168.1.105"};
 
 using namespace std;
 int main(int argc, char* argv[]){
@@ -19,7 +20,6 @@ int main(int argc, char* argv[]){
         cerr << "node[0] is not server_ip" << endl;
         exit(1);
     }
-    //clock_t start, end;
     
     string data_path = "/home/lwjeong/git/pagerank/pagerank/facebook_data.txt";
     int graph_data_vertex = 4039;
@@ -32,7 +32,6 @@ int main(int argc, char* argv[]){
 
     time_t start,end;
     start = time(NULL);
-    //double start_second = (double)(start / CLOCKS_PER_SEC);
 
     // Create graph data
     pagerank.create_graph_data(data_path, graph_data_vertex);

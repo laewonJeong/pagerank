@@ -20,10 +20,7 @@ class Pagerank{
        static void calc_pagerank_value(int start, int end);
        static void thread_calc_pr(int index);
        static void combine_pr();
-       static void update_pr();
-       static void thread_update_pr(int index);
        void send_recv_pagerank_value(int start, int end);
-       void change_pagerank_value();
        void run_pagerank(int iter);
        int max_pr();
        void init_connection(const char* ip, string server[], 

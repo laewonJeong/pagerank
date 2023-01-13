@@ -24,6 +24,7 @@ class TCP{
         void client_t(const char* ip, string server[]);
         void send_msg(const char* m,int ip);
         int recv_msg(int ip);
+        string recv_message(int ip);
         int *client_sock();
         map<string, string> read_rdma_info(int ip);
     private:
