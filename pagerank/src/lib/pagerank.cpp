@@ -128,12 +128,12 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
 }
 void Pagerank::run_pagerank(int iter){
     int step;
-    int *clnt_socks = tcp1.client_sock();
+    /*int *clnt_socks = tcp1.client_sock();
     for(int idx=0; idx < 6; idx++){
         if(clnt_socks[idx]!=0){
             sock_idx.push_back(idx);
         }
-    }
+    }*/
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1);
