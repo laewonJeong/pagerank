@@ -82,7 +82,7 @@ void Pagerank::calc_pagerank_value(int start, int end){
 void Pagerank::change_pagerank_value(){
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         pagerank.pr[i] = pagerank.new_pr[i];
-        //cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
+        cout << "my_pr[" <<i<<"]: " << pagerank.my_pr[i] <<endl;
     }
 }
 void Pagerank::combine_pr(){
@@ -93,9 +93,30 @@ void Pagerank::combine_pr(){
         a = split(tmp,'\n');
         for(int j=0;j<a.size();j++){
             vector<string> b = split(a[j], ' ');
-            pagerank.new_pr[stoi(b[0])] = stod(b[1]);
-            cout << "new_pr[" <<stoi(b[0])<<"]: " << pagerank.new_pr[stoi(b[0])] <<endl;
+            pagerank.my_pr[stoi(b[0])] = stod(b[1]);
         }
+    }
+}
+void Pagerank::thread_update_pr(int i){
+    double tmp;
+    for(int j=0;j<pagerank.num_of_vertex;j++){
+        if(i == j)
+            continue;
+        if(find(pagerank.graph[j].begin(), pagerank.graph[j].end(), i) != pagerank.graph[j].end())
+                tmp += df*pagerank.my_pr[j];
+        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+    }
+}
+void Pagerank::update_pr(){
+    vector<thread> worker;
+    int check = 0;
+    for(int i=0;i<pagerank.num_of_vertex;i++){
+        worker.push_back(thread(&Pagerank::thread_update_pr,i));
+        //Pagerank::thread_calc_pr(i);
+    }
+    for(int i=0;i<pagerank.num_of_vertex;i++){
+        //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;
+        worker[i].join();
     }
 }
 void Pagerank::run_pagerank(int iter, int start, int end){

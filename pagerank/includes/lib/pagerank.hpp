@@ -20,6 +20,8 @@ class Pagerank{
        static void calc_pagerank_value(int start, int end);
        static void thread_calc_pr(int index);
        static void combine_pr();
+       static void update_pr();
+       static void thread_update_pr(int index);
        void change_pagerank_value();
        void run_pagerank(int iter, int start, int end);
        int max_pr();
