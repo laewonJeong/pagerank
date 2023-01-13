@@ -142,7 +142,13 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,pagerank.send_buffer,pagerank.recv_buffer);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
-    if(server[0] == ip){
+    for(int i=0;i<number_of_server;i++){
+        if(ip == server[i]){
+            pagerank.start1 = number_of_vertex/number_of_server*i;
+            pagerank.end1 = pagerank.start1 + (number_of_vertex/number_of_server*(i+1));
+        }
+    }
+    /*if(server[0] == ip){
         pagerank.start1 = 0;
         pagerank.end1 = number_of_vertex/number_of_server;
         cout << pagerank.start1 << " " << pagerank.end1 <<endl;
@@ -161,5 +167,5 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
         pagerank.start1 = number_of_vertex/number_of_server+ number_of_vertex/number_of_server+ number_of_vertex/number_of_server;
         pagerank.end1 = number_of_vertex;
         cout << pagerank.start1 << " " << pagerank.end1 <<endl;
-    }
+    }*/
 }
