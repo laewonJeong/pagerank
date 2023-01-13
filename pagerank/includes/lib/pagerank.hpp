@@ -24,10 +24,11 @@ class Pagerank{
        static void thread_update_pr(int index);
        void send_recv_pagerank_value(int start, int end);
        void change_pagerank_value();
-       void run_pagerank(int iter, int start, int end);
+       void run_pagerank(int iter);
        int max_pr();
        void init_connection(const char* ip, string server[], 
-                                        int number_of_server, int Port);
+                            int number_of_server, int Port,
+                            int number_of_vertex);
     private:
         vector<int> graph[4039];
         vector<long double> pr;
@@ -36,4 +37,6 @@ class Pagerank{
         int num_of_vertex;
         char send_buffer[4][buf_size1];
         char recv_buffer[4][buf_size1];
+        int start1;
+        int end1;
 };

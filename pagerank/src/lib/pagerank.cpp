@@ -102,12 +102,12 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     }
     myrdma1.rdma_comm("send", message);
 }
-void Pagerank::run_pagerank(int iter, int start, int end){
+void Pagerank::run_pagerank(int iter){
     int step;
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
-        Pagerank::calc_pagerank_value(start,end);
-        Pagerank::send_recv_pagerank_value(start, end);
+        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1);
+        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
         if(pagerank.pr==pagerank.new_pr){
             break;
@@ -131,9 +131,29 @@ int Pagerank::max_pr(){
     return important;
 }
 
-void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port)
+void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port, int number_of_vertex)
 {
     myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,pagerank.send_buffer,pagerank.recv_buffer);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
+    if(server[0] == ip){
+        pagerank.start1 = 0;
+        pagerank.end1 = number_of_vertex/number_of_server;
+        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
+    }
+    else if(server[1] == ip){
+        pagerank.start1 = number_of_vertex/number_of_server;
+        pagerank.end1 = pagerank.start1 + number_of_vertex/number_of_server;
+        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
+    }
+    else if(server[2] == ip){
+        pagerank.start1 = number_of_vertex/number_of_server + number_of_vertex/number_of_server;
+        pagerank.end1 = pagerank.start1 + number_of_vertex/number_of_server;
+        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
+    }
+    else if(server[3] == ip){
+        pagerank.start1 = number_of_vertex/number_of_server+ number_of_vertex/number_of_server+ number_of_vertex/number_of_server;
+        pagerank.end1 = number_of_vertex;
+        cout << pagerank.start1 << " " << pagerank.end1 <<endl;
+    }
 }
