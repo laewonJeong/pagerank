@@ -74,10 +74,11 @@ void Pagerank::calc_pagerank_value(int start, int end){
 
 void Pagerank::combine_pr(){
     cout << "start combine" << endl;
-    for (int i=0;i<5;i++){
+    /*for (int i=0;i<5;i++){
         char tcp_recv_buffer[buf_size1];
         //cout << "start combine" << endl;
-        string s = tcp1.recv_message(sock_idx[i]);
+        string s;
+        s = tcp1.recv_message(sock_idx[i]);
         //cout << "start combine" << endl;
         strcpy(tcp_recv_buffer, s.c_str());
         //cout << "start combine" << endl;
@@ -95,9 +96,9 @@ void Pagerank::combine_pr(){
         }
         //cout << "start combine" << endl;
     }
-    //cout << "start combine" << endl;
+    //cout << "start combine" << endl;*/
 
-    /*for(int i=0;i<5;i++){
+    for(int i=0;i<5;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
         a = split(tmp,' ');
@@ -106,7 +107,7 @@ void Pagerank::combine_pr(){
                 pagerank.new_pr[stoi(a[j])] = stod(a[j+1]);
             }
         }
-    }*/
+    }
     for(int i = 0;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
@@ -119,11 +120,11 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
         message = message + to_string(i);
         message = message + " " + to_string(pagerank.new_pr[i]) + " ";
     }
-    for(int i = 0;i<5;i++){
+   /* for(int i = 0;i<5;i++){
         tcp1.send_msg(message.c_str(),sock_idx[i]);
-    }
+    }*/
+    myrdma1.rdma_comm("send", message);
     cout << "finish sending" << endl;
-    //myrdma1.rdma_comm("send", message);
 }
 void Pagerank::run_pagerank(int iter){
     int step;
