@@ -117,7 +117,8 @@ void Pagerank::run_pagerank(int iter){
         if(pagerank.pr==pagerank.new_pr){
             break;
         }
-        Pagerank::change_pagerank_value();
+        //Pagerank::change_pagerank_value();
+        pagerank.pr = pagerank.new_pr;
     }
     cout << "Done." << endl;
 }
