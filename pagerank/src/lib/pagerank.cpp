@@ -86,7 +86,7 @@ void Pagerank::combine_pr(){
         string tmp(pagerank.recv_buffer[i]);
         a = split(tmp,' ');
         for(int j=0;j<a.size();j++){
-            if(j%2!=0){
+            if(j%2==0){
                 pagerank.new_pr[stoi(a[j])] = stod(a[j+1]);
             }
         }
