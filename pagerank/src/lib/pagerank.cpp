@@ -5,6 +5,7 @@
 TCP tcp1;
 myRDMA myrdma1;
 Pagerank pagerank;
+vector<int> sock_idx;
 vector<string> split(string str, char Delimiter) {
     istringstream iss(str);             
     string buffer;                     
@@ -72,12 +73,12 @@ void Pagerank::calc_pagerank_value(int start, int end){
 }
 
 void Pagerank::combine_pr(){
-    char tcp_recv_buffer[6][buf_size1];
+    char tcp_recv_buffer[buf_size1];
     for (int i=0;i<5;i++){
-        string s = tcp1.recv_message(i);
-        strcpy(tcp_recv_buffer[i], s.c_str());
+        string s = tcp1.recv_message(sock_idx[i]);
+        strcpy(tcp_recv_buffer, s.c_str());
         vector<string> a;
-        string tmp(tcp_recv_buffer[i]);
+        string tmp(tcp_recv_buffer);
         a = split(tmp,' ');
         for(int j=0;j<a.size();j++){
             if(j%2==0){
@@ -103,7 +104,6 @@ void Pagerank::combine_pr(){
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
     int *clnt_socks = tcp1.client_sock();
-    vector<int> sock_idx;
     for(int idx=0; idx < 6; idx++){
         if(clnt_socks[idx]!=0){
             sock_idx.push_back(idx);
