@@ -81,7 +81,7 @@ void Pagerank::change_pagerank_value(){
     //}
 }
 void Pagerank::combine_pr(){
-    for(int i=0;i<3;i++){
+    for(int i=0;i<5;i++){
         //cout << "starting combine2" <<endl;
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
