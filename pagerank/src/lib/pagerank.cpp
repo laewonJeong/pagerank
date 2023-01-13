@@ -75,13 +75,12 @@ void Pagerank::calc_pagerank_value(int start, int end){
 }
 
 void Pagerank::change_pagerank_value(){
-    for(int i = 0;i<pagerank.num_of_vertex;i++){
-        pagerank.pr[i] = pagerank.new_pr[i];
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-    }
+    //for(int i = 0;i<pagerank.num_of_vertex;i++){
+    pagerank.pr = pagerank.new_pr;
+        //cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
+    //}
 }
 void Pagerank::combine_pr(){
-    cout << "starting combine1" <<endl;
     for(int i=0;i<3;i++){
         //cout << "starting combine2" <<endl;
         vector<string> a;

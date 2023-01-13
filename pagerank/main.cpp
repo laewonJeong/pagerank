@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
         cerr << "node[0] is not server_ip" << endl;
         exit(1);
     }
-    time_t start, end;
+    //clock_t start, end;
     
     string data_path = "/home/lwjeong/git/pagerank/pagerank/facebook_data.txt";
     int graph_data_vertex = 4039;
@@ -30,7 +30,9 @@ int main(int argc, char* argv[]){
     // init connection for rdma communication
     pagerank.init_connection(argv[1], node, num_of_node, port, graph_data_vertex);    
 
+    time_t start,end;
     start = time(NULL);
+    //double start_second = (double)(start / CLOCKS_PER_SEC);
 
     // Create graph data
     pagerank.create_graph_data(data_path, graph_data_vertex);
@@ -47,7 +49,7 @@ int main(int argc, char* argv[]){
 
     // check time
     end = time(NULL);
-    cout << "수행시간: " <<(double)(end-start) <<"s" <<endl;
+    cout << "수행시간: " <<(double)(end - start) <<"s" <<endl;
 
     /*sleep(4);
     while(1){
