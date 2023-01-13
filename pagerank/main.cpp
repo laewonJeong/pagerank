@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
     }
     else if(node[3] == argv[1]){
         start1 = 4039/num_of_node + 4039/num_of_node+ 4039/num_of_node;
-        end1 = start1 + 4039/num_of_node;
+        end1 = 4039;
         cout << start1 << " " << end1 <<endl;
     }
     pagerank.init_connection(argv[1], node, num_of_node, port);    
