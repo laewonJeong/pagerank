@@ -131,6 +131,7 @@ void Pagerank::run_pagerank(int iter, int start, int end){
         }
         myrdma1.rdma_comm("send", message);
         Pagerank::combine_pr();
+        Pagerank::update_pr();
         //cout << pagerank.recv_buffer[0] << endl;
         if(pagerank.pr==pagerank.new_pr)
             break;
