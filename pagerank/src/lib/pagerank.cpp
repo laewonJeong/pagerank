@@ -89,7 +89,7 @@ void Pagerank::combine_pr(){
         //cout << "start combine" << endl;
         for(int j=0;j<a.size();j++){
             if(j%2==0){
-                //cout << stoi(a[j]) << " " << stod(a[j+1]) << endl;
+                cout << stoi(a[j]) << " " << stod(a[j+1]) << endl;
                 pagerank.new_pr[stoi(a[j])] = stod(a[j+1]);
             }
         }
