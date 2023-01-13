@@ -97,7 +97,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
         message = message + to_string(i);
         message = message + " " + to_string(pagerank.new_pr[i]) + "\n";
     }
-    myrdma1.rdma_comm("write", message);
+    myrdma1.rdma_comm("send", message);
 }
 void Pagerank::run_pagerank(int iter, int start, int end){
     int step;
