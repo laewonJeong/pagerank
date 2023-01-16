@@ -30,8 +30,8 @@ int main(int argc, char* argv[]){
     pagerank.init_connection(argv[1], node, num_of_node, port, graph_data_vertex);    
 
     // check time
-    time_t start,end;
-    start = time(NULL);
+    time_t begin, end;
+    begin = time(NULL);
 
     // Create graph data
     pagerank.create_graph_data(data_path, graph_data_vertex);
@@ -48,7 +48,8 @@ int main(int argc, char* argv[]){
 
     // check time
     end = time(NULL);
-    cout << "수행시간: " <<(double)(end - start) <<"s" <<endl;
+    //long time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec);
+    printf("수행시간: %lfs\n", (double)(end-begin));
 
     /*sleep(4);
     while(1){

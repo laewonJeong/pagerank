@@ -121,7 +121,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
    /* for(int i = 0;i<5;i++){
         tcp1.send_msg(message.c_str(),sock_idx[i]);
     }*/
-    myrdma1.rdma_comm("send_with_imm", message);
+    myrdma1.rdma_comm("write", message);
     //cout << "finish sending" << endl;
 }
 void Pagerank::run_pagerank(int iter){
@@ -143,7 +143,7 @@ void Pagerank::run_pagerank(int iter){
         //Pagerank::change_pagerank_value();
         pagerank.pr = pagerank.new_pr;
     }
-    cout << "Done." << endl;
+    cout << "\nDone." << endl;
 }
 
 int Pagerank::max_pr(){
