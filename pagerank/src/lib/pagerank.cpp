@@ -62,7 +62,6 @@ void Pagerank::calc_pagerank_value(int start, int end){
         worker.push_back(thread(&Pagerank::thread_calc_pr,i));
     }
     for(int i=0;i<end-start;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
         worker[i].join();
     }
 
@@ -117,6 +116,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     for(int i=start;i<end;i++){
         message = message + to_string(i);
         message = message + " " + to_string(pagerank.new_pr[i]) + " ";
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
    /* for(int i = 0;i<5;i++){
         tcp1.send_msg(message.c_str(),sock_idx[i]);
