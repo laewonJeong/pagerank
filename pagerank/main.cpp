@@ -29,6 +29,7 @@ int main(int argc, char* argv[]){
     // init connection for rdma communication
     pagerank.init_connection(argv[1], node, num_of_node, port, graph_data_vertex);    
 
+    cout << "-------------------------------------" <<endl;
     // check time
     struct timespec begin, end ;
     clock_gettime(CLOCK_MONOTONIC, &begin);
