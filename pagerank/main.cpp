@@ -43,16 +43,17 @@ int main(int argc, char* argv[]){
     //calc pagerank
     pagerank.run_pagerank(iter);
 
-    // important thing
-    int important = pagerank.max_pr();
-    cout << "important page is " << important<< " page.\n" <<endl;
-
     // check time
     clock_gettime(CLOCK_MONOTONIC, &end);
     long double time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+    cout << "-------------------------------------" <<endl;
     printf("수행시간: %Lfs.\n", time);
-    
 
+    // important thing
+    string important = pagerank.max_pr();
+    cout << "-------------------------------------" <<endl;
+    cout << "important page and value is " << important  <<endl;
+    
     /*sleep(4);
     while(1){
         cout << "Success Pagerank execution" << endl;

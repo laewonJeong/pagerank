@@ -146,8 +146,9 @@ void Pagerank::run_pagerank(int iter){
     cout << "Done" << endl;
 }
 
-int Pagerank::max_pr(){
+string Pagerank::max_pr(){
     int important = 0;
+    string result = "";
     long double important_pr = pagerank.pr[0];
     long double tmp = important_pr;
     for (int i=0;i< pagerank.num_of_vertex;i++){
@@ -157,7 +158,8 @@ int Pagerank::max_pr(){
             tmp = important_pr;
         }
     }
-    return important;
+    result = result + to_string(important) + " " + to_string(tmp);
+    return result;
 }
 
 void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port, int number_of_vertex)

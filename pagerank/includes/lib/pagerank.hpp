@@ -22,7 +22,7 @@ class Pagerank{
        static void combine_pr();
        void send_recv_pagerank_value(int start, int end);
        void run_pagerank(int iter);
-       int max_pr();
+       string max_pr();
        void init_connection(const char* ip, string server[], 
                             int number_of_server, int Port,
                             int number_of_vertex);
