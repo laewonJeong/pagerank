@@ -99,7 +99,7 @@ void myRDMA::rdma_send_msg(string opcode, string msg){
         }
     }
     else if(opcode == "write"){
-        cerr << "rdma_write run" << endl;
+        //cerr << "rdma_write run" << endl;
         for(int i=0;i<myrdma.connect_num;i++){
             myRDMA::rdma_write(msg, i);
         }

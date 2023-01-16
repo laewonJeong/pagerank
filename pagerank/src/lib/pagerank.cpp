@@ -66,7 +66,7 @@ void Pagerank::calc_pagerank_value(int start, int end){
     }
 
 
-    cout << endl;
+   //cout << endl;
 }
 
 void Pagerank::combine_pr(){
@@ -131,8 +131,9 @@ void Pagerank::run_pagerank(int iter){
             sock_idx.push_back(idx);
         }
     }*/
+    cout << "progressing..." << endl;
     for(int step =0; step < iter ;step++){
-        cout <<"====="<< step+1 << " step=====" <<endl;
+        //cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
@@ -142,7 +143,7 @@ void Pagerank::run_pagerank(int iter){
         //Pagerank::change_pagerank_value();
         pagerank.pr = pagerank.new_pr;
     }
-    cout << "\nDone." << endl;
+    cout << "Done" << endl;
 }
 
 int Pagerank::max_pr(){
