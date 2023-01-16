@@ -37,4 +37,5 @@ class Pagerank{
         char recv_buffer[4][buf_size1];
         int start1;
         int end1;
+        string message;
 };

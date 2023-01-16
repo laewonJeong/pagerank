@@ -43,7 +43,7 @@ void Pagerank::initial_pagerank_value(){
 
     pagerank.pr = vector<long double>(pagerank.num_of_vertex, 1.0/pagerank.num_of_vertex);
     pagerank.new_pr= vector<long double>(pagerank.num_of_vertex);
-    
+
     cout << "Done" <<endl;
 }
 
@@ -59,7 +59,9 @@ void Pagerank::calc_pagerank_value(int start, int end){
     vector<thread> worker;
     int check = 0;
     for(int i=start;i<end;i++){
+        //pagerank.message = "";
         worker.push_back(thread(&Pagerank::thread_calc_pr,i));
+        //pagerank.message = pagerank.message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + " ";
     }
     for(int i=0;i<end-start;i++){
         worker[i].detach();
