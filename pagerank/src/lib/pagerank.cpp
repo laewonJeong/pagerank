@@ -50,7 +50,7 @@ void Pagerank::initial_pagerank_value(){
 void Pagerank::thread_calc_pr(int i){
     double tmp = 0;
     for(int j = 0; j<pagerank.outgoing[i].size();j++){
-        tmp+=df*(pagerank.pr[j]/pagerank.graph[j].size());
+        tmp+=df*(pagerank.pr[pagerank.outgoing[i][j]]/pagerank.graph[pagerank.outgoing[i][j]].size());
     }
     /*for(int j=0;j<pagerank.num_of_vertex;j++){
         if(i == j)
