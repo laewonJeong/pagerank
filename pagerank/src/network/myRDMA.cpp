@@ -51,7 +51,7 @@ void myRDMA::rdma_write(string msg, int i){
                          sizeof(myrdma.send_buffer[i]), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]))){
         //cerr << "send success" << endl;
-        tcp.send_msg("1", myrdma.sock_idx[i]);
+        //tcp.send_msg("1", myrdma.sock_idx[i]);
     }
     else
         cerr << "send failed" << endl;
@@ -85,9 +85,9 @@ void myRDMA::rdma_send_recv(int i){
 }
 
 void myRDMA::rdma_write_recv(int i){
-    TCP tcp;
-    while(tcp.recv_msg(myrdma.sock_idx[i]) <= 0);
-    cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
+    //TCP tcp;
+    //while(tcp.recv_msg(myrdma.sock_idx[i]) <= 0);
+    //cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
     cerr << "recv success" << endl;
 }
 
