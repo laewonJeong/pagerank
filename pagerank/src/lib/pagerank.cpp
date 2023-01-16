@@ -95,7 +95,7 @@ void Pagerank::combine_pr(){
     }
     //cout << "start combine" << endl;*/
 
-    for(int i=0;i<5;i++){
+    for(int i=0;i<3;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
         a = split(tmp,' ');
