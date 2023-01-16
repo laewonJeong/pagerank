@@ -87,8 +87,8 @@ void myRDMA::rdma_send_recv(int i){
 void myRDMA::rdma_write_recv(int i){
     TCP tcp;
     while(tcp.recv_msg(myrdma.sock_idx[i]) <= 0);
-    cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
-    cerr << "recv success" << endl;
+    //cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
+    //cerr << "recv success" << endl;
 }
 
 void myRDMA::rdma_send_msg(string opcode, string msg){
