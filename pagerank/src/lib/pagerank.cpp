@@ -114,8 +114,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     //cout << "sending" << endl;
     string message = "";
     for(int i=start;i<end;i++){
-        message = message + to_string(i);
-        message = message + " " + to_string(pagerank.new_pr[i]) + " ";
+        message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + " ";
         //cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
    /* for(int i = 0;i<5;i++){
