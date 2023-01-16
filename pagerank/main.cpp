@@ -30,6 +30,7 @@ int main(int argc, char* argv[]){
     // init connection for rdma communication
     pagerank.init_connection(argv[1], node, num_of_node, port, graph_data_vertex);    
 
+    // check time
     time_t start,end;
     start = time(NULL);
 
