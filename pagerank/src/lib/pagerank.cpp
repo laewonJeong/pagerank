@@ -27,6 +27,7 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
             vector<string> s;
             s = split(line, ' ');
             pagerank.graph[stoi(s[0])].push_back(stoi(s[1]));
+            pagerank.outgoing[stoi(s[1])].push_back(stoi(s[0]));
 		}
 		file.close();
         cout << "Done" <<endl;
@@ -48,12 +49,15 @@ void Pagerank::initial_pagerank_value(){
 
 void Pagerank::thread_calc_pr(int i){
     double tmp = 0;
-    for(int j=0;j<pagerank.num_of_vertex;j++){
+    for(int j = 0; j<pagerank.outgoing[i].size();j++){
+        tmp+=df*(pagerank.pr[j]/pagerank.graph[j].size());
+    }
+    /*for(int j=0;j<pagerank.num_of_vertex;j++){
         if(i == j)
             continue;
         if(find(pagerank.graph[j].begin(), pagerank.graph[j].end(), i) != pagerank.graph[j].end())
                 tmp += df*(pagerank.pr[j]/pagerank.graph[j].size());
-    }
+    }*/
     pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
     //cout << "pr[" <<i<<"]: " << pagerank.new_pr[i] <<endl;
 }
