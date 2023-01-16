@@ -62,7 +62,7 @@ void Pagerank::calc_pagerank_value(int start, int end){
         worker.push_back(thread(&Pagerank::thread_calc_pr,i));
     }
     for(int i=0;i<end-start;i++){
-        worker[i].join();
+        worker[i].detach();
     }
 
 
@@ -70,21 +70,14 @@ void Pagerank::calc_pagerank_value(int start, int end){
 }
 
 void Pagerank::combine_pr(){
-    //cout << "start combine" << endl;
     /*for (int i=0;i<5;i++){
         char tcp_recv_buffer[buf_size1];
-        //cout << "start combine" << endl;
         string s;
         s = tcp1.recv_message(sock_idx[i]);
-        //cout << "start combine" << endl;
         strcpy(tcp_recv_buffer, s.c_str());
-        //cout << "start combine" << endl;
         vector<string> a;
-        //cout << "start combine" << endl;
         string tmp(tcp_recv_buffer);
-        //cout << "start combine" << endl;
         a = split(tmp,' ');
-        //cout << "start combine" << endl;
         for(int j=0;j<a.size();j++){
             if(j%2==0){
                 cout << stoi(a[j]) << " " << stod(a[j+1]) << endl;

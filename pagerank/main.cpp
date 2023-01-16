@@ -53,7 +53,8 @@ int main(int argc, char* argv[]){
     string important = pagerank.max_pr();
     cout << "-------------------------------------" <<endl;
     cout << "important page and value is " << important  <<endl;
-    
+    cout << "-------------------------------------" <<endl;
+
     /*sleep(4);
     while(1){
         cout << "Success Pagerank execution" << endl;
