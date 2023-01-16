@@ -40,10 +40,10 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
 
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
-    for(int i=0;i<pagerank.num_of_vertex;i++){
-        pagerank.pr.push_back(1.0/pagerank.num_of_vertex);
-        pagerank.new_pr.push_back(0);
-    }
+
+    pagerank.pr = vector<long double>(pagerank.num_of_vertex, 1.0/pagerank.num_of_vertex);
+    pagerank.new_pr= vector<long double>(pagerank.num_of_vertex);
+    
     cout << "Done" <<endl;
 }
 
@@ -104,7 +104,6 @@ void Pagerank::combine_pr(){
     
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
-    //cout << "sending" << endl;
     string message = "";
     for(int i=start;i<end;i++){
         message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + " ";
@@ -114,7 +113,6 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
         tcp1.send_msg(message.c_str(),sock_idx[i]);
     }*/
     myrdma1.rdma_comm("write", message);
-    //cout << "finish sending" << endl;
 }
 void Pagerank::run_pagerank(int iter){
     int step;
@@ -133,7 +131,6 @@ void Pagerank::run_pagerank(int iter){
         if(pagerank.pr==pagerank.new_pr){
             break;
         }
-        //Pagerank::change_pagerank_value();
         pagerank.pr = pagerank.new_pr;
     }
     cout << "Done" << endl;
