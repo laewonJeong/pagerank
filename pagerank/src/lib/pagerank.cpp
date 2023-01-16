@@ -62,7 +62,8 @@ void Pagerank::calc_pagerank_value(int start, int end){
         worker.push_back(thread(&Pagerank::thread_calc_pr,i));
     }
     for(int i=0;i<end-start;i++){
-        worker[i].detach();
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
+        worker[i].join();
     }
 
 
