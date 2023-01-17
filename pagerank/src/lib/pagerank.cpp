@@ -17,7 +17,7 @@ vector<string> split(string str, char Delimiter) {
     return result;
 }
 void Pagerank::create_graph_data(string path, int num_of_vertex){
-    cout << "Reading input from "<< path<<"..."  <<endl;
+    cout << "Creating graph about  "<< path<<"..."  <<endl;
     pagerank.num_of_vertex = num_of_vertex;
     istream *infile;
 
@@ -35,15 +35,15 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
             pagerank.outgoing[stoi(to)].push_back(stoi(from));
             line_num++;
 		}
-        cout << "Done" <<endl;
+        //cout << "Done. ";
 	} 
     else {
 		cout << "Unable to open file" <<endl;
         exit(1);
 	}
 
-     cerr << "read " << line_num << " lines, "
-         << pagerank.num_of_vertex << " vertices." << endl;
+     cerr << "Create " << line_num << " lines, "
+         << pagerank.num_of_vertex << " vertices graph." << endl;
     cerr << "----------------------------------" <<endl;
     delete infile;
 }
@@ -99,15 +99,16 @@ void Pagerank::combine_pr(){
         //cout << "start combine" << endl;
     }
     //cout << "start combine" << endl;*/
-
+    string from, to;
     for(int i=0;i<3;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
-        a = split(tmp,' ');
+        a = split(tmp,'\n');
         for(int j=0;j<a.size();j++){
-            if(j%2==0){
-                pagerank.new_pr[stoi(a[j])] = stod(a[j+1]);
-            }
+            size_t pos = a[j].find(" ");
+            from = a[j].substr(0,pos);
+            to = a[j].substr(pos+1);
+            pagerank.new_pr[stoi(from)] = stod(to);
         }
     }
     /*for(int i = 0;i<pagerank.num_of_vertex;i++){
@@ -118,7 +119,7 @@ void Pagerank::combine_pr(){
 void Pagerank::send_recv_pagerank_value(int start, int end){
     string message = "";
     for(int i=start;i<end;i++){
-        message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + " ";
+        message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + "\n";
         //cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }
    /* for(int i = 0;i<5;i++){
