@@ -299,5 +299,5 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
             pagerank.end1 = pagerank.num_of_vertex;
         }
     }
-    //cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
+    cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
 }
