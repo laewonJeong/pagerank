@@ -20,11 +20,10 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     
+    Pagerank pagerank;
+
     string data_path = "/home/lwjeong/git/pagerank/pagerank/facebook_data.txt";
     int graph_data_vertex = 4039;
-
-
-    Pagerank pagerank;
     
     // init connection for rdma communication
     pagerank.init_connection(argv[1], node, num_of_node, port, graph_data_vertex);    
@@ -36,7 +35,7 @@ int main(int argc, char* argv[]){
 
     // Create graph data
     pagerank.create_graph_data(data_path, graph_data_vertex);
-
+    
     // Initial pr value each vertex
     pagerank.initial_pagerank_value();
 

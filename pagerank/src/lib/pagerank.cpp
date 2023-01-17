@@ -17,32 +17,40 @@ vector<string> split(string str, char Delimiter) {
     return result;
 }
 void Pagerank::create_graph_data(string path, int num_of_vertex){
-    cout << "creating graph data" <<endl;
+    cout << "Reading input from "<< path<<"..."  <<endl;
     pagerank.num_of_vertex = num_of_vertex;
+    istream *infile;
 
+    infile = new ifstream(path.c_str());
+    size_t line_num = 0;
     string line;
-	ifstream file(path);
-	if(file.is_open()){
-        while(getline(file, line)) {
+	//ifstream file(path);
+	if(infile){
+        while(getline(*infile, line)) {
             vector<string> s;
             s = split(line, ' ');
             pagerank.graph[stoi(s[0])].push_back(stoi(s[1]));
             pagerank.outgoing[stoi(s[1])].push_back(stoi(s[0]));
+            line_num++;
 		}
-		file.close();
         cout << "Done" <<endl;
 	} 
     else {
 		cout << "Unable to open file" <<endl;
         exit(1);
 	}
+
+     cerr << "read " << line_num << " lines, "
+         << pagerank.num_of_vertex << " vertices." << endl;
+    cerr << "----------------------------------" <<endl;
+    delete infile;
 }
 
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
-    pagerank.pr = vector<long double>(pagerank.num_of_vertex, 1.0/pagerank.num_of_vertex);
-    pagerank.new_pr= vector<long double>(pagerank.num_of_vertex);
+    pagerank.pr.resize(pagerank.num_of_vertex, 1.0/pagerank.num_of_vertex);
+    pagerank.new_pr.resize(pagerank.num_of_vertex);
 
     cout << "Done" <<endl;
 }
