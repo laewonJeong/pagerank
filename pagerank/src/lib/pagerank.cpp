@@ -51,7 +51,8 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
-    pagerank.pr.resize(pagerank.num_of_vertex, 1.0/pagerank.num_of_vertex);
+    pagerank.pr.resize(pagerank.num_of_vertex, 0);
+    pagerank.pr[0] = 1;
     pagerank.new_pr.resize(pagerank.num_of_vertex);
 
     cout << "Done" <<endl;
