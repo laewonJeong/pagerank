@@ -27,10 +27,12 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
 	//ifstream file(path);
 	if(infile){
         while(getline(*infile, line)) {
-            vector<string> s;
-            s = split(line, ' ');
-            pagerank.graph[stoi(s[0])].push_back(stoi(s[1]));
-            pagerank.outgoing[stoi(s[1])].push_back(stoi(s[0]));
+            string from, to;
+            size_t pos = line.find(" ");
+            from = line.substr(0,pos);
+            to = line.substr(pos+1);
+            pagerank.graph[stoi(from)].push_back(stoi(to));
+            pagerank.outgoing[stoi(to)].push_back(stoi(from));
             line_num++;
 		}
         cout << "Done" <<endl;
