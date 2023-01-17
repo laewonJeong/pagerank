@@ -7,7 +7,7 @@
 #define server_ip "192.168.1.100"
 #define iter 100000
 
-string node[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103"};
+string node[num_of_node] = {server_ip"192.168.1.101","192.168.1.102","192.168.1.103"};
 
 using namespace std;
 int main(int argc, char* argv[]){
@@ -23,10 +23,11 @@ int main(int argc, char* argv[]){
     Pagerank pagerank;
 
     string data_path = "/home/lwjeong/git/pagerank/pagerank/facebook_data.txt";
-    int graph_data_vertex = 4039;
+    pagerank.create_graph_data(data_path);
+    //int graph_data_vertex = 4039;
     
     // init connection for rdma communication
-    pagerank.init_connection(argv[1], node, num_of_node, port, graph_data_vertex);    
+    pagerank.init_connection(argv[1], node, num_of_node, port);    
 
     cout << "-------------------------------------" <<endl;
     // check time
@@ -34,8 +35,8 @@ int main(int argc, char* argv[]){
     clock_gettime(CLOCK_MONOTONIC, &begin);
 
     // Create graph data
-    pagerank.create_graph_data(data_path, graph_data_vertex);
     
+
     // Initial pr value each vertex
     pagerank.initial_pagerank_value();
 

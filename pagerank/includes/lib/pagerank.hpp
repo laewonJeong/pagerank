@@ -15,7 +15,7 @@
 using namespace std;
 class Pagerank{
     public:
-       void create_graph_data(string path, int num_of_vertex);
+       void create_graph_data(string path);
        void initial_pagerank_value();
        static void calc_pagerank_value(int start, int end);
        static void thread_calc_pr(int index);
@@ -24,11 +24,10 @@ class Pagerank{
        void run_pagerank(int iter);
        string max_pr();
        void init_connection(const char* ip, string server[], 
-                            int number_of_server, int Port,
-                            int number_of_vertex);
+                            int number_of_server, int Port);
     private:
-        vector<int> graph[4039];
-        vector<int> outgoing[4039];
+        vector<vector<size_t>> graph;
+        vector<vector<size_t>> outgoing;
         vector<long double> pr;
         vector<long double> new_pr;
         vector<long double> my_pr;
@@ -37,5 +36,8 @@ class Pagerank{
         char recv_buffer[4][buf_size1];
         int start1;
         int end1;
-        string message;
+        vector<size_t> num_outgoing;
+        bool add_arc(size_t from, size_t to);
+        template <class Vector, class T> bool insert_into_vector(Vector& v,
+                                                             const T& t);
 };

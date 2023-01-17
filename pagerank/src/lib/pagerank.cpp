@@ -16,7 +16,41 @@ vector<string> split(string str, char Delimiter) {
     }
     return result;
 }
-void Pagerank::create_graph_data(string path, int num_of_vertex){
+template <class Vector, class T>
+bool Pagerank::insert_into_vector(Vector& v, const T& t) {
+    typename Vector::iterator i = lower_bound(v.begin(), v.end(), t);
+    if (i == v.end() || t < *i) {
+        v.insert(i, t);
+        return true;
+    } else {
+        return false;
+    }
+}
+bool Pagerank::add_arc(size_t from, size_t to) {
+
+    bool ret = false;
+    //bool ret1 = false;
+    size_t max_dim = max(from, to);
+
+    if (pagerank.graph.size() <= max_dim) {
+        max_dim = max_dim + 1;
+        
+        pagerank.graph.resize(max_dim);
+        pagerank.outgoing.resize(max_dim);
+        if (pagerank.num_outgoing.size() <= max_dim) {
+            pagerank.num_outgoing.resize(max_dim);
+        }
+    }
+
+    ret = insert_into_vector(pagerank.graph[from], to);
+    //ret1 = insert_into_vector(pagerank.outgoing[to],from);
+    if (ret) {
+        pagerank.num_outgoing[from]++;
+    }
+
+    return ret;
+}
+void Pagerank::create_graph_data(string path){
     cout << "Creating graph about  "<< path<<"..."  <<endl;
     pagerank.num_of_vertex = num_of_vertex;
     istream *infile;
@@ -31,7 +65,8 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
             size_t pos = line.find(" ");
             from = line.substr(0,pos);
             to = line.substr(pos+1);
-            pagerank.graph[stoi(from)].push_back(stoi(to));
+            add_arc(strtol(from.c_str(), NULL, 10),strtol(to.c_str(), NULL, 10));
+            //pagerank.graph[stoi(from)].push_back(stoi(to));
             pagerank.outgoing[stoi(to)].push_back(stoi(from));
             line_num++;
 		}
@@ -41,9 +76,10 @@ void Pagerank::create_graph_data(string path, int num_of_vertex){
 		cout << "Unable to open file" <<endl;
         exit(1);
 	}
-
-     cerr << "Create " << line_num << " lines, "
+    pagerank.num_of_vertex = pagerank.graph.size();
+    cerr << "Create " << line_num << " lines, "
          << pagerank.num_of_vertex << " vertices graph." << endl;
+    
     cerr << "----------------------------------" <<endl;
     delete infile;
 }
@@ -147,6 +183,9 @@ void Pagerank::run_pagerank(int iter){
         }
         pagerank.pr = pagerank.new_pr;
     }
+    /*for(step =0;step<pagerank.num_of_vertex;step++){
+        cout << "pr[" <<step<<"]: " << pagerank.pr[step] <<endl; 
+    }*/
     cout << "Done" << endl;
 }
 
@@ -166,18 +205,18 @@ string Pagerank::max_pr(){
     return result;
 }
 
-void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port, int number_of_vertex)
+void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port)
 {
     myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,pagerank.send_buffer,pagerank.recv_buffer);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
     for(int i=0;i<number_of_server;i++){
         if(ip == server[i]){
-            pagerank.start1 = number_of_vertex/number_of_server*i;
-            pagerank.end1 = pagerank.start1 + number_of_vertex/number_of_server;
+            pagerank.start1 = pagerank.num_of_vertex/number_of_server*i;
+            pagerank.end1 = pagerank.start1 + pagerank.num_of_vertex/number_of_server;
         }
         if(ip == server[number_of_server-1]){
-            pagerank.end1 = number_of_vertex;
+            pagerank.end1 = pagerank.num_of_vertex;
         }
     }
     //cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
