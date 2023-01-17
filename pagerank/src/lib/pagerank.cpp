@@ -171,6 +171,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
         tcp1.send_msg(message.c_str(),sock_idx[i]);
     }*/
     myrdma1.rdma_comm("write", message);
+    cout << "sucess" << endl;
 }
 void Pagerank::run_pagerank(int iter){
     int step;
