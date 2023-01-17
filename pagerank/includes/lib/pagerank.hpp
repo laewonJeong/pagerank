@@ -8,6 +8,8 @@
 #include <sstream>
 #include <unistd.h>
 #include <thread>
+#include <stdlib.h>
+#include <math.h>
 
 #define df 0.85
 #define buf_size1 104857
@@ -17,8 +19,8 @@ class Pagerank{
     public:
        void create_graph_data(string path);
        void initial_pagerank_value();
-       static void calc_pagerank_value(int start, int end);
-       static void thread_calc_pr(int index);
+       static void calc_pagerank_value(int start, int end, double x, double y);
+       static void thread_calc_pr(int index, double x, double y);
        static void combine_pr();
        void send_recv_pagerank_value(int start, int end);
        void run_pagerank(int iter);

@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
     
 
     // Initial pr value each vertex
-    pagerank.initial_pagerank_value();
+    //pagerank.initial_pagerank_value();
 
     //calc pagerank
     pagerank.run_pagerank(iter);
