@@ -153,7 +153,7 @@ void Pagerank::combine_pr(){
             size_t pos = a[j].find(" ");
             from = a[j].substr(0,pos);
             to = a[j].substr(pos+1);
-            pagerank.new_pr[stoi(from)] = stod(to);
+            pagerank.pr[stoi(from)] = stod(to);
         }
     }
     /*for(int i = 0;i<pagerank.num_of_vertex;i++){
