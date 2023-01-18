@@ -248,7 +248,7 @@ void Pagerank::run_pagerank(int iter){
         /* The difference to be checked for convergence */
         string message;
         diff = 0;
-        for (i = pagerank.start1; i < pagerank.end1; i++) {
+        for (i = 0; i < pagerank.num_of_vertex; i++) {
             // The corresponding element of the H multiplication 
             message = "";
             double h = 0.0;
@@ -278,8 +278,8 @@ void Pagerank::run_pagerank(int iter){
             }*/
             //cout << "end send" << endl;
         }
-        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
-        Pagerank::combine_pr();
+        //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+        //Pagerank::combine_pr();
         //Pagerank::calc_pagerank_value(pagerank.start1, pagerank.end1, one_Av, one_Iv);
 
     }
