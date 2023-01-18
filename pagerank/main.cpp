@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
     
     Pagerank pagerank;
 
-    string data_path = "/home/lwjeong/git/pagerank/pagerank/test.txt";
+    string data_path = "/home/lwjeong/git/pagerank/pagerank/facebook_data.txt";
     pagerank.create_graph_data(data_path);
     //int graph_data_vertex = 4039;
     
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
     
 
     // Initial pr value each vertex
-    //pagerank.initial_pagerank_value();
+    pagerank.initial_pagerank_value();
 
     //calc pagerank
     pagerank.run_pagerank(iter);
