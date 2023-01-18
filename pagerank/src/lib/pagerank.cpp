@@ -72,6 +72,8 @@ void Pagerank::create_graph_data(string path){
             to = line.substr(pos+1);
             add_arc(strtol(from.c_str(), NULL, 10),strtol(to.c_str(), NULL, 10));
             line_num++;
+            if(line_num%100000 == 0)
+                cerr << "Create " << line_num << " lines" << endl;
 		}
 	} 
     else {
@@ -162,12 +164,12 @@ void Pagerank::run_pagerank(int iter){
     }*/
     cout << "progressing..." << endl;
     for(int step =0; step < iter ;step++){
-        //cout <<"====="<< step+1 << " step=====" <<endl;
+        cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
         //cout << diff <<endl;
-        if(diff < 0.1){
+        if(diff < 0.001){
             break;
         }
         pagerank.pr = pagerank.new_pr;
