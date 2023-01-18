@@ -153,6 +153,7 @@ void Pagerank::combine_pr(){
             size_t pos = a[j].find(" ");
             from = a[j].substr(0,pos);
             to = a[j].substr(pos+1);
+            cout << from << " " << to <<endl;
             pagerank.pr[stoi(from)] = stod(to);
         }
     }
