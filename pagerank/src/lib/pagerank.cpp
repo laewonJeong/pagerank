@@ -33,7 +33,7 @@ bool Pagerank::insert_into_vector(Vector& v, const T& t) {
 bool Pagerank::add_arc(size_t from, size_t to) {
 
     bool ret = false;
-    bool ret1 = false;
+    //bool ret1 = false;
     size_t max_dim = max(from, to);
 
     if (pagerank.graph.size() <= max_dim) {
@@ -42,16 +42,17 @@ bool Pagerank::add_arc(size_t from, size_t to) {
         pagerank.graph.resize(max_dim);
         pagerank.outgoing.resize(max_dim);
         if (pagerank.num_outgoing.size() <= max_dim) {
-            pagerank.num_outgoing.resize(max_dim);
+            pagerank.num_outgoing.resize(max_dim,0);
         }
     }
 
-    ret = insert_into_vector(pagerank.graph[from], to);
-    ret1 = insert_into_vector(pagerank.outgoing[to],from);
+    ret = insert_into_vector(pagerank.graph[to], from);
+    //ret1 = insert_into_vector(pagerank.outgoing[to],from);
     if (ret) {
         pagerank.num_outgoing[from]++;
+        //cout << from << ": " <<pagerank.num_outgoing[from] <<endl;
     }
-
+    //cout << from << ": " <<pagerank.num_outgoing[from] <<endl;
     return ret;
 }
 void Pagerank::create_graph_data(string path){
@@ -90,30 +91,31 @@ void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
     pagerank.pr.resize(pagerank.num_of_vertex, 0);
+    pagerank.new_pr = pagerank.pr;
     pagerank.pr[0] = 1;
-    pagerank.new_pr.resize(pagerank.num_of_vertex);
+    
 
     cout << "Done" <<endl;
 }
 
 void Pagerank::thread_calc_pr(int i, double x, double y){
     double tmp = 0;
-    for(int j = 0; j<pagerank.outgoing[i].size();j++){
-        tmp += df*(pagerank.pr[pagerank.outgoing[i][j]]/pagerank.graph[pagerank.outgoing[i][j]].size());
+    
+    for(int j = 0; j<pagerank.graph[i].size();j++){
+        tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
     }
     pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
     diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
-    //cout << diff <<endl;    
+    //cout << pagerank.new_pr[i] <<endl;    
 }
 
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     vector<thread> worker;
     diff = 0;
-    
     for(int i=start;i<end;i++){
-        worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
-       
-        worker[i-start].detach();
+        //worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
+       Pagerank::thread_calc_pr(i,x,y);
+        //worker[i-start].detach();
     }
     
 }

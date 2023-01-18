@@ -38,7 +38,7 @@ class Pagerank{
         char recv_buffer[4][buf_size1];
         int start1;
         int end1;
-        vector<size_t> num_outgoing;
+        vector<int> num_outgoing;
         bool add_arc(size_t from, size_t to);
         template <class Vector, class T> bool insert_into_vector(Vector& v,
                                                              const T& t);
