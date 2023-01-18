@@ -159,8 +159,8 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         //cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
-        //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
-        //Pagerank::combine_pr();
+        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+        Pagerank::combine_pr();
         //cout << diff <<endl;
         if(diff < 0.0001){
             break;
