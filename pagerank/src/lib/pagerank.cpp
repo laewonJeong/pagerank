@@ -263,9 +263,9 @@ void Pagerank::run_pagerank(int iter){
             
             message = message + to_string(i)+ " " + to_string(pagerank.pr[i]);
             myrdma1.rdma_comm("write", message);
-            cout << message << endl;
+            //cout << message << endl;
 
-            cout << "start send" << endl;
+            //cout << "start send" << endl;
             string from, to;
             for(int j=0;j<3;j++){
                 string a(pagerank.recv_buffer[j]);
@@ -274,7 +274,7 @@ void Pagerank::run_pagerank(int iter){
                 to = a.substr(pos+1);
                 pagerank.pr[stoi(from)] = stod(to);
             }
-            cout << "end send" << endl;
+            //cout << "end send" << endl;
         }
         //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         //Pagerank::combine_pr();
