@@ -244,9 +244,11 @@ void Pagerank::run_pagerank(int iter){
         double one_Iv = (1 - 0.85) * sum_pr / num_rows;
 
         /* The difference to be checked for convergence */
+        string message;
         diff = 0;
         for (i = pagerank.start1; i < pagerank.end1; i++) {
             // The corresponding element of the H multiplication 
+            message = "";
             double h = 0.0;
             for (ci = pagerank.graph[i].begin(); ci != pagerank.graph[i].end(); ci++) {
                 // The current element of the H vector 
@@ -258,9 +260,21 @@ void Pagerank::run_pagerank(int iter){
             h *= 0.85;
             pagerank.pr[i] = h + one_Av + one_Iv;
             diff += fabs(pagerank.pr[i] - old_pr[i]);
+            
+            message += to_string(i)+ " " + to_string(pagerank.pr[i]);
+            myrdma1.rdma_comm("write", message);
+
+            string from, to;
+            for(int i=0;i<4;i++){
+                string a(pagerank.recv_buffer[i]);
+                size_t pos = a.find(" ");
+                from = a.substr(0,pos);
+                to = a.substr(pos+1);
+                pagerank.pr[stoi(from)] = stod(to);
+            }
         }
-        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
-        Pagerank::combine_pr();
+        //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+        //Pagerank::combine_pr();
         //Pagerank::calc_pagerank_value(pagerank.start1, pagerank.end1, one_Av, one_Iv);
 
     }
