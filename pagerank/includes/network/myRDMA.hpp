@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "map"
-#define buf_size 104857
+#define buf_size 104857*2
 
 using namespace std;
 class myRDMA{

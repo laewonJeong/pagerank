@@ -163,7 +163,7 @@ void Pagerank::run_pagerank(int iter){
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
         //cout << diff <<endl;
-        if(diff < 0.00001){
+        if(diff < 0.0001){
             break;
         }
         pagerank.pr = pagerank.new_pr;
