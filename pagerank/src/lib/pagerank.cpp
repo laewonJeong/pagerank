@@ -146,7 +146,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     for(int i=start;i<end;i++){
         message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + "\n";
     }
-    myrdma1.rdma_comm("write_with_imm", message);
+    myrdma1.rdma_comm("write", message);
 }
 void Pagerank::run_pagerank(int iter){
     int step;
