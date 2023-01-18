@@ -130,7 +130,7 @@ void Pagerank::combine_pr(){
             from = a[j].substr(0,pos);
             to = a[j].substr(pos+1);
             pagerank.new_pr[stoi(from)] = stod(to);
-            //diff = fabs(pagerank.new_pr[stoi(from)] - pagerank.pr[stoi(from)]);  
+            diff += fabs(pagerank.new_pr[stoi(from)] - pagerank.pr[stoi(from)]);  
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
