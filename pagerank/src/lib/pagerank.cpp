@@ -113,7 +113,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     for(int i=start;i<end;i++){
         worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
        
-        worker[i-start].join();
+        worker[i-start].detach();
     }
     
 }
@@ -161,7 +161,7 @@ void Pagerank::run_pagerank(int iter){
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
         //cout << diff <<endl;
-        if(diff < 0.00001){
+        if(diff < 0.001){
             break;
         }
         pagerank.pr = pagerank.new_pr;
