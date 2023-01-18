@@ -145,7 +145,6 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
         message = message + to_string(i)+" " + to_string(pagerank.pr[i]) + "\n";
     }
     myrdma1.rdma_comm("write", message);
-    cout << "sucess" << endl;
 }
 void Pagerank::run_pagerank(int iter){
     int step;
@@ -162,7 +161,7 @@ void Pagerank::run_pagerank(int iter){
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
         //cout << diff <<endl;
-        if(diff < 0.0001){
+        if(diff < 0.00001){
             break;
         }
         pagerank.pr = pagerank.new_pr;
