@@ -265,8 +265,8 @@ void Pagerank::run_pagerank(int iter){
             myrdma1.rdma_comm("write", message);
 
             string from, to;
-            for(int i=0;i<4;i++){
-                string a(pagerank.recv_buffer[i]);
+            for(int j=0;j<4;i++){
+                string a(pagerank.recv_buffer[j]);
                 size_t pos = a.find(" ");
                 from = a.substr(0,pos);
                 to = a.substr(pos+1);
