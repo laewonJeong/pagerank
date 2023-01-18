@@ -113,9 +113,9 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     vector<thread> worker;
     diff = 0;
     for(int i=start;i<end;i++){
-        //worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
-       Pagerank::thread_calc_pr(i,x,y);
-        //worker[i-start].detach();
+        worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
+        //Pagerank::thread_calc_pr(i,x,y);
+        worker[i-start].join();
     }
     
 }
