@@ -112,10 +112,18 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     vector<thread> worker;
     diff = 0;
+    double tmp;
     for(int i=start;i<end;i++){
         //worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
-        Pagerank::thread_calc_pr(i,x,y);
+        //Pagerank::thread_calc_pr(i,x,y);
         //worker[i-start].join();
+        tmp = 0;
+    
+        for(int j = 0; j<pagerank.graph[i].size();j++){
+            tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
+        }
+        pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
+        diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
     
 }
