@@ -142,7 +142,7 @@ void Pagerank::combine_pr(){
 void Pagerank::send_recv_pagerank_value(int start, int end){
     string message = "";
     for(int i=start;i<end;i++){
-        message = message + to_string(i)+" " + to_string(pagerank.pr[i]) + "\n";
+        message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + "\n";
     }
     myrdma1.rdma_comm("write", message);
 }
