@@ -113,9 +113,9 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     vector<thread> worker;
     diff = 0;
     for(int i=start;i<end;i++){
-        worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
-       //Pagerank::thread_calc_pr(i,x,y);
-        worker[i-start].detach();
+        //worker.push_back(thread(&Pagerank::thread_calc_pr,i,x,y));
+       Pagerank::thread_calc_pr(i,x,y);
+        //worker[i-start].detach();
     }
     
 }
@@ -146,7 +146,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     for(int i=start;i<end;i++){
         message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + "\n";
     }
-    myrdma1.rdma_comm("write", message);
+    myrdma1.rdma_comm("write_with_imm", message);
 }
 void Pagerank::run_pagerank(int iter){
     int step;
