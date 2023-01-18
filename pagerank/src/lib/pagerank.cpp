@@ -155,6 +155,7 @@ void Pagerank::combine_pr(){
             to = a[j].substr(pos+1);
             cout << from << " " << to <<endl;
             pagerank.pr[stoi(from)] = stod(to);
+            diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
     /*for(int i = 0;i<pagerank.num_of_vertex;i++){
@@ -262,7 +263,7 @@ void Pagerank::run_pagerank(int iter){
             pagerank.pr[i] = h + one_Av + one_Iv;
             diff += fabs(pagerank.pr[i] - old_pr[i]);
             
-            message = message + to_string(i)+ " " + to_string(pagerank.pr[i]);
+            /*message = message + to_string(i)+ " " + to_string(pagerank.pr[i]);
             myrdma1.rdma_comm("write", message);
             //cout << message << endl;
 
@@ -274,11 +275,11 @@ void Pagerank::run_pagerank(int iter){
                 from = a.substr(0,pos);
                 to = a.substr(pos+1);
                 pagerank.pr[stoi(from)] = stod(to);
-            }
+            }*/
             //cout << "end send" << endl;
         }
-        //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
-        //Pagerank::combine_pr();
+        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+        Pagerank::combine_pr();
         //Pagerank::calc_pagerank_value(pagerank.start1, pagerank.end1, one_Av, one_Iv);
 
     }
