@@ -155,6 +155,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     myrdma1.rdma_comm("write", message);
 }
 void Pagerank::run_pagerank(int iter){
+    double prev_diff =0;
     int step;
     /*int *clnt_socks = tcp1.client_sock();
     for(int idx=0; idx < 6; idx++){
@@ -168,10 +169,11 @@ void Pagerank::run_pagerank(int iter){
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
-        //cout << diff <<endl;
-        if(diff < 0.001){
+        cout << diff <<endl;
+        if(diff < 0.00001 || diff == prev_diff){
             break;
         }
+        prev_diff = diff;
         pagerank.pr = pagerank.new_pr;
     }
     /*for(step =0;step<pagerank.num_of_vertex;step++){
