@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
     
     Pagerank pagerank;
 
-    string data_path = "/home/lwjeong/git/pagerank/pagerank/facebook_data.txt";
+    string data_path = "/home/lwjeong/git/pagerank/pagerank/test.txt";
     pagerank.create_graph_data(data_path);
     //int graph_data_vertex = 4039;
     
