@@ -158,7 +158,7 @@ void Pagerank::combine_pr(){
 
     for(int i = 0; i<3;i++){
         worker.push_back(std::thread(Pagerank::thread_combine_pr,i));
-        worker[i].join();
+        worker[i].detach();
     }
     /*string from, to;
     size_t previous, current;
