@@ -8,7 +8,6 @@ Pagerank pagerank;
 vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
-double diff = 1;
 //string message = "";
 
 vector<string> split(string str, char Delimiter) {
@@ -108,12 +107,12 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
         tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
     }
     pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
-    diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
+    pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     //cout << pagerank.new_pr[i] <<endl;    
 }
 
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
-    diff = 0;
+    pagerank.diff = 0;
     double tmp;
     string value;
     for(int i=start;i<end;i++){
@@ -131,7 +130,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.message += value; 
         pagerank.message += "\n";
 
-        diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
+        pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
     
 }
@@ -149,11 +148,9 @@ void Pagerank::combine_pr(){
             size_t pos = a[j].find(" ");
             from = a[j].substr(0,pos);
             to = a[j].substr(pos+1);
-            //istringstream ( to ) >> d;
-            //istringstream (from) >> f;
             f = stoi(from);
             pagerank.new_pr[f] = stod(to);
-            diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
+            pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
@@ -186,11 +183,11 @@ void Pagerank::run_pagerank(int iter){
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
-        cout << diff <<endl;
-        if(diff < 0.00001 || fabs(diff - prev_diff) <0.000001){
+        cout << pagerank.diff <<endl;
+        if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.000001){
             break;
         }
-        prev_diff = diff;
+        prev_diff = pagerank.diff;
         pagerank.pr = pagerank.new_pr;
     }
     /*for(step =0;step<pagerank.num_of_vertex;step++){
@@ -308,6 +305,7 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,pagerank.send_buffer,pagerank.recv_buffer);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
+    pagerank.diff = 1;
     for(int i=0;i<number_of_server;i++){
         if(ip == server[i]){
             pagerank.start1 = pagerank.num_of_vertex/number_of_server*i;

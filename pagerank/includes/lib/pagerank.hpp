@@ -40,6 +40,7 @@ class Pagerank{
         int end1;
         string message;
         vector<int> num_outgoing;
+        double diff;
         bool add_arc(size_t from, size_t to);
         template <class Vector, class T> bool insert_into_vector(Vector& v,
                                                              const T& t);
