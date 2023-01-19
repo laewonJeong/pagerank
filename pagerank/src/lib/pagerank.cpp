@@ -107,7 +107,7 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
     for(int j = 0; j<pagerank.graph[i].size();j++){
         tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
     }
-    pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+    pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
     diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     //cout << pagerank.new_pr[i] <<endl;    
 }
