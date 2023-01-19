@@ -119,7 +119,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         value = to_string((1-df)/pagerank.num_of_vertex + tmp);
         pagerank.new_pr[i] = stod(value);
-       
+        //pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         pagerank.message += to_string(i);
         pagerank.message += " ";
         pagerank.message += value; 
@@ -129,10 +129,38 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     }
     
 }
-
-void Pagerank::combine_pr(){
-    
+void Pagerank::thread_combine_pr(int i){
     string from, to;
+    size_t previous, current;
+
+    //double d;
+    int f;
+    string a;
+    
+    string tmp(pagerank.recv_buffer[i]);
+    current = tmp.find('\n');
+    previous = 0;
+    while(current != string::npos){
+        a = tmp.substr(previous, current - previous);
+        size_t pos = a.find(" ");
+        from = a.substr(0,pos);
+        to = a.substr(pos+1);
+        f = stoi(from);
+        pagerank.new_pr[f] = stod(to);
+        pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
+        //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
+        previous = current +1;
+        current = tmp.find('\n',previous);
+    }
+}
+void Pagerank::combine_pr(){
+    vector<thread> worker;
+
+    for(int i = 0; i<3;i++){
+        worker.push_back(std::thread(Pagerank::thread_combine_pr,i));
+        worker[i].join();
+    }
+    /*string from, to;
     size_t previous, current;
 
     //double d;
@@ -155,7 +183,7 @@ void Pagerank::combine_pr(){
             current = tmp.find('\n',previous);
         }
        
-    }
+    }*/
     
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
