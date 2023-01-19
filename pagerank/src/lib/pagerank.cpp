@@ -121,10 +121,11 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+
         myrdma1.rdma_comm("write", to_string(i) +" "+ to_string(pagerank.new_pr[i]));
         
         for(int j = 0;j<3;j++){
-            string a(pagerank.recv_buffer[i]);
+            string a(pagerank.recv_buffer[j]);
             string from, to;
             size_t pos = a.find(" ");
             from = a.substr(0,pos);
