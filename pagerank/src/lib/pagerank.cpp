@@ -124,10 +124,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.message += " ";
         pagerank.message += value; 
         pagerank.message += "\n";
-
-    }
-    for(int j=0;j<pagerank.num_of_vertex;j++){
-            pagerank.diff += fabs(pagerank.new_pr[j] - pagerank.pr[j]);
+        
+        pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
     
 }
@@ -148,8 +146,10 @@ void Pagerank::thread_combine_pr(int i){
         from = a.substr(0,pos);
         to = a.substr(pos+1);
         f = stoi(from);
+        mutx.lock();
         pagerank.new_pr[f] = stod(to);
-        //pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
+        pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);
+        mutx.unlock();  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         previous = current +1;
         current = tmp.find('\n',previous);
@@ -159,10 +159,10 @@ void Pagerank::combine_pr(){
     vector<thread> worker;
 
     for(int i = 0; i<3;i++){
-        mutx.lock();
+        
         worker.push_back(std::thread(Pagerank::thread_combine_pr,i));
-        mutx.unlock();
-        worker[i].join();
+    
+        worker[i].detach();
     }
     /*string from, to;
     size_t previous, current;
