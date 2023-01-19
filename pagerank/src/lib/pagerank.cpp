@@ -125,7 +125,9 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.message += value; 
         pagerank.message += "\n";
         
+        mutx.lock();
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
+        mutx.unlock();
     }
     
 }
