@@ -122,7 +122,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         //pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         pagerank.message += to_string(i);
         pagerank.message += " ";
-        pagerank.message += to_string(pagerank.new_pr[i]); 
+        pagerank.message += value; 
         pagerank.message += "\n";
         
         
