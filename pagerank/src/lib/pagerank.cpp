@@ -183,8 +183,8 @@ void Pagerank::run_pagerank(int iter){
         cout <<"====="<< step+1 << " step=====" <<endl;
         pagerank.message = "";
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
-        //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
-        //Pagerank::combine_pr();
+        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+        Pagerank::combine_pr();
         cout << diff <<endl;
         if(diff < 0.00001 || fabs(diff - prev_diff) <0.000001){
             break;
