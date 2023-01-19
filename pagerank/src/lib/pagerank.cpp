@@ -175,7 +175,7 @@ void Pagerank::run_pagerank(int iter){
 
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
 
-        myrdma1.rdma_comm("write_with_imm", pagerank.message);
+        myrdma1.rdma_comm("write", pagerank.message);
 
         Pagerank::combine_pr();
 
