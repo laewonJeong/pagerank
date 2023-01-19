@@ -115,6 +115,7 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     diff = 0;
     double tmp;
+    
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int j = 0; j<pagerank.graph[i].size();j++){
@@ -133,8 +134,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
 void Pagerank::combine_pr(){
     
     string from, to;
-    double d;
-    int f;
+    //double d;
+    //int f;
     for(int i=0;i<3;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
@@ -143,10 +144,10 @@ void Pagerank::combine_pr(){
             size_t pos = a[j].find(" ");
             from = a[j].substr(0,pos);
             to = a[j].substr(pos+1);
-            istringstream ( to ) >> d;
-            istringstream (from) >> f;
-            pagerank.new_pr[f] = d;
-            diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
+            //istringstream ( to ) >> d;
+            //istringstream (from) >> f;
+            pagerank.new_pr[stoi(from)] = stod(to);
+            diff += fabs(pagerank.new_pr[stoi(from)] - pagerank.pr[stoi(from)]);  
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
