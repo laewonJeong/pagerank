@@ -144,13 +144,10 @@ void Pagerank::combine_pr(){
         previous = 0;
         while(current != string::npos){
             a = tmp.substr(previous, current - previous);
-            //cout << a << endl;
             size_t pos = a.find(" ");
             from = a.substr(0,pos);
             to = a.substr(pos+1);
-            //cout << from << " " << to <<endl;
             f = stoi(from);
-            //cout << f << endl;
             pagerank.new_pr[f] = stod(to);
             pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
@@ -158,23 +155,7 @@ void Pagerank::combine_pr(){
             current = tmp.find('\n',previous);
         }
        
-        /*vector<string> a;
-        string tmp(pagerank.recv_buffer[i]);
-        a = split(tmp,'\n');
-        for(int j=0;j<a.size();j++){
-            size_t pos = a[j].find(" ");
-            from = a[j].substr(0,pos);
-            to = a[j].substr(pos+1);
-            f = stoi(from);
-            pagerank.new_pr[f] = stod(to);
-            pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
-            //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
-        }*/
     }
-    //message ="";
-    /*for(int i = 0;i<pagerank.num_of_vertex;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-    }*/
     
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
