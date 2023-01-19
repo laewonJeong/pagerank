@@ -120,7 +120,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
-        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+        pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
         //string temp = to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
         //cout << "start rdma_comm"<< endl;
         pagerank.message += to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
@@ -176,7 +176,7 @@ void Pagerank::run_pagerank(int iter){
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
         cout << diff <<endl;
-        if(diff < 0.00001 || fabs(diff - prev_diff) <0.00001){
+        if(diff < 0.00001 || fabs(diff - prev_diff) <0.000001){
             break;
         }
         prev_diff = diff;
