@@ -125,9 +125,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.message += value; 
         pagerank.message += "\n";
         
-        mutx.lock();
+        
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
-        mutx.unlock();
     }
     
 }
@@ -150,8 +149,10 @@ void Pagerank::thread_combine_pr(int i){
         f = stoi(from);
         mutx.lock();
         pagerank.new_pr[f] = stod(to);
-        pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);
-        mutx.unlock();  
+        mutx.unlock();
+        mutx.lock();
+        pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
+        mutx.unlock();
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         previous = current +1;
         current = tmp.find('\n',previous);
