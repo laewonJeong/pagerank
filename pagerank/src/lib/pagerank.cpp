@@ -9,6 +9,7 @@ vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
 double diff = 1;
+string message = "";
 
 vector<string> split(string str, char Delimiter) {
     istringstream iss(str);             
@@ -114,27 +115,17 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     diff = 0;
     double tmp;
-    string message;
+    //string message;
     for(int i=start;i<end;i++){
         tmp = 0;
-        message = "";
+        //message = "";
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
 
-        cout << "start rdma_comm"<< endl;
-        message = message + to_string(i) + " " + to_string(pagerank.new_pr[i]);
-        myrdma1.rdma_comm("write", message);
-        
-        for(int j = 0;j<3;j++){
-            string a(pagerank.recv_buffer[j]);
-            string from, to;
-            size_t pos = a.find(" ");
-            from = a.substr(0,pos);
-            to = a.substr(pos+1);
-            pagerank.new_pr[stoi(from)] = stod(to);
-        }
+        //cout << "start rdma_comm"<< endl;
+        message = message + to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
 
         diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
@@ -163,10 +154,10 @@ void Pagerank::combine_pr(){
     
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
-    string message = "";
+    /*string message = "";
     for(int i=start;i<end;i++){
         message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + "\n";
-    }
+    }*/
     myrdma1.rdma_comm("write", message);
 }
 void Pagerank::run_pagerank(int iter){
@@ -182,8 +173,8 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
-        //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
-        //Pagerank::combine_pr();
+        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+        Pagerank::combine_pr();
         cout << diff <<endl;
         if(diff < 0.00001 || diff == prev_diff){
             break;
