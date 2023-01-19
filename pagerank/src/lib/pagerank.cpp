@@ -9,7 +9,7 @@ vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
 double diff = 1;
-string message = "";
+//string message = "";
 
 vector<string> split(string str, char Delimiter) {
     istringstream iss(str);             
@@ -107,7 +107,7 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
     for(int j = 0; j<pagerank.graph[i].size();j++){
         tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
     }
-    pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
+    pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
     diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     //cout << pagerank.new_pr[i] <<endl;    
 }
@@ -115,17 +115,15 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     diff = 0;
     double tmp;
-    //string message;
     for(int i=start;i<end;i++){
         tmp = 0;
-        //message = "";
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
-        pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
-
+        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+        //string temp = to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
         //cout << "start rdma_comm"<< endl;
-        message = message + to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
+        pagerank.message += to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
 
         diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
@@ -148,7 +146,7 @@ void Pagerank::combine_pr(){
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
-    message ="";
+    //message ="";
     /*for(int i = 0;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }*/
@@ -159,7 +157,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     for(int i=start;i<end;i++){
         message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + "\n";
     }*/
-    myrdma1.rdma_comm("write", message);
+    myrdma1.rdma_comm("write", pagerank.message);
 }
 void Pagerank::run_pagerank(int iter){
     double prev_diff =0;
@@ -173,6 +171,7 @@ void Pagerank::run_pagerank(int iter){
     cout << "progressing..." << endl;
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
+        pagerank.message = "";
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
         Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
         Pagerank::combine_pr();
