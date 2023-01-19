@@ -72,7 +72,7 @@ void Pagerank::create_graph_data(string path){
             to = line.substr(pos+1);
             add_arc(strtol(from.c_str(), NULL, 10),strtol(to.c_str(), NULL, 10));
             line_num++;
-            if(line_num%100000 == 0)
+            if(line_num%1000000 == 0)
                 cerr << "Create " << line_num << " lines" << endl;
 		}
 	} 
@@ -120,7 +120,18 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
-        pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
+        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+        myrdma1.rdma_comm("write", to_string(i) +" "+ to_string(pagerank.new_pr[i]));
+        
+        for(int j = 0;j<3;j++){
+            string a(pagerank.recv_buffer[i]);
+            string from, to;
+            size_t pos = a.find(" ");
+            from = a.substr(0,pos);
+            to = a.substr(pos+1);
+            pagerank.new_pr[stoi(from)] = stod(to);
+        }
+
         diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
     
@@ -167,8 +178,8 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
-        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
-        Pagerank::combine_pr();
+        //Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+        //Pagerank::combine_pr();
         cout << diff <<endl;
         if(diff < 0.00001 || diff == prev_diff){
             break;
