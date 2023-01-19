@@ -162,7 +162,7 @@ void Pagerank::combine_pr(){
         mutx.lock();
         worker.push_back(std::thread(Pagerank::thread_combine_pr,i));
         mutx.unlock();
-        worker[i].detach();
+        worker[i].join();
     }
     /*string from, to;
     size_t previous, current;
