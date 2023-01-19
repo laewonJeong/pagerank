@@ -157,7 +157,9 @@ void Pagerank::combine_pr(){
     vector<thread> worker;
 
     for(int i = 0; i<3;i++){
+        mutx.lock();
         worker.push_back(std::thread(Pagerank::thread_combine_pr,i));
+        mutx.unlock();
         worker[i].detach();
     }
     /*string from, to;
