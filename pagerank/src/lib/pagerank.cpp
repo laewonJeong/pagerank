@@ -124,7 +124,10 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         //string temp = to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
         //cout << "start rdma_comm"<< endl;
-        pagerank.message += to_string(i) + " " +to_string(pagerank.new_pr[i]) + "\n";
+        pagerank.message += to_string(i);
+        pagerank.message += " ";
+        pagerank.message += to_string(pagerank.new_pr[i]); 
+        pagerank.message += "\n";
 
         diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
