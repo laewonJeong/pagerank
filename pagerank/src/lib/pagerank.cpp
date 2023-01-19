@@ -115,7 +115,6 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     diff = 0;
     double tmp;
-    ostringstream s;
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int j = 0; j<pagerank.graph[i].size();j++){
@@ -124,8 +123,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         //string temp = to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
         //cout << "start rdma_comm"<< endl;
-        s << pagerank.new_pr[i];
-        pagerank.message += to_string(i) + " " + s.str() + "\n";
+        pagerank.message += to_string(i) + " " +to_string(pagerank.new_pr[i]) + "\n";
 
         diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
