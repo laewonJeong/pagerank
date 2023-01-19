@@ -117,12 +117,12 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
-        value = to_string((1-df)/pagerank.num_of_vertex + tmp);
-        pagerank.new_pr[i] = stod(value);
-        //pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+        //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
+        //pagerank.new_pr[i] = stod(value);
+        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         pagerank.message += to_string(i);
         pagerank.message += " ";
-        pagerank.message += value; 
+        pagerank.message += to_string(pagerank.new_pr[i]); 
         pagerank.message += "\n";
         
         
@@ -158,7 +158,7 @@ void Pagerank::thread_combine_pr(int i){
 void Pagerank::combine_pr(){
     //vector<thread> worker;
 
-    for(int i = 0; i<3;i++){
+    for(int i = 0; i < 3;i++){
         Pagerank::thread_combine_pr(i);
     }
     /*string from, to;
