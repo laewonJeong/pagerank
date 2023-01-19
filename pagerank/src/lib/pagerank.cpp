@@ -115,6 +115,7 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     diff = 0;
     double tmp;
+    ostringstream s;
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int j = 0; j<pagerank.graph[i].size();j++){
@@ -123,7 +124,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         //string temp = to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
         //cout << "start rdma_comm"<< endl;
-        pagerank.message += to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
+        s << pagerank.new_pr[i];
+        pagerank.message += to_string(i) + " " + s.str() + "\n";
 
         diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
@@ -134,6 +136,7 @@ void Pagerank::combine_pr(){
     
     string from, to;
     double d;
+    int f;
     for(int i=0;i<3;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
@@ -143,8 +146,9 @@ void Pagerank::combine_pr(){
             from = a[j].substr(0,pos);
             to = a[j].substr(pos+1);
             istringstream ( to ) >> d;
-            pagerank.new_pr[stoi(from)] = d;
-            diff += fabs(pagerank.new_pr[stoi(from)] - pagerank.pr[stoi(from)]);  
+            istringstream (from) >> f;
+            pagerank.new_pr[f] = d;
+            diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
