@@ -148,6 +148,7 @@ void Pagerank::combine_pr(){
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
+    message ="";
     /*for(int i = 0;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
     }*/
