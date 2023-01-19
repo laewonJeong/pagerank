@@ -125,9 +125,9 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         pagerank.message += value; 
         pagerank.message += "\n";
 
-        for(int j=0;j<pagerank.num_of_vertex;j++){
-            pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
-        }
+    }
+    for(int j=0;j<pagerank.num_of_vertex;j++){
+            pagerank.diff += fabs(pagerank.new_pr[j] - pagerank.pr[j]);
     }
     
 }
