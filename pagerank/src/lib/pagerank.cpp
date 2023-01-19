@@ -140,7 +140,7 @@ void Pagerank::combine_pr(){
     
     string from, to;
     //double d;
-    //int f;
+    int f;
     for(int i=0;i<3;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
@@ -151,8 +151,9 @@ void Pagerank::combine_pr(){
             to = a[j].substr(pos+1);
             //istringstream ( to ) >> d;
             //istringstream (from) >> f;
-            pagerank.new_pr[stoi(from)] = stod(to);
-            diff += fabs(pagerank.new_pr[stoi(from)] - pagerank.pr[stoi(from)]);  
+            f = stoi(from);
+            pagerank.new_pr[f] = stod(to);
+            diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
     }
