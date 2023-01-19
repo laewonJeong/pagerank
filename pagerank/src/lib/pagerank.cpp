@@ -117,9 +117,9 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
-        //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
-        //pagerank.new_pr[i] = stod(value);
-        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+        value = to_string((1-df)/pagerank.num_of_vertex + tmp);
+        pagerank.new_pr[i] = stod(value);
+        //pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         pagerank.message += to_string(i);
         pagerank.message += " ";
         pagerank.message += to_string(pagerank.new_pr[i]); 
