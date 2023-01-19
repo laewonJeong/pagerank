@@ -33,7 +33,6 @@ bool Pagerank::insert_into_vector(Vector& v, const T& t) {
 bool Pagerank::add_arc(size_t from, size_t to) {
 
     bool ret = false;
-    //bool ret1 = false;
     size_t max_dim = max(from, to);
 
     if (pagerank.graph.size() <= max_dim) {
@@ -47,12 +46,10 @@ bool Pagerank::add_arc(size_t from, size_t to) {
     }
 
     ret = insert_into_vector(pagerank.graph[to], from);
-    //ret1 = insert_into_vector(pagerank.outgoing[to],from);
     if (ret) {
         pagerank.num_outgoing[from]++;
-        //cout << from << ": " <<pagerank.num_outgoing[from] <<endl;
     }
-    //cout << from << ": " <<pagerank.num_outgoing[from] <<endl;
+
     return ret;
 }
 void Pagerank::create_graph_data(string path){
@@ -122,9 +119,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         value = to_string((1-df)/pagerank.num_of_vertex + tmp);
         pagerank.new_pr[i] = stod(value);
-        //string temp = to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
-        //cout << "start rdma_comm"<< endl;
-        //cout << strObj << endl;
+       
         pagerank.message += to_string(i);
         pagerank.message += " ";
         pagerank.message += value; 
@@ -161,10 +156,7 @@ void Pagerank::combine_pr(){
     
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
-    /*string message = "";
-    for(int i=start;i<end;i++){
-        message = message + to_string(i)+" " + to_string(pagerank.new_pr[i]) + "\n";
-    }*/
+    
     myrdma1.rdma_comm("write", pagerank.message);
 }
 void Pagerank::run_pagerank(int iter){
@@ -180,9 +172,13 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         pagerank.message = "";
+
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
-        Pagerank::send_recv_pagerank_value(pagerank.start1,pagerank.end1);
+
+        myrdma1.rdma_comm("write", pagerank.message);
+
         Pagerank::combine_pr();
+        
         cout << pagerank.diff <<endl;
         if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.000001){
             break;
