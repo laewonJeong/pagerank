@@ -120,7 +120,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
-        pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
+        pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
         //string temp = to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
         //cout << "start rdma_comm"<< endl;
         pagerank.message += to_string(i) + " " + to_string(pagerank.new_pr[i]) + "\n";
@@ -133,6 +133,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
 void Pagerank::combine_pr(){
     
     string from, to;
+    double d;
     for(int i=0;i<3;i++){
         vector<string> a;
         string tmp(pagerank.recv_buffer[i]);
@@ -141,7 +142,8 @@ void Pagerank::combine_pr(){
             size_t pos = a[j].find(" ");
             from = a[j].substr(0,pos);
             to = a[j].substr(pos+1);
-            pagerank.new_pr[stoi(from)] = stod(to);
+            istringstream ( to ) >> d;
+            pagerank.new_pr[stoi(from)] = d;
             diff += fabs(pagerank.new_pr[stoi(from)] - pagerank.pr[stoi(from)]);  
             //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         }
