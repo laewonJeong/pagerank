@@ -114,15 +114,18 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     diff = 0;
     double tmp;
+    string message;
     for(int i=start;i<end;i++){
         tmp = 0;
-    
+        message = "";
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
         }
         pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
 
-        myrdma1.rdma_comm("write", to_string(i) +" "+ to_string(pagerank.new_pr[i]));
+        cout << "start rdma_comm"<< endl;
+        message = message + to_string(i) + " " + to_string(pagerank.new_pr[i]);
+        myrdma1.rdma_comm("write", message);
         
         for(int j = 0;j<3;j++){
             string a(pagerank.recv_buffer[j]);
