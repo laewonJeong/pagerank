@@ -1,6 +1,7 @@
 #include "pagerank.hpp"
 #include "../../includes/network/myRDMA.hpp"
 #include "../../includes/network/tcp.hpp"
+#include <boost/lexical_cast.hpp>
 
 TCP tcp1;
 myRDMA myrdma1;
@@ -119,12 +120,13 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
-        value = to_string(tmp + x+ y);
+        value = boost::lexical_cast<string>(tmp+x+y);
+        //cout << value << endl;
         //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
-        pagerank.new_pr[i] = stod(value);
+        pagerank.new_pr[i] = boost::lexical_cast<double>(value);
         //pagerank.new_pr[i] = (((1-df)/pagerank.num_of_vertex) + df * tmp);
         //pagerank.new_pr[i] = tmp + (x+y);
-        pagerank.message += to_string(i);
+        pagerank.message += boost::lexical_cast<string>(i);
         pagerank.message += " ";
         pagerank.message += value; 
         pagerank.message += "\n";
@@ -218,17 +220,6 @@ void Pagerank::run_pagerank(int iter){
         //pagerank.pr = pagerank.new_pr;
 
     }
-
-    //size_t i;
-    /*size_t num_row = pagerank.pr.size();
-    double sum = 0;
-    cout.precision(numeric_limits<double>::digits10);
-    for(i=0;i<num_row;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-        sum += pagerank.pr[i];
-    }
-    cerr << "s = " <<sum << endl;*/
-    //cout << "Done." << endl;
     
 }
 
@@ -244,7 +235,10 @@ string Pagerank::max_pr(){
             tmp = important_pr;
         }
     }
-    result = result + to_string(important) + " " + to_string(tmp);
+
+    cout << "important page is " << important << " and value is " << tmp << endl;
+
+    result += to_string(important);
     return result;
 }
 

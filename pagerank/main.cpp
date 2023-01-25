@@ -56,9 +56,8 @@ int main(int argc, char* argv[]){
     printf("수행시간: %Lfs.\n", time);
 
     // important thing
-    string important = pagerank.max_pr();
     cout << "-------------------------------------" <<endl;
-    cout << "important page and value is " << important  <<endl;
+    string important = pagerank.max_pr();
     cout << "-------------------------------------" <<endl;
 
     /*sleep(4);
