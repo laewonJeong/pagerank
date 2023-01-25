@@ -3,26 +3,28 @@
 #include "myRDMA.hpp"
 
 #define port 40145
-#define num_of_node 4
 #define server_ip "192.168.1.100"
 #define iter 100000
-
-string node[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103"};
-
+string node1[4] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103"};
 using namespace std;
 int main(int argc, char* argv[]){
-    if(argc != 2){
+    /*if(argc != 3){
         cerr << argv[0] << " <MY IP> " << endl;
         exit(1);
-    }
-    if(server_ip != node[0]){
+    }*/
+    if(server_ip != node1[0]){
         cerr << "node[0] is not server_ip" << endl;
         exit(1);
     }
-    
+    int num_of_node = atoi(argv[3]);
+    string node[num_of_node];
+    for(int i=0;i<num_of_node;i++){
+        node[i] = node1[i];
+    }
+
     Pagerank pagerank;
 
-    string data_path = "/home/lwjeong/git/pagerank/pagerank/test.txt";
+    string data_path = argv[2];
     pagerank.create_graph_data(data_path);
     //int graph_data_vertex = 4039;
     

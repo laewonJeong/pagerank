@@ -36,6 +36,7 @@ class Pagerank{
         vector<long double> new_pr;
         vector<long double> my_pr;
         int num_of_vertex;
+        int num_of_server;
         char send_buffer[4][buf_size1];
         char recv_buffer[4][buf_size1];
         int start1;

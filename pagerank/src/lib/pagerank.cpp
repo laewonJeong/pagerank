@@ -11,22 +11,6 @@ vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
 //string message = "";
-inline std::string& ltrim(std::string& s, const char* t = " \t\n\r\f\v")
-{
-	s.erase(0, s.find_first_not_of(t));
-	return s;
-}
-// trim from right 
-inline std::string& rtrim(std::string& s, const char* t = " \t\n\r\f\v")
-{
-	s.erase(s.find_last_not_of(t) + 1);
-	return s;
-}
-// trim from left & right 
-inline std::string& trim(std::string& s, const char* t = " \t\n\r\f\v")
-{
-	return ltrim(rtrim(s, t), t);
-}
 
 vector<string> split(string str, char Delimiter) {
     istringstream iss(str);             
@@ -137,17 +121,22 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
-        value = to_string(tmp+x+y);
-        //cout << value << endl;
-        //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
-        tmp = atof(value.c_str());
-        pagerank.new_pr[i] = tmp;
-        //pagerank.new_pr[i] = (((1-df)/pagerank.num_of_vertex) + df * tmp);
-        //pagerank.new_pr[i] = tmp + (x+y);
-        pagerank.message += to_string(i);
-        pagerank.message += " ";
-        pagerank.message += value; 
-        pagerank.message += "\n";
+        if(pagerank.num_of_server != 1){
+            value = to_string(tmp+x+y);
+            //cout << value << endl;
+            //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
+            tmp = stod(value);
+            pagerank.new_pr[i] = tmp;
+            //pagerank.new_pr[i] = (((1-df)/pagerank.num_of_vertex) + df * tmp);
+            //pagerank.new_pr[i] = tmp + (x+y);
+            pagerank.message += to_string(i);
+            pagerank.message += " ";
+            pagerank.message += value; 
+            pagerank.message += "\n";
+        }
+        else{
+            pagerank.new_pr[i] = tmp + (x+y);
+        }
 
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
@@ -175,7 +164,7 @@ void Pagerank::thread_combine_pr(int i){
         
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<d << endl;
-        pagerank.new_pr[f] = atof(to.c_str());
+        pagerank.new_pr[f] = stod(to);
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
@@ -230,8 +219,10 @@ void Pagerank::run_pagerank(int iter){
         double one_Iv = (1 - df) * sum_pr / num_rows;
 
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,one_Av,one_Iv);
-        myrdma1.rdma_comm("write", pagerank.message);
-        Pagerank::combine_pr();
+        if(pagerank.num_of_server!=1){
+            myrdma1.rdma_comm("write", pagerank.message);
+            Pagerank::combine_pr();
+        }
 
         //cout << pagerank.diff <<endl;
         if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.0000001){
@@ -268,6 +259,7 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,pagerank.send_buffer,pagerank.recv_buffer);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
+    pagerank.num_of_server = number_of_server;
     pagerank.diff = 1;
     for(int i=0;i<number_of_server;i++){
         if(ip == server[i]){
