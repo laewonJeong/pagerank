@@ -140,7 +140,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         value = to_string(tmp+x+y);
         //cout << value << endl;
         //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
-        tmp = stold(value);
+        tmp = atof(value.c_str());
         pagerank.new_pr[i] = tmp;
         //pagerank.new_pr[i] = (((1-df)/pagerank.num_of_vertex) + df * tmp);
         //pagerank.new_pr[i] = tmp + (x+y);
@@ -175,7 +175,7 @@ void Pagerank::thread_combine_pr(int i){
         
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<d << endl;
-        pagerank.new_pr[f] = stold(to);
+        pagerank.new_pr[f] = atof(to.c_str());
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
