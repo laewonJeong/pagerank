@@ -95,8 +95,6 @@ void Pagerank::initial_pagerank_value(){
     pagerank.new_pr[0] = 1;
     //pagerank.new_pr = pagerank.pr;
     
-    
-
     cout << "Done" <<endl;
 }
 
@@ -124,7 +122,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         if(pagerank.num_of_server != 1){
             value = to_string(tmp+x+y);
 
-            pagerank.new_pr[i] = stod(value);
+            pagerank.new_pr[i] = strtod(value.c_str(), NULL);
             
             pagerank.message += to_string(i);
             pagerank.message += " ";
@@ -161,7 +159,7 @@ void Pagerank::thread_combine_pr(int i){
         
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<d << endl;
-        pagerank.new_pr[f] = stod(to);
+        pagerank.new_pr[f] = strtod(to.c_str(), NULL);
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
