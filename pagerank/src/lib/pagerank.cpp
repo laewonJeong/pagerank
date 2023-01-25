@@ -174,7 +174,7 @@ void Pagerank::thread_combine_pr(int i){
         f = stoi(from);
         
         d = stod(to);
-        cout <<from << ": " <<d << endl;
+        //cout <<from << ": " <<d << endl;
         pagerank.new_pr[f] = d;
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
