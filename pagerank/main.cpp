@@ -17,7 +17,7 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     int num_of_node = atoi(argv[3]);
-    if(num_of_node != 1 || num_of_node !=4){
+    if(num_of_node != 1 && num_of_node !=4){
         cerr <<"1 or 4" << endl;
         exit(1);
     }
