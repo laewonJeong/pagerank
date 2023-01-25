@@ -123,9 +123,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         if(pagerank.num_of_server != 1){
             value = to_string(tmp+x+y);
-            tmp = stod(value);
 
-            pagerank.new_pr[i] = tmp;
+            pagerank.new_pr[i] = stod(value);
             
             pagerank.message += to_string(i);
             pagerank.message += " ";
@@ -205,7 +204,7 @@ void Pagerank::run_pagerank(int iter){
             pagerank.pr = pagerank.new_pr;
         } 
         else {
-            /* Normalize so that we start with sum equal to one */
+            // Normalize so that we start with sum equal to one 
             for (i = 0; i < pagerank.pr.size(); i++) {
                 pagerank.pr[i] = pagerank.new_pr[i] / sum_pr;
             }
