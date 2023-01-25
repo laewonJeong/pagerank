@@ -123,12 +123,10 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         if(pagerank.num_of_server != 1){
             value = to_string(tmp+x+y);
-            //cout << value << endl;
-            //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
             tmp = stod(value);
+
             pagerank.new_pr[i] = tmp;
-            //pagerank.new_pr[i] = (((1-df)/pagerank.num_of_vertex) + df * tmp);
-            //pagerank.new_pr[i] = tmp + (x+y);
+            
             pagerank.message += to_string(i);
             pagerank.message += " ";
             pagerank.message += value; 
@@ -225,7 +223,7 @@ void Pagerank::run_pagerank(int iter){
         }
 
         //cout << pagerank.diff <<endl;
-        if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.000001){
             break;
         }
         prev_diff = pagerank.diff;
