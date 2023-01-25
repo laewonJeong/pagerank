@@ -28,6 +28,7 @@ class Pagerank{
        string max_pr();
        void init_connection(const char* ip, string server[], 
                             int number_of_server, int Port);
+       void print_pr(); 
     private:
         vector<vector<size_t>> graph;
         vector<vector<size_t>> outgoing;
