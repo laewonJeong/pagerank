@@ -17,9 +17,18 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     int num_of_node = atoi(argv[3]);
+    if(num_of_node != 1 || num_of_node !=4){
+        cerr <<"1 or 4" << endl;
+        exit(1);
+    }
     string node[num_of_node];
-    for(int i=0;i<num_of_node;i++){
-        node[i] = node1[i];
+    if(num_of_node == 1){
+        node[0] = argv[1];
+    }
+    else{
+        for(int i=0;i<num_of_node;i++){
+            node[i] = node1[i];
+        }
     }
 
     Pagerank pagerank;
