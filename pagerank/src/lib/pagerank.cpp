@@ -120,7 +120,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         if(pagerank.num_of_server != 1){
-            value = to_string(tmp+x+y);
+            value = to_string(round((tmp + x+y)*1000000)/1000000);
 
             pagerank.new_pr[i] = strtod(value.c_str(), NULL);
             
@@ -130,7 +130,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             pagerank.message += "\n";
         }
         else{
-            pagerank.new_pr[i] = tmp + (x+y);
+            pagerank.new_pr[i] = round((tmp + x+y)*10000000)/10000000;
         }
 
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
