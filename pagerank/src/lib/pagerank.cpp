@@ -250,7 +250,7 @@ void Pagerank::run_pagerank(int iter){
 
         Pagerank::combine_pr();
 
-        cout << pagerank.diff <<endl;
+        //cout << pagerank.diff <<endl;
         if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
@@ -262,7 +262,7 @@ void Pagerank::run_pagerank(int iter){
     //size_t i;
     size_t num_row = pagerank.pr.size();
     double sum = 0;
-    //cout.precision(numeric_limits<double>::digits10);
+    cout.precision(numeric_limits<double>::digits10);
     for(i=0;i<num_row;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
         sum += pagerank.pr[i];
