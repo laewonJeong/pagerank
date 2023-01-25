@@ -11,6 +11,22 @@ vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
 //string message = "";
+inline std::string& ltrim(std::string& s, const char* t = " \t\n\r\f\v")
+{
+	s.erase(0, s.find_first_not_of(t));
+	return s;
+}
+// trim from right 
+inline std::string& rtrim(std::string& s, const char* t = " \t\n\r\f\v")
+{
+	s.erase(s.find_last_not_of(t) + 1);
+	return s;
+}
+// trim from left & right 
+inline std::string& trim(std::string& s, const char* t = " \t\n\r\f\v")
+{
+	return ltrim(rtrim(s, t), t);
+}
 
 vector<string> split(string str, char Delimiter) {
     istringstream iss(str);             
@@ -121,7 +137,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
-        value = boost::lexical_cast<string>(tmp+x+y);
+        value = to_string(tmp+x+y);
         //cout << value << endl;
         //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
         tmp = stod(value);
@@ -156,7 +172,9 @@ void Pagerank::thread_combine_pr(int i){
         from = a.substr(0,pos);
         to = a.substr(pos+1);
         f = stoi(from);
+        
         d = stod(to);
+        cout <<from << ": " <<d << endl;
         pagerank.new_pr[f] = d;
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
