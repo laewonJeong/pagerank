@@ -2,6 +2,7 @@
 #include "../../includes/network/myRDMA.hpp"
 #include "../../includes/network/tcp.hpp"
 #include <boost/lexical_cast.hpp>
+//#include <strtk.hpp>
 
 TCP tcp1;
 myRDMA myrdma1;
@@ -123,10 +124,11 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         value = boost::lexical_cast<string>(tmp+x+y);
         //cout << value << endl;
         //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
-        pagerank.new_pr[i] = boost::lexical_cast<double>(value);
+        tmp = stod(value);
+        pagerank.new_pr[i] = tmp;
         //pagerank.new_pr[i] = (((1-df)/pagerank.num_of_vertex) + df * tmp);
         //pagerank.new_pr[i] = tmp + (x+y);
-        pagerank.message += boost::lexical_cast<string>(i);
+        pagerank.message += to_string(i);
         pagerank.message += " ";
         pagerank.message += value; 
         pagerank.message += "\n";
@@ -140,7 +142,7 @@ void Pagerank::thread_combine_pr(int i){
     string from, to;
     size_t previous, current;
 
-    //double d;
+    double d;
     int f;
     string a;
     
@@ -154,7 +156,8 @@ void Pagerank::thread_combine_pr(int i){
         from = a.substr(0,pos);
         to = a.substr(pos+1);
         f = stoi(from);
-        pagerank.new_pr[f] = stod(to);
+        d = stod(to);
+        pagerank.new_pr[f] = d;
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
