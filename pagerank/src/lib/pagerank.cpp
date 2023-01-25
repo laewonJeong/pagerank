@@ -39,7 +39,7 @@ bool Pagerank::add_arc(size_t from, size_t to) {
         max_dim = max_dim + 1;
         
         pagerank.graph.resize(max_dim);
-        pagerank.outgoing.resize(max_dim);
+        //pagerank.outgoing.resize(max_dim);
         if (pagerank.num_outgoing.size() <= max_dim) {
             pagerank.num_outgoing.resize(max_dim,0);
         }
@@ -69,7 +69,7 @@ void Pagerank::create_graph_data(string path){
             to = line.substr(pos+1);
             add_arc(strtol(from.c_str(), NULL, 10),strtol(to.c_str(), NULL, 10));
             line_num++;
-            if(line_num%1000000 == 0)
+            if(line_num%500000 == 0)
                 cerr << "Create " << line_num << " lines" << endl;
 		}
 	} 
@@ -89,9 +89,10 @@ void Pagerank::create_graph_data(string path){
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
-    pagerank.pr.resize(pagerank.num_of_vertex, 0);
-    pagerank.new_pr = pagerank.pr;
-    pagerank.pr[0] = 1;
+    pagerank.new_pr.resize(pagerank.num_of_vertex, 0);
+    pagerank.new_pr[0] = 1;
+    //pagerank.new_pr = pagerank.pr;
+    
     
 
     cout << "Done" <<endl;
@@ -112,22 +113,25 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     pagerank.diff = 0;
     double tmp;
     string value;
+    //double sum = 0;
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int j = 0; j<pagerank.graph[i].size();j++){
-            tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
+            tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
-        value = to_string((1-df)/pagerank.num_of_vertex + tmp);
+        value = to_string(tmp + x+ y);
+        //value = to_string((1-df)/pagerank.num_of_vertex + tmp);
         pagerank.new_pr[i] = stod(value);
-        //pagerank.new_pr[i] = (1-df)/pagerank.num_of_vertex + tmp;
+        //pagerank.new_pr[i] = (((1-df)/pagerank.num_of_vertex) + df * tmp);
+        //pagerank.new_pr[i] = tmp + (x+y);
         pagerank.message += to_string(i);
         pagerank.message += " ";
         pagerank.message += value; 
         pagerank.message += "\n";
-        
-        
+
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
+    //cout << "s = " << sum <<endl;
     
 }
 void Pagerank::thread_combine_pr(int i){
@@ -138,6 +142,7 @@ void Pagerank::thread_combine_pr(int i){
     int f;
     string a;
     
+    //strcpy(tmp, pagerank.recv_buffer[i]);
     string tmp(pagerank.recv_buffer[i]);
     current = tmp.find('\n');
     previous = 0;
@@ -194,6 +199,10 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
 void Pagerank::run_pagerank(int iter){
     double prev_diff =0;
     int step;
+    size_t i;
+    double sum_pr; // sum of current pagerank vector elements
+    double dangling_pr; // sum of current pagerank vector elements for dangling
+    size_t num_rows = pagerank.graph.size();
     /*int *clnt_socks = tcp1.client_sock();
     for(int idx=0; idx < 6; idx++){
         if(clnt_socks[idx]!=0){
@@ -204,8 +213,38 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         pagerank.message = "";
+        sum_pr = 0;
+        dangling_pr = 0;
+        for (size_t k = 0; k < pagerank.pr.size(); k++) {
+            double cpr = pagerank.new_pr[k];
+            sum_pr += cpr;
+            if (pagerank.num_outgoing[k] == 0) {
+                dangling_pr += cpr;
+            }   
+        }
 
-        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
+        if (step == 0) {
+            pagerank.pr = pagerank.new_pr;
+        } else {
+            /* Normalize so that we start with sum equal to one */
+            for (i = 0; i < pagerank.pr.size(); i++) {
+                pagerank.pr[i] = pagerank.new_pr[i] / sum_pr;
+            }
+        }
+
+        /*
+         * After normalisation the elements of the pagerank vector sum
+         * to one
+         */
+        sum_pr = 1;
+        
+        /* An element of the A x I vector; all elements are identical */
+        double one_Av = df * dangling_pr / num_rows;
+
+        /* An element of the 1 x I vector; all elements are identical */
+        double one_Iv = (1 - df) * sum_pr / num_rows;
+        //cout << one_Av << " " << one_Iv << endl;
+        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,one_Av,one_Iv);
 
         myrdma1.rdma_comm("write", pagerank.message);
 
@@ -216,8 +255,20 @@ void Pagerank::run_pagerank(int iter){
             break;
         }
         prev_diff = pagerank.diff;
-        pagerank.pr = pagerank.new_pr;
+        //pagerank.pr = pagerank.new_pr;
+
     }
+
+    //size_t i;
+    size_t num_row = pagerank.pr.size();
+    double sum = 0;
+    //cout.precision(numeric_limits<double>::digits10);
+    for(i=0;i<num_row;i++){
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
+        sum += pagerank.pr[i];
+    }
+    cerr << "s = " <<sum << endl;
+    cout << "Done." << endl;
     /*for(step =0;step<pagerank.num_of_vertex;step++){
         cout << "pr[" <<step<<"]: " << pagerank.pr[step] <<endl; 
     }*/
@@ -306,10 +357,7 @@ void Pagerank::run_pagerank(int iter){
         //Pagerank::calc_pagerank_value(pagerank.start1, pagerank.end1, one_Av, one_Iv);
 
     }*/
-    for(int i=0;i<pagerank.num_of_vertex;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-    }
-    cout << "Done" << endl;
+    
 }
 
 string Pagerank::max_pr(){
