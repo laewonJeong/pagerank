@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
 
 
     //print pagerank value
-    //pagerank.print_pr();
+    pagerank.print_pr();
 
     cout << "Done." << endl;
     cout << "-------------------------------------" <<endl;
