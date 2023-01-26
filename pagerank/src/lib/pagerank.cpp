@@ -166,7 +166,7 @@ void Pagerank::thread_combine_pr(int i){
         
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<d << endl;
-        pagerank.new_pr[f] = strtod(to.c_str(), NULL)/1000000000;//stod(to);
+        pagerank.new_pr[f] = stod(to)/1000000000;//stod(to);
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
@@ -223,7 +223,7 @@ void Pagerank::run_pagerank(int iter){
         cout.precision(numeric_limits<double>::digits10);
         cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
 
-        if(pagerank.diff < 0.000001 || z){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001 || z){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         prev_diff = pagerank.diff;
@@ -283,11 +283,4 @@ void Pagerank::print_pr(){
         sum += pagerank.pr[i];
     }
     cerr << "s = " <<sum << endl;
-
-
-    long double test = 3.03441328102206e-06 * 100000000000000;
-    string test1 = "3.03441328102206e-06";
-    cout << to_string(test) << endl;
-
-    cout  <<stod(to_string(test))/100000000000000<< endl;
 }
