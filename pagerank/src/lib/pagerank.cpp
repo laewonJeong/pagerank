@@ -98,7 +98,7 @@ void Pagerank::initial_pagerank_value(){
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
     pagerank.new_pr = pagerank.pr;
-    pagerank.pr[0] = 1;
+    //pagerank.pr[0] = 1;
 
     cout << "Done" <<endl;
 }
@@ -129,7 +129,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         
         if(pagerank.num_of_server != 1){
             d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
-            value = to_string(d*1000000);
+            value = to_string(d*1000000000);
 
             pagerank.new_pr[i] = d;
             
@@ -168,7 +168,7 @@ void Pagerank::thread_combine_pr(int i){
         
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<to << endl;
-        pagerank.new_pr[f] = stod(to)/1000000;//stod(to);
+        pagerank.new_pr[f] = stod(to)/1000000000;//stod(to);
         //mutx.lock();
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);
         //mutx.unlock();  
