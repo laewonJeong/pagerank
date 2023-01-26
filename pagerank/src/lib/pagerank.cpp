@@ -11,6 +11,8 @@ Pagerank pagerank;
 vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
+char send_buffer[4][buf_size1];
+char recv_buffer[4][buf_size1];
 //string message = "";
 
 vector<string> split(string str, char Delimiter) {
@@ -154,7 +156,7 @@ void Pagerank::thread_combine_pr(int i){
     string a;
     
     //strcpy(tmp, pagerank.recv_buffer[i]);
-    string tmp(pagerank.recv_buffer[i]);
+    string tmp(recv_buffer[i]);
     current = tmp.find('\n');
     previous = 0;
     while(current != string::npos){
@@ -255,7 +257,7 @@ string Pagerank::max_pr(){
 
 void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port)
 {
-    myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,pagerank.send_buffer,pagerank.recv_buffer);
+    myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,send_buffer,recv_buffer);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
     pagerank.num_of_server = number_of_server;

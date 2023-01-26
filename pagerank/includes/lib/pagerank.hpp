@@ -12,7 +12,7 @@
 #include <math.h>
 
 #define df 0.85
-#define buf_size1 104857*4
+#define buf_size1 1048676
 
 using namespace std;
 class Pagerank{
@@ -39,8 +39,6 @@ class Pagerank{
         vector<string> new_pr1;
         int num_of_vertex;
         int num_of_server;
-        char send_buffer[4][buf_size1];
-        char recv_buffer[4][buf_size1];
         int start1;
         int end1;
         string message;
