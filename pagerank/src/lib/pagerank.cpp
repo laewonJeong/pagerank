@@ -137,7 +137,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             pagerank.message += "\n";
         }
         else{
-            pagerank.new_pr[i] = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
+            pagerank.new_pr[i] = round(((tmp + (double)(x/pagerank.num_of_vertex))*df + (double)((1-df)/pagerank.num_of_vertex))*1000000)/1000000;
         }
 
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
@@ -236,8 +236,9 @@ string Pagerank::max_pr(){
     string result = "";
     long double important_pr = pagerank.pr[0];
     long double tmp = important_pr;
+    double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     for (int i=0;i< pagerank.num_of_vertex;i++){
-        important_pr = max(important_pr, pagerank.pr[i]);
+        important_pr = max(important_pr, pagerank.pr[i]/sum1);
         if(tmp != important_pr){
             important = i;
             tmp = important_pr;
@@ -273,10 +274,11 @@ void Pagerank::print_pr(){
     size_t i;
     size_t num_row = pagerank.pr.size();
     double sum = 0;
+    double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     cout.precision(numeric_limits<double>::digits10);
     for(i=0;i<num_row;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-        sum += pagerank.pr[i];
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i]/sum1 <<endl;
+        sum += pagerank.pr[i]/sum1;
     }
     cerr << "s = " <<sum << endl;
 }
