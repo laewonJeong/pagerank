@@ -92,7 +92,7 @@ void Pagerank::create_graph_data(string path){
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
-    pagerank.pr.resize(pagerank.num_of_vertex, 0);
+    pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
     pagerank.new_pr = pagerank.pr;
@@ -126,8 +126,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         
         if(pagerank.num_of_server != 1){
-            d = round(((tmp + (double)(x/pagerank.num_of_vertex))*df + (double)((1-df)/pagerank.num_of_vertex))*1000000)/1000000;
-            value = to_string(d);
+            d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
+            value = to_string(d*1000000000000);
 
             pagerank.new_pr[i] = d;
             
@@ -137,7 +137,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             pagerank.message += "\n";
         }
         else{
-            pagerank.new_pr[i] = round(((tmp + (double)(x/pagerank.num_of_vertex))*df + (double)((1-df)/pagerank.num_of_vertex))*1000000)/1000000;
+            pagerank.new_pr[i] = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
         }
 
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
@@ -166,7 +166,7 @@ void Pagerank::thread_combine_pr(int i){
         
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<d << endl;
-        pagerank.new_pr[f] = strtod(to.c_str(), NULL);//stod(to);
+        pagerank.new_pr[f] = strtod(to.c_str(), NULL)/1000000000000;//stod(to);
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
@@ -209,8 +209,10 @@ void Pagerank::run_pagerank(int iter){
                 }   
             }
         }
-
+        //cout << "start calc" << endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
+        //cout << "end calc" << endl;
+        //cout << pagerank.message.size()<<endl;
         if(pagerank.num_of_server!=1){
             myrdma1.rdma_comm("write", pagerank.message);
             Pagerank::combine_pr();
@@ -277,8 +279,15 @@ void Pagerank::print_pr(){
     double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     cout.precision(numeric_limits<double>::digits10);
     for(i=0;i<num_row;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i]/sum1 <<endl;
-        sum += pagerank.pr[i]/sum1;
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
+        sum += pagerank.pr[i];
     }
     cerr << "s = " <<sum << endl;
+
+
+    long double test = 3.03441328102206e-06 * 100000000000000;
+    string test1 = "3.03441328102206e-06";
+    cout << to_string(test) << endl;
+
+    cout  <<stod(to_string(test))/100000000000000<< endl;
 }
