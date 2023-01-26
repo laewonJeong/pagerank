@@ -169,9 +169,9 @@ void Pagerank::thread_combine_pr(int i){
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<to << endl;
         pagerank.new_pr[f] = stod(to)/10000000000;//stod(to);
-        mutx.lock();
+        //mutx.lock();
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);
-        mutx.unlock();  
+        //mutx.unlock();  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         previous = current +1;
         current = tmp.find('\n',previous);
@@ -179,7 +179,7 @@ void Pagerank::thread_combine_pr(int i){
 }
 void Pagerank::combine_pr(){
     //230126 thread를 시도해보자
-    vector<thread> worker;
+    //vector<thread> worker;
     for(int i = 0; i < 3;i++){
         Pagerank::thread_combine_pr(i);
         //worker.push_back(thread(&Pagerank::thread_combine_pr,i));
