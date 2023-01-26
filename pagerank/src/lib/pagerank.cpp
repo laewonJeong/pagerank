@@ -115,6 +115,7 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     pagerank.diff = 0;
     long double tmp;
+    double d;
     string value;
     //double sum = 0;
     for(int i=start;i<end;i++){
@@ -125,9 +126,10 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         
         if(pagerank.num_of_server != 1){
-            value = to_string((tmp + (double)(x/pagerank.num_of_vertex))*df + (double)((1-df)/pagerank.num_of_vertex));
+            d = round(((tmp + (double)(x/pagerank.num_of_vertex))*df + (double)((1-df)/pagerank.num_of_vertex))*100000)/100000;
+            value = to_string(d);
 
-            pagerank.new_pr[i] = strtod(value.c_str(), NULL);
+            pagerank.new_pr[i] = d;
             
             pagerank.message += to_string(i);
             pagerank.message += " ";
