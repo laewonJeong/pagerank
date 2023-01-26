@@ -214,7 +214,7 @@ void Pagerank::run_pagerank(int iter){
         }
 
         cout << pagerank.diff <<endl;
-        if(pagerank.diff < 0.0000001){ //|| fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.0000001 || pagerank.diff == prev_diff){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         prev_diff = pagerank.diff;
