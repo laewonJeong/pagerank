@@ -187,7 +187,7 @@ void Pagerank::run_pagerank(int iter){
     size_t i;
     double sum_pr; // sum of current pagerank vector elements
     double dangling_pr; // sum of current pagerank vector elements for dangling
-    size_t num_rows = pagerank.graph.size();
+    //size_t num_rows = pagerank.graph.size();
 
     cout << "progressing..." << endl;
     for(int step =0; step < iter ;step++){
@@ -213,14 +213,14 @@ void Pagerank::run_pagerank(int iter){
                 pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                 if (pagerank.num_outgoing[i] == 0) {
                     dangling_pr += pagerank.new_pr[i];
-            }   
+                }   
             }
         }
 
         sum_pr = 1;
 
-        double one_Av = df * dangling_pr / num_rows;
-        double one_Iv = (1 - df) * sum_pr / num_rows;
+        double one_Av = df * dangling_pr / pagerank.num_of_vertex;
+        double one_Iv = (1 - df) * sum_pr / pagerank.num_of_vertex;
 
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,one_Av,one_Iv);
         if(pagerank.num_of_server!=1){
@@ -228,7 +228,7 @@ void Pagerank::run_pagerank(int iter){
             Pagerank::combine_pr();
         }
 
-        cout << pagerank.diff <<endl;
+        //cout << pagerank.diff <<endl;
         if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
