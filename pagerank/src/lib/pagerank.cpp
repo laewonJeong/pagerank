@@ -167,7 +167,7 @@ void Pagerank::thread_combine_pr(int i){
         f = stoi(from);
         
         //d = boost::lexical_cast<double>(to);
-        //cout <<from << ": " <<d << endl;
+        cout <<from << ": " <<to << endl;
         pagerank.new_pr[f] = stod(to)/1000000000;//stod(to);
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
