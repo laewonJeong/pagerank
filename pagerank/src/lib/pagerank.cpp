@@ -93,6 +93,8 @@ void Pagerank::initial_pagerank_value(){
 
     pagerank.new_pr.resize(pagerank.num_of_vertex, 0);
     pagerank.new_pr[0] = 1;
+    //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
+    //pagerank.new_pr1[0] = "1";
     //pagerank.new_pr = pagerank.pr;
     
     cout << "Done" <<endl;
@@ -118,11 +120,12 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         tmp = 0;
         for(int j = 0; j<pagerank.graph[i].size();j++){
             tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
+            //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         if(pagerank.num_of_server != 1){
-            value = to_string(round((tmp + x+y)*1000000)/1000000);
+            value = to_string(tmp + x+y);
 
-            pagerank.new_pr[i] = strtod(value.c_str(), NULL);
+            pagerank.new_pr[i] = round((tmp + x+y)*1000000)/1000000;//strtod(value.c_str(), NULL);
             
             pagerank.message += to_string(i);
             pagerank.message += " ";
@@ -130,7 +133,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             pagerank.message += "\n";
         }
         else{
-            pagerank.new_pr[i] = round((tmp + x+y)*10000000)/10000000;
+            pagerank.new_pr[i] = round((tmp + x+y)*1000000)/1000000;
         }
 
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
@@ -168,6 +171,7 @@ void Pagerank::thread_combine_pr(int i){
     }
 }
 void Pagerank::combine_pr(){
+    //230126 thread를 시도해보자
     for(int i = 0; i < 3;i++){
         Pagerank::thread_combine_pr(i);
     }
