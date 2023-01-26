@@ -125,9 +125,9 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         
         if(pagerank.num_of_server != 1){
-            value = to_string((tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex);
+            value = to_string((tmp + (double)(x/pagerank.num_of_vertex))*df + (double)((1-df)/pagerank.num_of_vertex));
 
-            pagerank.new_pr[i] = stod(value);//strtod(value.c_str(), NULL);
+            pagerank.new_pr[i] = strtod(value.c_str(), NULL);
             
             pagerank.message += to_string(i);
             pagerank.message += " ";
@@ -164,7 +164,7 @@ void Pagerank::thread_combine_pr(int i){
         
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<d << endl;
-        pagerank.new_pr[f] = strtod(to.c_str(), NULL);
+        pagerank.new_pr[f] = strtod(to.c_str(), NULL);//stod(to);
        
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
@@ -197,12 +197,8 @@ void Pagerank::run_pagerank(int iter){
         sum_pr = 0;
         dangling_pr = 0;
 
-        if (step == 0) {
-            cout << "." << endl;
-        } 
-        else {
-            // Normalize so that we start with sum equal to one 
-            double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
+        if(step!=0) {
+            // Normalize so that we start with sum equal to one   
             for (i = 0; i < pagerank.pr.size(); i++) {
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                 if (pagerank.num_outgoing[i] == 0) {
@@ -217,8 +213,8 @@ void Pagerank::run_pagerank(int iter){
             Pagerank::combine_pr();
         }
 
-        //cout << pagerank.diff <<endl;
-        if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.0000001){
+        cout << pagerank.diff <<endl;
+        if(pagerank.diff < 0.0000001){ //|| fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         prev_diff = pagerank.diff;
