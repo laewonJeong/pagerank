@@ -134,7 +134,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             pagerank.message += "\n";
         }
         else{
-            pagerank.new_pr[i] = round(((1-df)/pagerank.num_of_vertex + df*tmp)*100000000)/100000000;
+            pagerank.new_pr[i] = tmp+x+y;
         }
 
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
