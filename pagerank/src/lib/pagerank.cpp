@@ -129,7 +129,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         
         if(pagerank.num_of_server != 1){
             d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
-            value = to_string(d*10000);
+            value = to_string(d*10000000000);
 
             pagerank.new_pr[i] = d;
             
@@ -168,7 +168,7 @@ void Pagerank::thread_combine_pr(int i){
         
         d = stod(to);
         //cout <<from << ": " <<to << endl;
-        pagerank.new_pr[f] = d/10000;//stod(to);
+        pagerank.new_pr[f] = d/10000000000;//stod(to);
         //mutx.lock();
         pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);
         //mutx.unlock();  
