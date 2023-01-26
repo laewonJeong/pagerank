@@ -124,7 +124,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         if(pagerank.num_of_server != 1){
-            value = to_string((1-df)/pagerank.num_of_vertex + df*tmp);
+            value = to_string(tmp+x+y);
 
             pagerank.new_pr[i] = stod(value);//strtod(value.c_str(), NULL);
             
@@ -211,15 +211,18 @@ void Pagerank::run_pagerank(int iter){
             double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
             for (i = 0; i < pagerank.pr.size(); i++) {
                 pagerank.pr[i] = pagerank.new_pr[i] /sum1;
+                if (pagerank.num_outgoing[i] == 0) {
+                    dangling_pr += pagerank.new_pr[i];
+            }   
             }
         }
 
-        /*sum_pr = 1;
+        sum_pr = 1;
 
         double one_Av = df * dangling_pr / num_rows;
-        double one_Iv = (1 - df) * sum_pr / num_rows;*/
+        double one_Iv = (1 - df) * sum_pr / num_rows;
 
-        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
+        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,one_Av,one_Iv);
         if(pagerank.num_of_server!=1){
             myrdma1.rdma_comm("write", pagerank.message);
             Pagerank::combine_pr();
