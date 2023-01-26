@@ -12,7 +12,7 @@
 #include <math.h>
 
 #define df 0.85
-#define buf_size1 1048676*64
+#define buf_size1 1048676*10
 
 using namespace std;
 class Pagerank{
