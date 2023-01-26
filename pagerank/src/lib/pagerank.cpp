@@ -2,6 +2,7 @@
 #include "../../includes/network/myRDMA.hpp"
 #include "../../includes/network/tcp.hpp"
 #include <boost/lexical_cast.hpp>
+#include <numeric>
 //#include <strtk.hpp>
 
 TCP tcp1;
@@ -123,9 +124,9 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         if(pagerank.num_of_server != 1){
-            value = to_string(tmp + x+y);
+            value = to_string((1-df)/pagerank.num_of_vertex + df*tmp);
 
-            pagerank.new_pr[i] = round((tmp + x+y)*1000000)/1000000;//strtod(value.c_str(), NULL);
+            pagerank.new_pr[i] = round(((1-df)/pagerank.num_of_vertex + df*tmp)*100000000)/100000000;//strtod(value.c_str(), NULL);
             
             pagerank.message += to_string(i);
             pagerank.message += " ";
@@ -133,7 +134,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             pagerank.message += "\n";
         }
         else{
-            pagerank.new_pr[i] = round((tmp + x+y)*1000000)/1000000;
+            pagerank.new_pr[i] = round(((1-df)/pagerank.num_of_vertex + df*tmp)*100000000)/100000000;
         }
 
         pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
@@ -194,36 +195,37 @@ void Pagerank::run_pagerank(int iter){
         pagerank.message = "";
         sum_pr = 0;
         dangling_pr = 0;
-        for (size_t k = 0; k < pagerank.pr.size(); k++) {
+        /*for (size_t k = 0; k < pagerank.pr.size(); k++) {
             double cpr = pagerank.new_pr[k];
             sum_pr += cpr;
             if (pagerank.num_outgoing[k] == 0) {
                 dangling_pr += cpr;
             }   
-        }
+        }*/
 
         if (step == 0) {
             pagerank.pr = pagerank.new_pr;
         } 
         else {
             // Normalize so that we start with sum equal to one 
+            double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
             for (i = 0; i < pagerank.pr.size(); i++) {
-                pagerank.pr[i] = pagerank.new_pr[i] / sum_pr;
+                pagerank.pr[i] = pagerank.new_pr[i] /sum1;
             }
         }
 
-        sum_pr = 1;
+        /*sum_pr = 1;
 
         double one_Av = df * dangling_pr / num_rows;
-        double one_Iv = (1 - df) * sum_pr / num_rows;
+        double one_Iv = (1 - df) * sum_pr / num_rows;*/
 
-        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,one_Av,one_Iv);
+        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,0.0,0.0);
         if(pagerank.num_of_server!=1){
             myrdma1.rdma_comm("write", pagerank.message);
             Pagerank::combine_pr();
         }
 
-        //cout << pagerank.diff <<endl;
+        cout << pagerank.diff <<endl;
         if(pagerank.diff < 0.00001 || fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
