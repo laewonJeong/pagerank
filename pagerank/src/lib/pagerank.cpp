@@ -178,8 +178,13 @@ void Pagerank::thread_combine_pr(int i){
 }
 void Pagerank::combine_pr(){
     //230126 thread를 시도해보자
+    vector<thread> worker;
     for(int i = 0; i < 3;i++){
-        Pagerank::thread_combine_pr(i);
+        //Pagerank::thread_combine_pr(i);
+        worker.push_back(thread(&Pagerank::thread_combine_pr,i));
+    }
+    for(int i=0;i<3;i++){
+        worker[i].join();
     }
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
