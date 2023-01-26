@@ -201,8 +201,9 @@ void Pagerank::run_pagerank(int iter){
 
         if(step!=0) {
             // Normalize so that we start with sum equal to one   
+            double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
             for (i = 0; i < pagerank.pr.size(); i++) {
-                //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
+                pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                 if (pagerank.num_outgoing[i] == 0) {
                     dangling_pr += pagerank.new_pr[i];
                 }   
@@ -216,7 +217,10 @@ void Pagerank::run_pagerank(int iter){
         }
 
         bool z = fabs(pagerank.diff - prev_diff) < 0.0000001;
-        cout << pagerank.diff  << " " << prev_diff << " = " << z <<endl;
+
+        cout.precision(numeric_limits<double>::digits10);
+        cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
+
         if(pagerank.diff < 0.000001 || z){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
