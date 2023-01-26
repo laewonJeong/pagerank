@@ -204,7 +204,7 @@ void Pagerank::run_pagerank(int iter){
         if(step!=0) {
             // Normalize so that we start with sum equal to one   
             //double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
-            for (i = 0; i < pagerank.pr.size(); i++) {
+            for (i = 0; i < pagerank.num_of_vertex; i++) {
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                 if (pagerank.num_outgoing[i] == 0) {
                     dangling_pr += pagerank.new_pr[i];
@@ -276,11 +276,10 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
 
 void Pagerank::print_pr(){
     size_t i;
-    size_t num_row = pagerank.pr.size();
     double sum = 0;
     double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     cout.precision(numeric_limits<double>::digits10);
-    for(i=0;i<num_row;i++){
+    for(i=0;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
         sum += pagerank.pr[i];
     }
