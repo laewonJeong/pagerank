@@ -169,8 +169,9 @@ void Pagerank::thread_combine_pr(int i){
         //d = boost::lexical_cast<double>(to);
         //cout <<from << ": " <<to << endl;
         pagerank.new_pr[f] = stod(to)/10000000000;//stod(to);
-       
-        pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);  
+        mutx.lock();
+        pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);
+        mutx.unlock();  
         //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
         previous = current +1;
         current = tmp.find('\n',previous);
