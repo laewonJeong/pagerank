@@ -302,7 +302,7 @@ void myRDMA::create_rdma_info(){
                 struct ibv_cq* completion_queue = ibv_create_cq(context, cq_size, nullptr, nullptr, 0);
                 struct ibv_qp* qp = rdma.createQueuePair(protection_domain, completion_queue);
                 struct ibv_mr *mr = rdma.registerMemoryRegion(protection_domain, 
-                                                        &myrdma.recv[i], myrdma.recv[i].capacity());
+                                                        &myrdma.recv[i], sizeof(myrdma.recv[i][0])*myrdma.recv[i].capacity());
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
                 myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
@@ -317,7 +317,7 @@ void myRDMA::create_rdma_info(){
                 struct ibv_cq* completion_queue = ibv_create_cq(context, cq_size, nullptr, nullptr, 0);
                 struct ibv_qp* qp = rdma.createQueuePair(protection_domain, completion_queue);
                 struct ibv_mr *mr = rdma.registerMemoryRegion(protection_domain, 
-                                                        &myrdma.send[i], myrdma.send[i].capacity());
+                                                        &myrdma.send[i], sizeof(myrdma.send[i][0])*myrdma.send[i].capacity());
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
                 myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
