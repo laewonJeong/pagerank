@@ -92,10 +92,11 @@ void myRDMA::rdma_send_recv(int i){
         cerr << "recv failed" << endl;
     else{
         //cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
-        for(int j=0;j<myrdma.recv[i].size();j++){
+       /* for(int j=0;j<myrdma.recv[i].size();j++){
             cout << j << ": " << myrdma.recv[i][j] << endl;
-        }
+        }*/
         cerr << "receive success" << endl;
+        cout << myrdma.recv[i].size() << endl;
     }
 }
 
