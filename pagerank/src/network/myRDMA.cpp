@@ -15,8 +15,8 @@ void myRDMA::rdma_send_vector(vector<double> *msg, int i){
     //msg[67108865] = NULL;
     myrdma.send = msg;
     
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send_buffer[i], 
-                                sizeof(myrdma.send_buffer[i]), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send, 
+                                sizeof(myrdma.send), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
         //cerr << "send success" << endl;
         cerr << "send failed" << endl;
@@ -87,7 +87,7 @@ void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
 
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
-                        get<3>(myrdma.rdma_info[1][i]),myrdma.recv_buffer[i], sizeof(myrdma.recv_buffer[i]));
+                        get<3>(myrdma.rdma_info[1][i]),myrdma.recv[i], sizeof(myrdma.recv[i]));
     if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
         cerr << "recv failed" << endl;
     else{
