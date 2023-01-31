@@ -11,7 +11,7 @@ string node1[num_of_node] = {server_ip,"192.168.1.101"};//,"192.168.1.102","192.
 using namespace std;
 //using namespace stdext;
 int main(int argc, char* argv[]){
-    vector<double> x;
+    vector<double> x[num_of_node];
     vector<double> recv[num_of_node];
     //if(argv[1] == server_ip){
     //    x.resize(4039,1/4039);
@@ -27,8 +27,8 @@ int main(int argc, char* argv[]){
     myrdma.create_rdma_info();
     myrdma.send_info_change_qp();
 
-    x.resize(4039,1/4039);
-    vector<double> *x1 = &x;
+    x[0].resize(4039,1/4039);
+    vector<double> &x1 = *x;
     
     if(my_ip == server_ip)
         myrdma.rdma_send_vector(x1, 0);
