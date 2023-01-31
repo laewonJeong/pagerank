@@ -16,10 +16,11 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     myrdma.send[i] = msg;
     cout << myrdma.send[i][0] << endl;
     cout << sizeof(myrdma.send[i]) << endl;
-    cout << myrdma.send[i].capacity() << endl;
+    cout << myrdma.send[i].size() << endl;
     //(*myrdma.send)[i].push_back(0.321);
+
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), &myrdma.send[i], 
-                                myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                sizeof(myrdma.send[i][0])*myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
         cerr << "send success" << endl;
         //cerr << "send failed" << endl;
@@ -90,7 +91,7 @@ void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
 
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
-                        get<3>(myrdma.rdma_info[1][i]), &myrdma.recv[i], sizeof(&myrdma.recv[i]));
+                        get<3>(myrdma.rdma_info[1][i]), &myrdma.recv[i], sizeof(myrdma.recv[i][0])*myrdma.recv[i].capacity());
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
     //if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
     //    cerr << "recv failed" << endl;
