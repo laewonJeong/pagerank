@@ -10,6 +10,7 @@
 #include <thread>
 #include <stdlib.h>
 #include <math.h>
+#include <unordered_map>
 
 #define df 0.85
 #define buf_size1 1048676*30
@@ -31,12 +32,13 @@ class Pagerank{
        void print_pr(); 
     private:
         vector<vector<size_t>> graph;
+        unordered_map<size_t, vector<size_t>> graph1;
+        unordered_map<string, double> pr1;
+        unordered_map<string, double> new_pr1;
         vector<vector<size_t>> outgoing;
         vector<long double> pr;
         vector<long double> new_pr;
         vector<long double> my_pr;
-        vector<string> pr1;
-        vector<string> new_pr1;
         int num_of_vertex;
         int num_of_server;
         int start1;

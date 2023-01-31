@@ -3,6 +3,7 @@
 #include "../../includes/network/tcp.hpp"
 #include <boost/lexical_cast.hpp>
 #include <numeric>
+//#include <mpi.hpp>
 //#include <strtk.hpp>
 
 TCP tcp1;
@@ -36,7 +37,7 @@ bool Pagerank::insert_into_vector(Vector& v, const T& t) {
     }
 }
 bool Pagerank::add_arc(size_t from, size_t to) {
-
+    vector<size_t> v;
     bool ret = false;
     size_t max_dim = max(from, to);
 
@@ -49,8 +50,11 @@ bool Pagerank::add_arc(size_t from, size_t to) {
             pagerank.num_outgoing.resize(max_dim,0);
         }
     }
+    //pagerank.graph[to].push_back(from);
+    //cout << pagerank.graph[to] << endl;
 
     ret = insert_into_vector(pagerank.graph[to], from);
+
     if (ret) {
         pagerank.num_outgoing[from]++;
     }
@@ -72,6 +76,10 @@ void Pagerank::create_graph_data(string path){
             size_t pos = line.find(" ");
             from = line.substr(0,pos);
             to = line.substr(pos+1);
+            /*if(pagerank.pr1.find(from) == pagerank.pr1.end()){
+                pagerank.pr1[from] = 0.0;
+                //cout << from << ": " <<pagerank.pr1[from] << endl;
+            }*/
             add_arc(strtol(from.c_str(), NULL, 10),strtol(to.c_str(), NULL, 10));
             line_num++;
             if(line_num%500000 == 0)
@@ -82,7 +90,8 @@ void Pagerank::create_graph_data(string path){
 		cout << "Unable to open file" <<endl;
         exit(1);
 	}
-
+    //agerank.new_pr1 = pagerank.pr1;
+    //pagerank.pr1["0"] = 1;
     pagerank.num_of_vertex = pagerank.graph.size();
     cerr << "Create " << line_num << " lines, "
          << pagerank.num_of_vertex << " vertices graph." << endl;
@@ -95,6 +104,7 @@ void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
     pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
+    //pagerank.pr1.reserve(pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
     pagerank.new_pr = pagerank.pr;
@@ -122,7 +132,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     //double sum = 0;
     for(int i=start;i<end;i++){
         tmp = 0;
-        for(int from_page: pagerank.graph[i]){
+        for(int from_page : pagerank.graph[i]){// = 0; from_page< pagerank.graph[i].size();from_page++){
             tmp += pagerank.pr[from_page]/pagerank.num_outgoing[from_page];
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
@@ -206,11 +216,11 @@ void Pagerank::run_pagerank(int iter){
         pagerank.message = "";
         sum_pr = 0;
         dangling_pr = 0;
-
+       // cout << "dd" << endl;
         if(step!=0) {
             // Normalize so that we start with sum equal to one   
             //double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
-            for (i = 0; i < pagerank.num_of_vertex; i++) {
+            for (i=0;i<pagerank.num_of_vertex;i++) {
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                 if (pagerank.num_outgoing[i] == 0) {
                     dangling_pr += pagerank.new_pr[i];
