@@ -33,6 +33,13 @@ int main(int argc, char* argv[]){
         myrdma.rdma_send_vector(x[0], 0);
     else
         myrdma.rdma_send_recv(0);
+
+    x[0].resize(83549,1/83549);
+
+    if(my_ip == server_ip)
+        myrdma.rdma_send_vector(x[0], 0);
+    else
+        myrdma.rdma_send_recv(0);
     /*if(argc != 3){
         cerr << argv[0] << " <MY IP> " << endl;
         exit(1);
