@@ -85,7 +85,7 @@ void myRDMA::rdma_write_with_imm(string msg, int i){
 }
 void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
-
+    myrdma.recv[i].resize(4039);
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
                         get<3>(myrdma.rdma_info[1][i]),&myrdma.recv[i], sizeof(myrdma.recv[i]));
     if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
