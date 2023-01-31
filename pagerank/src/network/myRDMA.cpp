@@ -15,11 +15,11 @@ void myRDMA::rdma_send_vector(vector<double> msg, int i){
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
     //(*myrdma.send)[i].push_back(0.321);
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), &myrdma.send, 
-                                sizeof(myrdma.send), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
-        //cerr << "send success" << endl;
-        cerr << "send failed" << endl;
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), &myrdma.send[i], 
+                                sizeof(myrdma.send[i]), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+    if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
+        cerr << "send success" << endl;
+        //cerr << "send failed" << endl;
     
 }
 void myRDMA::rdma_send(string msg, int i){
@@ -92,6 +92,9 @@ void myRDMA::rdma_send_recv(int i){
         cerr << "recv failed" << endl;
     else{
         //cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
+        for(int j=0;j<myrdma.recv[i].size();j++){
+            cout << j << ": " << myrdma.recv[i][j] << endl;
+        }
         cerr << "receive success" << endl;
     }
 }
