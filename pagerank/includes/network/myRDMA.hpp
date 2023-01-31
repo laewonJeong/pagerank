@@ -8,7 +8,7 @@
 using namespace std;
 class myRDMA{
     public:
-        void rdma_send_vector(vector<double> msg, int i);
+        void rdma_send_vector(vector<long double> msg, int i);
         void rdma_send(string msg, int i);
         void rdma_send_with_imm(string msg, int i);
         void rdma_write(string msg, int i);
@@ -31,7 +31,7 @@ class myRDMA{
                                         char send[][buf_size], char recv[][buf_size]);
         void initialize_rdma_connection_vector(const char* ip, string server[], 
                                         int number_of_server, int Port,
-                                        vector<double> *send, vector<double> *recv);
+                                        vector<long double> *send, vector<long double> *recv);
         void exit_rdma();
     private:
         std::vector<tuple<struct ibv_context*, struct ibv_pd*, 
@@ -41,8 +41,8 @@ class myRDMA{
         std::vector<pair<string,string>> qp_key;
         char (*send_buffer)[buf_size];
         char (*recv_buffer)[buf_size];
-        vector<double> send[2];
-        vector<double> recv[2];
+        vector<long double> send[2];
+        vector<long double> recv[2];
         vector<int> sock_idx;
         int connect_num;
 };
