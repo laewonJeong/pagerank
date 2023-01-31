@@ -85,20 +85,20 @@ void myRDMA::rdma_write_with_imm(string msg, int i){
 }
 void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
-    myrdma.recv[i].resize(4039);
+    //myrdma.recv[i].resize(4039);
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
                         get<3>(myrdma.rdma_info[1][i]),&myrdma.recv[i], sizeof(myrdma.recv[i]));
-    if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
-        cerr << "recv failed" << endl;
-    else{
+    //if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
+    //    cerr << "recv failed" << endl;
+    //else{
         //cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
        /* for(int j=0;j<myrdma.recv[i].size();j++){
             cout << j << ": " << myrdma.recv[i][j] << endl;
         }*/
         cerr << "receive success" << endl;
         cout << myrdma.recv[i].size() << endl;
-        cout << myrdma.recv[i][0] << endl;
-    }
+        //cout << myrdma.recv[i][0] << endl;
+    //}
 }
 
 void myRDMA::rdma_write_recv(int i){
