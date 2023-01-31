@@ -91,7 +91,7 @@ void myRDMA::rdma_write_with_imm(string msg, int i){
 }
 void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
-    vector<long double> x;
+    vector<long double> *x;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
                         get<3>(myrdma.rdma_info[1][i]), &myrdma.recv[i], myrdma.recv[i].capacity());
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
@@ -102,7 +102,7 @@ void myRDMA::rdma_send_recv(int i){
        /* for(int j=0;j<myrdma.recv[i].size();j++){
             cout << j << ": " << myrdma.recv[i][j] << endl;
         }*/
-        x = myrdma.recv[i];
+        x = &myrdma.recv[i];
         cerr << "receive success" << endl;
         cout << x.size() << endl;
         cout << x[0] << endl;
