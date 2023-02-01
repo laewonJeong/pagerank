@@ -13,13 +13,13 @@ char* change(string temp){
 void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     RDMA rdma;
     //msg[67108865] = NULL;
-    long double pr[8354];
-    cout << sizeof(pr) << endl;
+    cout << msg[0] << endl;
     myrdma.send[i] = msg;
     cout << myrdma.send[i][0] << endl;
     cout << myrdma.send[i].data() << endl;
     cout << &myrdma.send[i] << endl;
     cout << myrdma.send[i].size() << endl;
+    cout << myrdma.send[i][0] << endl;
     //(*myrdma.send)[i].push_back(0.321);
 
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
@@ -106,10 +106,11 @@ void myRDMA::rdma_send_recv(int i){
         //x = &myrdma.recv[i];
         cout.precision(numeric_limits<double>::digits10);
         cerr << "receive success" << endl;
-        cout << myrdma.recv[i].size() << endl;
+        
         cout << myrdma.recv[i][0] << endl;
         //cout << (*x).size() << endl;
         //cout << (*x)[0] << endl;
+        cout << myrdma.recv[i].size() << endl;
     //}
 }
 
