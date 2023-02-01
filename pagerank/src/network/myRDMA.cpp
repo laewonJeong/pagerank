@@ -17,11 +17,12 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     cout << sizeof(pr) << endl;
     myrdma.send[i] = msg;
     cout << myrdma.send[i][0] << endl;
-    cout << sizeof(myrdma.send[i])*myrdma.send[i].capacity() << endl;
+    cout << myrdma.send[i].data() << endl;
+    cout << &myrdma.send[i] << endl;
     cout << myrdma.send[i].size() << endl;
     //(*myrdma.send)[i].push_back(0.321);
 
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), &myrdma.send[i], 
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
                                 sizeof(myrdma.send[i].data()), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
         cerr << "send success" << endl;
@@ -305,7 +306,7 @@ void myRDMA::create_rdma_info(){
                 struct ibv_cq* completion_queue = ibv_create_cq(context, cq_size, nullptr, nullptr, 0);
                 struct ibv_qp* qp = rdma.createQueuePair(protection_domain, completion_queue);
                 struct ibv_mr *mr = rdma.registerMemoryRegion(protection_domain, 
-                                                        &myrdma.recv[i], sizeof(myrdma.recv[i].data()));
+                                                        myrdma.recv[i].data(), sizeof(myrdma.recv[i].data()));
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
                 myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
@@ -320,7 +321,7 @@ void myRDMA::create_rdma_info(){
                 struct ibv_cq* completion_queue = ibv_create_cq(context, cq_size, nullptr, nullptr, 0);
                 struct ibv_qp* qp = rdma.createQueuePair(protection_domain, completion_queue);
                 struct ibv_mr *mr = rdma.registerMemoryRegion(protection_domain, 
-                                                        &myrdma.send[i], sizeof(myrdma.send[i].data()));
+                                                        myrdma.send[i].data(), sizeof(myrdma.send[i].data()));
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
                 myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
