@@ -15,10 +15,10 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
     //(*myrdma.send)[i].push_back(0.321);
-    cout << sizeof(myrdma.send_buffer[i]) << endl;
+    //cout << sizeof(myrdma.send_buffer[i]) << endl;
 
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                myrdma.send[i].size(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                sizeof(msg[i]) * myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
         cerr << "send success" << endl;
         //cerr << "send failed" << endl;
@@ -102,7 +102,8 @@ void myRDMA::rdma_send_recv(int i){
         cout.precision(numeric_limits<double>::digits10);
         cerr << "receive success" << endl;
         
-        cout << myrdma.recv[i].back() << endl;
+        cout << myrdma.recv[i].front() << endl;
+        cout << myrdma.recv[i][1] << endl;
         //cout << (*x).size() << endl;
         //cout << (*x)[0] << endl;
         cout << myrdma.recv[i].size() << endl;
