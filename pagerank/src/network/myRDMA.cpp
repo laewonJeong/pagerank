@@ -94,7 +94,7 @@ void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
     vector<long double> *x;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
-                        get<3>(myrdma.rdma_info[1][i]), &myrdma.recv[i], sizeof(myrdma.recv[i].data()));
+                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
     //if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
     //    cerr << "recv failed" << endl;
