@@ -105,8 +105,10 @@ void myRDMA::rdma_send_recv(int i){
         }*/
         //x = &myrdma.recv[i];
         cerr << "receive success" << endl;
+        cout << myrdma.recv[i].size() << endl;
+        cout << myrdma.recv[i][0] << endl;
         //cout << (*x).size() << endl;
-        cout << (*x)[0] << endl;
+        //cout << (*x)[0] << endl;
     //}
 }
 
