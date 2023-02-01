@@ -29,6 +29,7 @@ int main(int argc, char* argv[]){
 
     x[0].resize(4039,0.000000000002648686351586);
     //cout << x[0][0] << endl;
+    x[0].push_back(980623);
     if(my_ip == server_ip)
         myrdma.rdma_send_vector(x[0], 0);
     else
