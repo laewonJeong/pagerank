@@ -27,8 +27,8 @@ int main(int argc, char* argv[]){
     myrdma.create_rdma_info();
     myrdma.send_info_change_qp();
 
-    x[0].resize(4039,0);
-    x[0][0] = 1;
+    x[0].resize(4039,1/6);
+    //x[0][0] = 1;
     if(my_ip == server_ip)
         myrdma.rdma_send_vector(x[0], 0);
     else
