@@ -110,9 +110,8 @@ void myRDMA::rdma_send_recv(int i){
         
         cout << myrdma.recv[i].capacity() << endl;
         myrdma.recv[i].shrink_to_fit();
-        
-        x = myrdma.recv[i];
-        cout << x.capacity() << endl;
+        cout << myrdma.recv[i].capacity() << endl;
+
     //}
 }
 
