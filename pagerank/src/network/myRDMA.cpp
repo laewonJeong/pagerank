@@ -354,8 +354,8 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     //myrdma.send = &send;
     //myrdma.recv = &recv;
     for(int i=0;i<number_of_server;i++){
-        myrdma.send[i].resize(10000, 1/5);
-        myrdma.recv[i].resize(10000, 0);
+        myrdma.send[i].reserve(10000);
+        myrdma.recv[i].reserve(10000);
     }
     myrdma.connect_num = number_of_server - 1;
 }
