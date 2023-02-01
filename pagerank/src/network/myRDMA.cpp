@@ -15,6 +15,7 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
     cout << myrdma.send[i][4039] << endl;
+    cout << myrdma.send[i].size() << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
 
@@ -354,8 +355,8 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     //myrdma.send = &send;
     //myrdma.recv = &recv;
     for(int i=0;i<number_of_server;i++){
-        myrdma.send[i].resize(100000);
-        myrdma.recv[i].resize(100000);
+        myrdma.send[i].reserve(100000);
+        myrdma.recv[i].reserve(100000);
     }
     myrdma.connect_num = number_of_server - 1;
 }
