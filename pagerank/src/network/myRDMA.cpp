@@ -104,14 +104,7 @@ void myRDMA::rdma_send_recv(int i){
         cout.precision(numeric_limits<double>::digits10);
         cerr << "receive success" << endl;
         
-        cout << myrdma.recv[i].front() << endl;
-        cout << myrdma.recv[i][1] << endl;
-        cout << myrdma.recv[i][4039] << endl;
-        
-        cout << myrdma.recv[i].capacity() << endl;
-        myrdma.recv[i].shrink_to_fit();
-        cout << myrdma.recv[i].capacity() << endl;
-
+    
     //}
 }
 
@@ -200,7 +193,7 @@ void myRDMA::rdma_one_to_many_recv_msg(string opcode){
     myRDMA::rdma_recv_msg(opcode);
 }
 
-void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg){
+void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg,vector<long double> msg1){
     if (opcode == "send_with_imm"){
         cerr << "rdma_send_with_imm run" <<endl;
         myRDMA::rdma_send_with_imm(msg, 0);
@@ -216,7 +209,7 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg){
     }
     else if(opcode == "send"){
         cerr << "rdma_send run" <<endl;
-        myRDMA::rdma_send(msg, 0);
+        myRDMA::rdma_send_vector(msg1, 0);
     }
     else{
         cerr << "rdma_many_to_one_send_msg opcode error" << endl;

@@ -3,6 +3,32 @@
 static std::mutex mutx;
 TCP *tcp = new TCP();
 
+string TCP::check_my_ip(){
+   struct ifaddrs * ifAddrStruct=NULL;
+   struct ifaddrs * ifa=NULL;
+   void * tmpAddrPtr=NULL;
+
+   getifaddrs(&ifAddrStruct);
+
+   for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
+      if (!ifa->ifa_addr) {
+         continue;
+      }
+      if (ifa->ifa_addr->sa_family == AF_INET) { // check it is IP4
+         // is a valid IP4 Address
+         tmpAddrPtr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+         char addressBuffer[INET_ADDRSTRLEN];
+         inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+         if(strcmp(ifa->ifa_name, "ibp2s0") == 0){
+            string str(addressBuffer);
+            if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+            return str;
+         }
+         //printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer); 
+      }
+   }
+   return "error";
+}
 void TCP::send_msg(const char* m, int ip){
    mutx.lock();
    write(tcp->clnt_socks[ip],m,strlen(m));

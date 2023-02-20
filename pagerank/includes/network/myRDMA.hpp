@@ -20,7 +20,7 @@ class myRDMA{
         void recv_t(string opcode);
         void rdma_one_to_many_send_msg(string opcode, string msg);
         void rdma_one_to_many_recv_msg(string opcode);
-        void rdma_many_to_one_send_msg(string opcode, string msg);
+        void rdma_many_to_one_send_msg(string opcode, string msg,vector<long double> msg1);
         void rdma_many_to_one_recv_msg(string opcode);
         void rdma_comm(string opcode, string msg);
         void create_rdma_info();
@@ -41,8 +41,8 @@ class myRDMA{
         std::vector<pair<string,string>> qp_key;
         char (*send_buffer)[buf_size];
         char (*recv_buffer)[buf_size];
-        vector<long double> send[2];
-        vector<long double> recv[2];
+        vector<long double> send[5];
+        vector<long double> recv[5];
         vector<int> sock_idx;
         int connect_num;
 };

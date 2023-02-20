@@ -12,8 +12,9 @@ Pagerank pagerank;
 vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
-char send_buffer[4][buf_size1];
-char recv_buffer[4][buf_size1];
+vector<long double> send_buffer[5];
+vector<long double> recv_buffer[5];
+vector<long double> real_pr;
 //string message = "";
 
 vector<string> split(string str, char Delimiter) {
@@ -157,7 +158,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     //cout << "s = " << sum <<endl;
     
 }
-void Pagerank::thread_combine_pr(int i){
+/*void Pagerank::thread_combine_pr(int i){
     string from, to;
     size_t previous, current;
 
@@ -186,12 +187,11 @@ void Pagerank::thread_combine_pr(int i){
         previous = current +1;
         current = tmp.find('\n',previous);
     }
-}
+}*/
 void Pagerank::combine_pr(){
-    //230126 thread를 시도해보자
     //vector<thread> worker;
     for(int i = 0; i < 3;i++){
-        Pagerank::thread_combine_pr(i);
+        //Pagerank::thread_combine_pr(i);
         //worker.push_back(thread(&Pagerank::thread_combine_pr,i));
     }
     /*for(int i=0;i<3;i++){
@@ -273,7 +273,7 @@ string Pagerank::max_pr(){
 
 void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port)
 {
-    myrdma1.initialize_rdma_connection(ip,server,number_of_server,Port,send_buffer,recv_buffer);
+    myrdma1.initialize_rdma_connection_vector(ip,server,number_of_server,Port,send_buffer,recv_buffer);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
     pagerank.num_of_server = number_of_server;
@@ -300,4 +300,8 @@ void Pagerank::print_pr(){
         sum += pagerank.pr[i];
     }
     cerr << "s = " <<round(sum) << endl;
+}
+
+int Pagerank::get_num_of_vertex(){
+    return pagerank.num_of_vertex;
 }

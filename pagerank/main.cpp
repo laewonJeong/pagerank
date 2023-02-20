@@ -1,40 +1,67 @@
 #include<time.h>
 #include "pagerank.hpp"
 #include "myRDMA.hpp"
+#include "tcp.hpp"
 #include <map>
 
-#define num_of_node 2
+#define num_of_node 5
 #define port 40145
 #define server_ip "192.168.1.100"
 #define iter 100000
-string node1[num_of_node] = {server_ip,"192.168.1.101"};//,"192.168.1.102","192.168.1.103"};
+string node1[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103","192.168.1.104"};//,"192.168.1.102","192.168.1.103"};
 using namespace std;
 //using namespace stdext;
+
+bool is_server(string ip){
+  if(ip == server_ip)
+    return true;
+  return false;
+}
+
 int main(int argc, char* argv[]){
-    vector<long double> x[num_of_node];
+    vector<long double> x1[num_of_node];
     vector<long double> recv[num_of_node];
-    //if(argv[1] == server_ip){
-    //    x.resize(4039,1/4039);
-    //}
-    //else{
-    //    x.resize(4039);
-    //}
-    //recv[0].resize(4039,10);
-    string my_ip(argv[1]);
-    
+    vector<long double> x;
+    Pagerank pagerank;
+    TCP tcp;
     myRDMA myrdma;
-    myrdma.initialize_rdma_connection_vector(argv[1], node1, num_of_node, port,x,recv);
+    string data_path = argv[1];
+
+    string my_ip = tcp.check_my_ip();
+    cout<<"my ip is " << my_ip << endl;
+
+    pagerank.create_graph_data(data_path);
+
+    myrdma.initialize_rdma_connection_vector(my_ip.c_str(),node1,num_of_node,port,x1,recv);
     myrdma.create_rdma_info();
     myrdma.send_info_change_qp();
+    
+    for(int i=0;i<20;i++){
+        x.push_back(i);
+    }
 
-    x[0].resize(4039,0.000000000002648686351586);
-    //cout << x[0][0] << endl;
-    x[0].push_back(980623);
-    if(my_ip == server_ip)
-        myrdma.rdma_send_vector(x[0], 0);
-    else
-        myrdma.rdma_send_recv(0);
-    cout.precision(numeric_limits<double>::digits10);
+    if(is_server(my_ip)){
+        myrdma.rdma_many_to_one_recv_msg("send");
+        for(int i=0;i<num_of_node-1;i++){
+            cout << recv[i][0] << endl;
+        }
+    }
+    else{
+        myrdma.rdma_many_to_one_send_msg("send","s",x);
+    }
+
+    /*int partition;
+    for(int i=0; i<num_of_node; i++){
+        if(my_ip == node1[num_of_node-1]){
+            int n1 = pagerank.get_num_of_vertex() - n*(num_of_node-1) + n;
+            partition=n1;
+        }
+        else{
+            partition=n;
+        }
+    }
+
+    cout << partition << endl;*/
     
     /*if(argc != 3){
         cerr << argv[0] << " <MY IP> " << endl;

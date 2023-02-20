@@ -29,7 +29,8 @@ class Pagerank{
        string max_pr();
        void init_connection(const char* ip, string server[], 
                             int number_of_server, int Port);
-       void print_pr(); 
+       void print_pr();
+       int get_num_of_vertex(); 
     private:
         vector<vector<size_t>> graph;
         unordered_map<size_t, vector<size_t>> graph1;
