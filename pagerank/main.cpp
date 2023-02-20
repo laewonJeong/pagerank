@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
     else{
         myrdma.rdma_many_to_one_send_msg("send","s",x);
     }
-
+    x.clear();
     for(int i=0;i<20;i++){
         x.push_back(i*2);
     }
