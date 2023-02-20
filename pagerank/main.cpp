@@ -42,13 +42,22 @@ int main(int argc, char* argv[]){
 
     if(is_server(my_ip)){
         myrdma.rdma_many_to_one_recv_msg("send");
-        for(int i=0;i<num_of_node-1;i++){
-            cout << recv[i][0] << endl;
-        }
     }
     else{
         myrdma.rdma_many_to_one_send_msg("send","s",x);
     }
+
+    for(int i=0;i<20;i++){
+        x.push_back(i*2);
+    }
+
+    if(is_server(my_ip)){
+        myrdma.rdma_many_to_one_recv_msg("send");
+    }
+    else{
+        myrdma.rdma_many_to_one_send_msg("send","s",x);
+    }
+
 
     /*int partition;
     for(int i=0; i<num_of_node; i++){

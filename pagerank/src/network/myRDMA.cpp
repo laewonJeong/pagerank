@@ -14,7 +14,7 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     RDMA rdma;
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
-    cout << myrdma.send[i][4039] << endl;
+    //cout << myrdma.send[i][4039] << endl;
     cout << myrdma.send[i].size() << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
@@ -89,7 +89,7 @@ void myRDMA::rdma_write_with_imm(string msg, int i){
 }
 void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
-    vector<long double> x;
+    vector<long double> x1;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
                         get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), myrdma.recv[i].capacity());//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
@@ -97,9 +97,11 @@ void myRDMA::rdma_send_recv(int i){
     //    cerr << "recv failed" << endl;
     //else{
         //cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
-       /* for(int j=0;j<myrdma.recv[i].size();j++){
-            cout << j << ": " << myrdma.recv[i][j] << endl;
-        }*/
+        
+        
+        //for(int j=0;j<20;j++){
+        //    cout << j << ": " << myrdma.recv[i][j] << endl;
+        //}
         //x = &myrdma.recv[i];
         cout.precision(numeric_limits<double>::digits10);
         cerr << "receive success" << endl;
@@ -218,6 +220,12 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg,vector<long dou
 }
 void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myRDMA::recv_t(opcode);
+    myrdma.aaa.clear();
+    for(int i=0;i<4;i++){
+        vector<long double> x = myrdma.recv[i];
+        myrdma.aaa.insert(myrdma.aaa.end(),x.begin(),x.begin()+20);
+    }
+    for(const auto& j: myrdma.aaa) cout << j << " ";
 }
 
 void myRDMA::send_info_change_qp(){
