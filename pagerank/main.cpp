@@ -37,8 +37,16 @@ int main(int argc, char* argv[]){
     cout << "--------------------------------------------------------" << endl;
     
     pagerank.initial_pagerank_value();
+    struct timespec begin, end ;
+    clock_gettime(CLOCK_MONOTONIC, &begin);
     pagerank.run_pagerank(iter);
-    pagerank.print_pr();
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    long double time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+    cout << "Done." << endl;
+    cout << "-------------------------------------" <<endl;
+    printf("수행시간: %Lfs.\n", time);
+
+    //pagerank.print_pr();
     /*int n = num_of_vertex/(num_of_node-1);
     int partition;
     for(int i=1; i<num_of_node; i++){
