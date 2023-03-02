@@ -287,7 +287,7 @@ void Pagerank::print_pr(){
     double sum = 0;
     double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     cout.precision(numeric_limits<double>::digits10);
-    for(i=0;i<pagerank.num_of_vertex;i++){
+    for(i=pagerank.num_of_vertex-200;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
         sum += pagerank.pr[i];
     }
