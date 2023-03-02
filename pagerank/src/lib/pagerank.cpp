@@ -162,6 +162,9 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
 }
 void Pagerank::run_pagerank(int iter){
     double prev_diff =0;
+    vector<long double> prev_pr;
+    long double prev_sum;
+    long double cur_sum;
     int step;
     size_t i;
     double sum_pr; // sum of current pagerank vector elements
@@ -188,16 +191,19 @@ void Pagerank::run_pagerank(int iter){
         //cout << "start calc" << endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
+        prev_pr = pagerank.pr;
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
+        prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
+        cur_sum = accumulate(pagerank.pr.begin(),pagerank.pr.end(),0.0);
         //cout << "end calc" << endl;
         //cout << pagerank.message.size()<<endl;
-
+        pagerank.diff = fabs(cur_sum - prev_sum);
         //bool z = fabs(pagerank.diff - prev_diff) < 0.0000001;
 
         cout.precision(numeric_limits<double>::digits10);
-        //cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
+        cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
 
-        if(step == 32){//pagerank.diff < 0.00001 || z){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;
