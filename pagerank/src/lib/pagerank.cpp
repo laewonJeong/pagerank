@@ -191,19 +191,19 @@ void Pagerank::run_pagerank(int iter){
         //cout << "start calc" << endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
-        prev_pr = pagerank.pr;
+        //prev_pr = pagerank.pr;
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
-        prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
-        cur_sum = accumulate(pagerank.pr.begin(),pagerank.pr.end(),0.0);
+        //prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
+        //cur_sum = accumulate(pagerank.pr.begin(),pagerank.pr.end(),0.0);
         //cout << "end calc" << endl;
         //cout << pagerank.message.size()<<endl;
-        pagerank.diff = fabs(cur_sum - prev_sum);
+        //pagerank.diff = fabs(cur_sum - prev_sum);
         //bool z = fabs(pagerank.diff - prev_diff) < 0.0000001;
 
         cout.precision(numeric_limits<double>::digits10);
         cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
 
-        if(pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(step == 61){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;
@@ -264,7 +264,9 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
 }
 void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     vector<long double> pagerank1;
+    
     if(pagerank.my_ip == "192.168.1.100"){
+        pagerank.pr = send_buffer[0];
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_send_pagerank(send_buffer[0],i);
     }
