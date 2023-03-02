@@ -41,8 +41,8 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
 
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
                                 sizeof(myrdma.send[i])*myrdma.num_of_vertex, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
-        cerr << "send success" << endl;
+    rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
+        //cerr << "send success" << endl;
         //cerr << "send failed" << endl;
     
 }
@@ -401,8 +401,8 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     }
     cout << partition << " " << partition1 << endl;
     for(int i=0;i<number_of_server-1;i++){
-        myrdma.send[i].resize(num_of_vertex*9);
-        myrdma.recv[i].resize(num_of_vertex*9);
+        myrdma.send[i].resize(num_of_vertex);
+        myrdma.recv[i].resize(num_of_vertex);
     }
     /*if(strcmp(ip,change(server[0])) == 0){
         for(int i=0;i<number_of_server-1;i++){

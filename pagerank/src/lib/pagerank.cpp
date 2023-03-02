@@ -208,7 +208,7 @@ void Pagerank::run_pagerank(int iter){
         cout.precision(numeric_limits<double>::digits10);
         cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
 
-        if(pagerank.diff < 0.00001 && step != 0){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;
@@ -278,7 +278,6 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     else{
         myrdma1.rdma_recv_pagerank(0);
         pagerank.pr = recv_buffer[0];
-        cout << endl;
     }
 }
 
