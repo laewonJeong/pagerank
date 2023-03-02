@@ -12,10 +12,10 @@ char* change(string temp){
 }
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     RDMA rdma;
-    myrdma.srecv[i] = myrdma.srecv[0];
-    cout << myrdma.srecv[0].size() << endl;
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[2][i]), get<5>(myrdma.rdma_info[2][i]), myrdma.srecv[i].data(), 
-                                myrdma.srecv[i].capacity(), myrdma.qp_key1[i].first, myrdma.qp_key1[i].second);
+    myrdma.send[i] = myrdma.send[0];
+    cout << myrdma.send[i].size() << endl;
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[2][i]), get<5>(myrdma.rdma_info[2][i]), myrdma.send[i].data(), 
+                                myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[2][i])))
         cerr << "send success" << endl;
 }
@@ -23,13 +23,14 @@ void myRDMA::rdma_recv_pagerank(int i){
     RDMA rdma;
     vector<long double> x1;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[2][i]), get<5>(myrdma.rdma_info[2][i]), 
-                        get<3>(myrdma.rdma_info[2][i]), myrdma.srecv[i].data(), myrdma.srecv[i].capacity());//sizeof(myrdma.recv[i].data()));
+                        get<3>(myrdma.rdma_info[2][i]), myrdma.recv[i].data(), myrdma.recv[i].capacity());//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[2][i]));
    
         //cout.precision(numeric_limits<double>::digits10);
         for(int j =0 ;j<80;j++){
             //cout << srecv[i][j] << " ";
         }
+        cout << recv[i][0] << endl;
         cout << endl;
     
     //}
@@ -244,12 +245,12 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg,vector<long dou
 }
 void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myRDMA::recv_t(opcode);
-    myrdma.srecv[0].clear();
+    myrdma.send[0].clear();
     for(int i=0;i<4;i++){
         vector<long double> x = myrdma.recv[i];
-        myrdma.srecv[0].insert(myrdma.srecv[0].end(),x.begin(),x.begin()+20);
+        myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+20);
     }
-    for(const auto& j: myrdma.srecv[0]) cout << j << " ";
+    for(const auto& j: myrdma.send[0]) cout << j << " ";
     cout << endl;
 }
 
