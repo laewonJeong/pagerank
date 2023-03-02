@@ -385,8 +385,8 @@ void myRDMA::initialize_rdma_connection(const char* ip, string server[], int num
 void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], int number_of_server, int Port, vector<long double> *send, vector<long double> *recv, int num_of_vertex){
     TCP tcp;
     tcp.connect_tcp(ip, server, number_of_server, Port);
-    //myrdma.send = &send;
-    //myrdma.recv = &recv;
+    myrdma.send = &send[0];
+    myrdma.recv = &recv[0];
     for(int i=0;i<number_of_server;i++){
         myrdma.send[i].resize(100000);
         myrdma.recv[i].resize(100000);

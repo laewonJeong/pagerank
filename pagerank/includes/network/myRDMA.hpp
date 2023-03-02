@@ -44,8 +44,8 @@ class myRDMA{
         std::vector<pair<string,string>> qp_key1;
         char (*send_buffer)[buf_size];
         char (*recv_buffer)[buf_size];
-        vector<long double> send[5];
-        vector<long double> recv[5];
+        vector<long double> *send;
+        vector<long double> *recv;
         vector<long double> srecv[5];
         vector<long double> aaa;
         vector<int> sock_idx;
