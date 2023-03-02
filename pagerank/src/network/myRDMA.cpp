@@ -15,8 +15,8 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     myrdma.send[i] = msg;
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
                                 myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
-        cerr << "send success" << endl;
+    rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
+        //cerr << "send success" << endl;
 }
 void myRDMA::rdma_recv_pagerank(int i){
     RDMA rdma;
@@ -33,7 +33,6 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
     //cout << myrdma.send[i][4039] << endl;
-    cout << myrdma.send[i].size() << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
 
@@ -121,8 +120,8 @@ void myRDMA::rdma_send_recv(int i){
         //    cout << j << ": " << myrdma.recv[i][j] << endl;
         //}
         //x = &myrdma.recv[i];
-        cout.precision(numeric_limits<double>::digits10);
-        cerr << "receive success" << endl;
+        //cout.precision(numeric_limits<double>::digits10);
+        //cerr << "receive success" << endl;
         
     
     //}
@@ -228,7 +227,6 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg,vector<long dou
         myRDMA::rdma_write_with_imm(msg, 0);
     }
     else if(opcode == "send"){
-        cerr << "rdma_send run" <<endl;
         myRDMA::rdma_send_vector(msg1, 0);
     }
     else{
@@ -378,9 +376,55 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     tcp.connect_tcp(ip, server, number_of_server, Port);
     myrdma.send = &send[0];
     myrdma.recv = &recv[0];
-    for(int i=0;i<number_of_server;i++){
-        myrdma.send[i].resize(num_of_vertex);
-        myrdma.recv[i].resize(num_of_vertex);
+
+    int n = num_of_vertex/(number_of_server-1);
+    int partition[number_of_server-1];
+
+    for(int i=0; i<number_of_server-1; i++){
+        if(i == number_of_server-2){
+            int n1 = num_of_vertex - n*(number_of_server-2);
+            partition[i]=n1;
+        }
+        else{
+            partition[i]=n;
+        }
+    }
+    if(strcmp(ip,change(server[0])) == 0){
+        for(int i=0;i<number_of_server-1;i++){
+            myrdma.send[i].resize(num_of_vertex);
+            myrdma.recv[i].resize(partition[i]);
+        }
+    }
+    else if (strcmp(ip,change(server[number_of_server])) == 0){
+        for(int i=0;i<number_of_server-1;i++){
+            if(i == 0){
+                myrdma.send[i].resize(num_of_vertex);
+                myrdma.recv[i].resize(num_of_vertex);
+            }
+            else{
+                myrdma.send[i].resize(num_of_vertex - n*(number_of_server-2));
+                myrdma.recv[i].resize(n);
+            }
+        }
+    }
+    else{
+         for(int i=0;i<number_of_server-1;i++){
+            if(i == 0){
+                myrdma.send[i].resize(num_of_vertex);
+                myrdma.recv[i].resize(num_of_vertex);
+            }
+            else if(i != number_of_server-2){
+                myrdma.send[i].resize(n);
+                myrdma.recv[i].resize(n);
+            }
+            else {
+                myrdma.send[i].resize(num_of_vertex - n*(number_of_server-2));
+                myrdma.recv[i].resize(num_of_vertex - n*(number_of_server-2));
+            }
+        }
+    }
+    for(int i=0;i<number_of_server-1;i++){
+        cout << myrdma.send[i].size() << " " << myrdma.recv[i].size() << endl;
     }
     myrdma.connect_num = number_of_server - 1;
 }
