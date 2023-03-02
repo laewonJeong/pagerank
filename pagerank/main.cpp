@@ -50,7 +50,8 @@ int main(int argc, char* argv[]){
     }
     
     if(is_server(my_ip)){
-        myrdma.rdma_send_pagerank(x,0);
+        for(int i=0;i<num_of_node-1;i++)
+            myrdma.rdma_send_pagerank(x,i);
     }
     else{
         myrdma.rdma_recv_pagerank(0);
