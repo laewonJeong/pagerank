@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
         }
     }
     for(int i=0;i<partition;i++){
-        x.push_back(0.000564813548*i/num_of_vertex);
+        x.push_back(i);
     }
     pagerank.gather_pagerank("send",0,x);
     cout << "Done gather" << endl;
