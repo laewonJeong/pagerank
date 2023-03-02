@@ -46,6 +46,7 @@ int main(int argc, char* argv[]){
             partition=n;
         }
     }
+    cout << partition << endl;
     for(int i=0;i<partition;i++){
         x.push_back(i);
     }
