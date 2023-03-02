@@ -175,8 +175,7 @@ void Pagerank::run_pagerank(int iter){
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         
-         if(step!=0) {
-            pagerank.message = "";
+        if(step!=0) {
             sum_pr = 0;
             dangling_pr = 0;
             pagerank.diff = 0;
@@ -191,7 +190,7 @@ void Pagerank::run_pagerank(int iter){
                         dangling_pr += pagerank.pr[i];
                     }   
                 }
-            }
+        }
         if(pagerank.my_ip != "192.168.1.100"){
            
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
