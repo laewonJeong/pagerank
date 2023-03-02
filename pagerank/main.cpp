@@ -44,8 +44,8 @@ int main(int argc, char* argv[]){
     pagerank.scatter_pagerank("send",0,x);
     cout << "Done scatter" << endl;
 
-
-    /*int partition;
+    int n = num_of_vertex/(num_of_node);
+    int partition;
     for(int i=0; i<num_of_node; i++){
         if(my_ip == node1[num_of_node-1]){
             int n1 = pagerank.get_num_of_vertex() - n*(num_of_node-1) + n;
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]){
         }
     }
 
-    cout << partition << endl;*/
+    cout << partition << endl;
     
     /*if(argc != 3){
         cerr << argv[0] << " <MY IP> " << endl;
