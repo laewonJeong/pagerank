@@ -36,6 +36,7 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
     cout << myrdma.send[i].size() << endl;
+    cout << myrdma.send[i][partition-1] << endl;
     //cout << myrdma.send[i][4039] << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;

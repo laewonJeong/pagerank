@@ -50,6 +50,7 @@ int main(int argc, char* argv[]){
     for(int i=0;i<partition;i++){
         x.push_back(i);
     }
+    cout << x[partition-1] << endl;
     pagerank.gather_pagerank("send",0,x);
     cout << "Done gather" << endl;
     pagerank.scatter_pagerank("send",0,x);
