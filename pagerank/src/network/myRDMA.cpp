@@ -394,6 +394,7 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
             partition=n;
         }
     }
+    cout << partition << " " << partition1 << endl;
     for(int i=0;i<number_of_server-1;i++){
         myrdma.send[i].resize(num_of_vertex);
         myrdma.recv[i].resize(num_of_vertex);
