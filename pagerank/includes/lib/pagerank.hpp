@@ -28,7 +28,7 @@ class Pagerank{
        void run_pagerank(int iter);
        string max_pr();
        void init_connection(const char* ip, string server[], 
-                            int number_of_server, int Port);
+                            int number_of_server, int Port, int num_of_vertex);
        void print_pr();
        int get_num_of_vertex(); 
     private:

@@ -31,18 +31,19 @@ class myRDMA{
                                         char send[][buf_size], char recv[][buf_size]);
         void initialize_rdma_connection_vector(const char* ip, string server[], 
                                         int number_of_server, int Port,
-                                        vector<long double> *send, vector<long double> *recv);
+                                        vector<long double> *send, vector<long double> *recv, int num_of_vertex);
         void exit_rdma();
     private:
         std::vector<tuple<struct ibv_context*, struct ibv_pd*, 
                         int, struct ibv_cq*,
                         struct ibv_qp*, struct ibv_mr*,
-                        uint16_t, uint32_t>> rdma_info[2];
+                        uint16_t, uint32_t>> rdma_info[3];
         std::vector<pair<string,string>> qp_key;
         char (*send_buffer)[buf_size];
         char (*recv_buffer)[buf_size];
         vector<long double> send[5];
         vector<long double> recv[5];
+        vector<long double> srecv[5];
         vector<long double> aaa;
         vector<int> sock_idx;
         int connect_num;
