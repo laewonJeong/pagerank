@@ -35,15 +35,6 @@ int main(int argc, char* argv[]){
     pagerank.init_connection(my_ip.c_str(),node1,num_of_node,port,num_of_vertex);
     
     cout << "--------------------------------------------------------" << endl;
-    for(int i=0;i<20;i++){
-        x.push_back(i);
-    }
-
-    pagerank.gather_pagerank("send",0,x);
-    cout << "Done gather" << endl;
-    pagerank.scatter_pagerank("send",0,x);
-    cout << "Done scatter" << endl;
-
     int n = num_of_vertex/(num_of_node);
     int partition;
     for(int i=0; i<num_of_node; i++){
@@ -55,8 +46,19 @@ int main(int argc, char* argv[]){
             partition=n;
         }
     }
+    for(int i=0;i<partition;i++){
+        x.push_back(0.000564813548*i/num_of_vertex);
+    }
+    pagerank.gather_pagerank("send",0,x);
+    cout << "Done gather" << endl;
+    pagerank.scatter_pagerank("send",0,x);
+    cout << "Done scatter" << endl;
 
-    cout << partition << endl;
+    
+    
+
+    
+
     
     /*if(argc != 3){
         cerr << argv[0] << " <MY IP> " << endl;

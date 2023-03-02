@@ -309,11 +309,8 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     else{
         myrdma1.rdma_recv_pagerank(0);
         pagerank.pr = recv_buffer[0];
-        for(int h = 0; h < pagerank1.size(); h++){
-            cout << pagerank1[h] << " ";
-            if(pagerank1[h] == 0 && pagerank1[h+1] == 0){
-                break;
-            }
+        for(int h = 0; h < pagerank.num_of_vertex; h++){
+            cout << "pr[" <<h<<"]: " << pagerank.pr[h] << endl;
         }
         cout << endl;
     }

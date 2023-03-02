@@ -4,6 +4,8 @@
 
 static std::mutex mutx;
 myRDMA myrdma;
+int partition;
+int partition1;
 
 char* change(string temp){
   static char stc[buf_size];
@@ -239,7 +241,10 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myrdma.send[0].clear();
     for(int i=0;i<4;i++){
         vector<long double> x = myrdma.recv[i];
-        myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+20);
+        if(i == 3)
+            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
+        else
+            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition);
     }
 }
 
@@ -378,18 +383,21 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     myrdma.recv = &recv[0];
 
     int n = num_of_vertex/(number_of_server-1);
-    int partition[number_of_server-1];
 
     for(int i=0; i<number_of_server-1; i++){
         if(i == number_of_server-2){
             int n1 = num_of_vertex - n*(number_of_server-2);
-            partition[i]=n1;
+            partition1=n1;
         }
         else{
-            partition[i]=n;
+            partition=n;
         }
     }
-    if(strcmp(ip,change(server[0])) == 0){
+    for(int i=0;i<number_of_server-1;i++){
+        myrdma.send[i].resize(num_of_vertex);
+        myrdma.recv[i].resize(num_of_vertex);
+    }
+    /*if(strcmp(ip,change(server[0])) == 0){
         for(int i=0;i<number_of_server-1;i++){
             myrdma.send[i].resize(num_of_vertex);
             myrdma.recv[i].resize(partition[i]);
@@ -425,7 +433,7 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     }
     for(int i=0;i<number_of_server-1;i++){
         cout << myrdma.send[i].size() << " " << myrdma.recv[i].size() << endl;
-    }
+    }*/
     myrdma.connect_num = number_of_server - 1;
 }
 void myRDMA::exit_rdma(){
