@@ -17,7 +17,7 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     myrdma.send[i] = msg;
     cout << myrdma.send[i].size() << endl;
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                myrdma.send[i].size(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
         //cerr << "send success" << endl;
 }
@@ -42,7 +42,7 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
 
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                myrdma.send[i].size(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
         cerr << "send success" << endl;
         //cerr << "send failed" << endl;
@@ -245,22 +245,22 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     
     for(int i=0;i<4;i++){
         vector<long double> x = myrdma.recv[i];
-        
+        cout <<  "============" << i << "==========" << endl;
         for(int j=0;j<1009;j++){
-            if(myrdma.recv[i][j] == 0.0)
+            if(myrdma.recv[i][j] == 0.0 && myrdma.recv[i][j+1] ==0.0)
                 break;
-            cout <<  "============ << i << ==========" << endl;
+            
             cout << myrdma.recv[i][j] << endl;
         }
         if(i == 3)
-            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
+            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+252);
         else
-            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition);
+            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+252);
 
     }
-    for(int i=0;i<4039;i++){
+    /*for(int i=0;i<252*4;i++){
         cout << myrdma.send[0][i] << endl;
-    }
+    }*/
 }
 
 void myRDMA::send_info_change_qp(){
