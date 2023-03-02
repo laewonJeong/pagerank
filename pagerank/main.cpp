@@ -55,6 +55,9 @@ int main(int argc, char* argv[]){
     }
     else{
         myrdma.rdma_recv_pagerank(0);
+        for(int j =0 ;j<80;j++){
+            cout << recv[0][j] << " ";
+        }
     }
 
 
