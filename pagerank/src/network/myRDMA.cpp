@@ -245,6 +245,7 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
             myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
         else
             myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition);
+
     }
 }
 
@@ -384,9 +385,9 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
 
     int n = num_of_vertex/(number_of_server-1);
 
-    for(int i=0; i<number_of_server-1; i++){
-        if(i == number_of_server-2){
-            int n1 = num_of_vertex - n*(number_of_server-2);
+    for(int i=1; i<number_of_server; i++){
+        if(i == number_of_server-1){
+            int n1 = num_of_vertex - n*(number_of_server-1);
             partition1=n1;
         }
         else{

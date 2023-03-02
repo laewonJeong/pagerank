@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
     cout << "--------------------------------------------------------" << endl;
     int n = num_of_vertex/(num_of_node);
     int partition;
-    for(int i=0; i<num_of_node; i++){
+    for(int i=1; i<num_of_node; i++){
         if(my_ip == node1[num_of_node-1]){
             int n1 = num_of_vertex - n*(num_of_node-1);
             partition=n1;
