@@ -27,8 +27,10 @@ void myRDMA::rdma_recv_pagerank(int i){
     rdma.pollCompletion(get<3>(myrdma.rdma_info[2][i]));
    
         cout.precision(numeric_limits<double>::digits10);
-        cerr << "receive success" << endl;
-        cerr << myrdma.srecv[i].size() << endl;
+        for(int j =0 ;i<80;j++){
+            cout << srecv[i][j] << " ";
+        }
+        cout << endl;
     
     //}
 }
