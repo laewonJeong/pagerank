@@ -18,7 +18,7 @@
 using namespace std;
 class Pagerank{
     public:
-       void create_graph_data(string path);
+       void create_graph_data(string path, string del);
        void initial_pagerank_value();
        static void calc_pagerank_value(int start, int end, double x, double y);
        static void thread_calc_pr(int index, double x, double y);

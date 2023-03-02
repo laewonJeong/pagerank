@@ -62,7 +62,7 @@ bool Pagerank::add_arc(size_t from, size_t to) {
 
     return ret;
 }
-void Pagerank::create_graph_data(string path){
+void Pagerank::create_graph_data(string path, string del){
     cout << "Creating graph about  "<< path<<"..."  <<endl;
     pagerank.num_of_vertex = num_of_vertex;
     istream *infile;
@@ -74,7 +74,7 @@ void Pagerank::create_graph_data(string path){
 	if(infile){
         while(getline(*infile, line)) {
             string from, to;
-            size_t pos = line.find(" ");
+            size_t pos = line.find(del);
             from = line.substr(0,pos);
             to = line.substr(pos+1);
             /*if(pagerank.pr1.find(from) == pagerank.pr1.end()){

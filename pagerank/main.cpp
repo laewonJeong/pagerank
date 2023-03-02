@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
     string my_ip = tcp.check_my_ip();
     cout<<"my ip is " << my_ip << endl;
 
-    pagerank.create_graph_data(data_path);
+    pagerank.create_graph_data(data_path, argv[2]);
     int num_of_vertex = pagerank.get_num_of_vertex();
 
     pagerank.init_connection(my_ip.c_str(),node1,num_of_node,port,num_of_vertex);
