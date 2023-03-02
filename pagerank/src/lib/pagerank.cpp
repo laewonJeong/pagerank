@@ -74,7 +74,7 @@ void Pagerank::create_graph_data(string path){
 	if(infile){
         while(getline(*infile, line)) {
             string from, to;
-            size_t pos = line.find(" ");
+            size_t pos = line.find("\t");
             from = line.substr(0,pos);
             to = line.substr(pos+1);
             /*if(pagerank.pr1.find(from) == pagerank.pr1.end()){
