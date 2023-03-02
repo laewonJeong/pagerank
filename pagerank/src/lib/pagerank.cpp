@@ -292,6 +292,7 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
 }
 void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
+    vector<long double> pagerank1;
     if(pagerank.my_ip == "192.168.1.100"){
         myrdma1.rdma_many_to_one_recv_msg("send");
     }
@@ -305,7 +306,8 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
     }
     else{
         myrdma1.rdma_recv_pagerank(0);
-        for(int h = 0; h < 4; h++)
+        pagerank1 = recv_buffer[0];
+        for(int h = 0; h < pagerank1.size(); h++)
             cout << recv_buffer[0][h] << " ";
         cout << endl;
     }
