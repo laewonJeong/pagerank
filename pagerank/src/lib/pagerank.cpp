@@ -174,24 +174,25 @@ void Pagerank::run_pagerank(int iter){
     cout << "progressing..." << endl;
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
-        if(pagerank.my_ip != "192.168.1.100"){
+         if(step!=0) {
             pagerank.message = "";
             sum_pr = 0;
             dangling_pr = 0;
             // cout << "dd" << endl;
-            if(step!=0) {
-            // Normalize so that we start with sum equal to one   
+           
+            //cout << "start calc" << endl;// Normalize so that we start with sum equal to one   
             //double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
                 for (i=0;i<pagerank.num_of_vertex;i++) {
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
-                    pagerank.diff = fabs(prev_pr[i] - pagerank.pr[i]);
+                    pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
                     if (pagerank.num_outgoing[i] == 0) {
                         dangling_pr += pagerank.pr[i];
                     }   
                 }
-        }
-        //cout << "start calc" << endl;
-        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
+            }
+        if(pagerank.my_ip != "192.168.1.100"){
+           
+            Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         }
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
         prev_pr = pagerank.pr;
