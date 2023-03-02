@@ -40,7 +40,9 @@ int main(int argc, char* argv[]){
     }
 
     pagerank.gather_pagerank("send",0,x);
-    
+    cout << "Done gather" << endl;
+    pagerank.scatter_pagerank("send",0,x);
+    cout << "Done scatter" << endl;
 
 
     /*int partition;

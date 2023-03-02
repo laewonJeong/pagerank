@@ -243,8 +243,6 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
         vector<long double> x = myrdma.recv[i];
         myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+20);
     }
-    for(const auto& j: myrdma.send[0]) cout << j << " ";
-    cout << endl;
 }
 
 void myRDMA::send_info_change_qp(){

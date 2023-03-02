@@ -27,6 +27,7 @@ class Pagerank{
        void send_recv_pagerank_value(int start, int end);
        void run_pagerank(int iter);
        void gather_pagerank(string opcode, int i, vector<long double> pr);
+       void scatter_pagerank(string opcode, int i, vector<long double> pr);
        string max_pr();
        void init_connection(const char* ip, string server[], 
                             int number_of_server, int Port, int num_of_vertex);
