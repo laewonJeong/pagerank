@@ -17,14 +17,14 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     myrdma.send[i] = msg;
     cout << myrdma.send[i].size() << endl;
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                myrdma.send[i].capacity()*5, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
         //cerr << "send success" << endl;
 }
 void myRDMA::rdma_recv_pagerank(int i){
     RDMA rdma;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
-                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), myrdma.recv[i].capacity()*5);//sizeof(myrdma.recv[i].data()));
+                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), myrdma.recv[i].capacity());//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
    
         //cout.precision(numeric_limits<double>::digits10);
@@ -42,7 +42,7 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
 
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                myrdma.send[i].capacity()*5, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
         cerr << "send success" << endl;
         //cerr << "send failed" << endl;
