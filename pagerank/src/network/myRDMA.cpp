@@ -28,9 +28,9 @@ void myRDMA::rdma_recv_pagerank(int i){
    
         //cout.precision(numeric_limits<double>::digits10);
         for(int j =0 ;j<80;j++){
-            //cout << srecv[i][j] << " ";
+            cout << myrdma.recv[i][j] << " ";
         }
-        cout << recv[i][0] << endl;
+       
         cout << endl;
     
     //}
