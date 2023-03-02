@@ -24,7 +24,6 @@ int main(int argc, char* argv[]){
     vector<long double> x;
     Pagerank pagerank;
     TCP tcp;
-    myRDMA myrdma;
     string data_path = argv[1];
  
     string my_ip = tcp.check_my_ip();
@@ -33,32 +32,15 @@ int main(int argc, char* argv[]){
     pagerank.create_graph_data(data_path);
     int num_of_vertex = pagerank.get_num_of_vertex();
 
-
-    myrdma.initialize_rdma_connection_vector(my_ip.c_str(),node1,num_of_node,port,x1,recv,num_of_vertex);
-    myrdma.create_rdma_info();
-    myrdma.send_info_change_qp();
+    pagerank.init_connection(my_ip.c_str(),node1,num_of_node,port,num_of_vertex);
+    
     cout << "--------------------------------------------------------" << endl;
     for(int i=0;i<20;i++){
         x.push_back(i);
     }
 
-    if(is_server(my_ip)){
-        myrdma.rdma_many_to_one_recv_msg("send");
-    }
-    else{
-        myrdma.rdma_many_to_one_send_msg("send","s",x);
-    }
+    pagerank.gather_pagerank("send",0,x);
     
-    if(is_server(my_ip)){
-        for(int i=0;i<num_of_node-1;i++)
-            myrdma.rdma_send_pagerank(x,i);
-    }
-    else{
-        myrdma.rdma_recv_pagerank(0);
-        for(int j =0 ;j<80;j++){
-            cout << recv[0][j] << " ";
-        }
-    }
 
 
     /*int partition;

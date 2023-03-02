@@ -12,8 +12,7 @@ char* change(string temp){
 }
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     RDMA rdma;
-    myrdma.send[i] = myrdma.send[0];
-    cout << myrdma.send[i].size() << endl;
+    myrdma.send[i] = msg;
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
                                 myrdma.send[i].capacity(), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
@@ -21,14 +20,11 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
 }
 void myRDMA::rdma_recv_pagerank(int i){
     RDMA rdma;
-    vector<long double> x1;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
                         get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), myrdma.recv[i].capacity());//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
    
         //cout.precision(numeric_limits<double>::digits10);
-       
-        cout << endl;
     
     //}
 }
@@ -385,8 +381,8 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     myrdma.send = &send[0];
     myrdma.recv = &recv[0];
     for(int i=0;i<number_of_server;i++){
-        myrdma.send[i].resize(100000);
-        myrdma.recv[i].resize(100000);
+        myrdma.send[i].resize(num_of_vertex);
+        myrdma.recv[i].resize(num_of_vertex);
     }
     myrdma.connect_num = number_of_server - 1;
 }

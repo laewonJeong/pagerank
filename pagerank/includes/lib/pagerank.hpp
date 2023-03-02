@@ -26,6 +26,7 @@ class Pagerank{
        static void thread_combine_pr(int i);
        void send_recv_pagerank_value(int start, int end);
        void run_pagerank(int iter);
+       void gather_pagerank(string opcode, int i, vector<long double> pr);
        string max_pr();
        void init_connection(const char* ip, string server[], 
                             int number_of_server, int Port, int num_of_vertex);
@@ -40,6 +41,7 @@ class Pagerank{
         vector<long double> pr;
         vector<long double> new_pr;
         vector<long double> my_pr;
+        string my_ip;
         int num_of_vertex;
         int num_of_server;
         int start1;
