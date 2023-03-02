@@ -170,15 +170,16 @@ void Pagerank::run_pagerank(int iter){
     double sum_pr; // sum of current pagerank vector elements
     double dangling_pr; // sum of current pagerank vector elements for dangling
     //size_t num_rows = pagerank.graph.size();
-    
+    pagerank.diff = 1;
     cout << "progressing..." << endl;
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
-        pagerank.diff = 0;
+        
          if(step!=0) {
             pagerank.message = "";
             sum_pr = 0;
             dangling_pr = 0;
+            pagerank.diff = 0;
             // cout << "dd" << endl;
            
             //cout << "start calc" << endl;// Normalize so that we start with sum equal to one   
