@@ -191,10 +191,10 @@ void Pagerank::run_pagerank(int iter){
                     }   
                 }
         }
-        if(pagerank.my_ip != "192.168.1.100"){
+        //if(pagerank.my_ip != "192.168.1.100"){
            
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
-        }
+        //}
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
         prev_pr = pagerank.pr;
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
