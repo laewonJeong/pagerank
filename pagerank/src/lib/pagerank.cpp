@@ -280,10 +280,10 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     pagerank.my_ip = str_ip; 
     pagerank.num_of_server = number_of_server;
     pagerank.diff = 1;
-    for(int i=0;i<number_of_server;i++){
-        if(ip == server[i]){
-            pagerank.start1 = pagerank.num_of_vertex/number_of_server*i;
-            pagerank.end1 = pagerank.start1 + pagerank.num_of_vertex/number_of_server;
+    for(int i=1;i<number_of_server;i++){
+        if(ip == server[1]){
+            pagerank.start1 = pagerank.num_of_vertex/(number_of_server-1)*i;
+            pagerank.end1 = pagerank.start1 + pagerank.num_of_vertex/(number_of_server-1);
         }
         if(ip == server[number_of_server-1]){
             pagerank.end1 = pagerank.num_of_vertex;

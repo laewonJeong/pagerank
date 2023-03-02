@@ -39,7 +39,7 @@ int main(int argc, char* argv[]){
     int partition;
     for(int i=1; i<num_of_node; i++){
         if(my_ip == node1[num_of_node-1]){
-            int n1 = num_of_vertex - n*(num_of_node-1);
+            int n1 = num_of_vertex - n*(num_of_node-2);
             partition=n1;
         }
         else{
