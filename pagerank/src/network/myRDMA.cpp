@@ -15,16 +15,15 @@ char* change(string temp){
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     RDMA rdma;
     myrdma.send[i] = msg;
-    cout << myrdma.send[i].size() << endl;
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                sizeof(myrdma.send[i])*4039, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                sizeof(myrdma.send[i])*myrdma.num_of_vertex, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
         //cerr << "send success" << endl;
 }
 void myRDMA::rdma_recv_pagerank(int i){
     RDMA rdma;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
-                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), sizeof(myrdma.recv[i])*4039);//sizeof(myrdma.recv[i].data()));
+                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), sizeof(myrdma.recv[i])*myrdma.num_of_vertex);//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
    
         //cout.precision(numeric_limits<double>::digits10);
@@ -35,14 +34,13 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     RDMA rdma;
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
-    cout << myrdma.send[i].size() << endl;
     //cout << myrdma.send[i][partition-1] << endl;
-    //cout << myrdma.send[i][4039] << endl;
+    //cout << myrdma.send[i][myrdma.num_of_vertex] << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
 
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                sizeof(myrdma.send[i])*4039, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+                                sizeof(myrdma.send[i])*myrdma.num_of_vertex, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i])))
         cerr << "send success" << endl;
         //cerr << "send failed" << endl;
@@ -113,7 +111,7 @@ void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
     vector<long double> x1;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
-                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), sizeof(myrdma.recv[i])*4039);//sizeof(myrdma.recv[i].data()));
+                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), sizeof(myrdma.recv[i])*myrdma.num_of_vertex);//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
     //if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
     //    cerr << "recv failed" << endl;
@@ -245,13 +243,6 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     
     for(int i=0;i<4;i++){
         vector<long double> x = myrdma.recv[i];
-        cout <<  "============" << i << "==========" << endl;
-        for(int j=0;j<1009;j++){
-            if(myrdma.recv[i][j] == 0.0 && myrdma.recv[i][j+1] ==0.0)
-                break;
-            
-            cout << myrdma.recv[i][j] << endl;
-        }
         if(i == 3)
             myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
         else
@@ -350,7 +341,7 @@ void myRDMA::create_rdma_info(){
                 struct ibv_cq* completion_queue = ibv_create_cq(context, cq_size, nullptr, nullptr, 0);
                 struct ibv_qp* qp = rdma.createQueuePair(protection_domain, completion_queue);
                 struct ibv_mr *mr = rdma.registerMemoryRegion(protection_domain, 
-                                                        myrdma.recv[i].data(), sizeof(myrdma.recv[i])*4039);//sizeof(myrdma.recv[i].data()));
+                                                        myrdma.recv[i].data(), sizeof(myrdma.recv[i])*myrdma.num_of_vertex);//sizeof(myrdma.recv[i].data()));
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
                 myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
@@ -365,7 +356,7 @@ void myRDMA::create_rdma_info(){
                 struct ibv_cq* completion_queue = ibv_create_cq(context, cq_size, nullptr, nullptr, 0);
                 struct ibv_qp* qp = rdma.createQueuePair(protection_domain, completion_queue);
                 struct ibv_mr *mr = rdma.registerMemoryRegion(protection_domain, 
-                                                        myrdma.send[i].data(), sizeof(myrdma.send[i])*4039);//sizeof(myrdma.send[i].data()));
+                                                        myrdma.send[i].data(), sizeof(myrdma.send[i])*myrdma.num_of_vertex);//sizeof(myrdma.send[i].data()));
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
                 myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
@@ -396,7 +387,7 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     tcp.connect_tcp(ip, server, number_of_server, Port);
     myrdma.send = &send[0];
     myrdma.recv = &recv[0];
-
+    myrdma.num_of_vertex = num_of_vertex;
     int n = num_of_vertex/(number_of_server-1);
 
     for(int i=1; i<number_of_server; i++){

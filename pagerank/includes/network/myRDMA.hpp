@@ -50,4 +50,5 @@ class myRDMA{
         vector<long double> aaa;
         vector<int> sock_idx;
         int connect_num;
+        int num_of_vertex;
 };

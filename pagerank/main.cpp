@@ -35,7 +35,11 @@ int main(int argc, char* argv[]){
     pagerank.init_connection(my_ip.c_str(),node1,num_of_node,port,num_of_vertex);
     
     cout << "--------------------------------------------------------" << endl;
-    int n = num_of_vertex/(num_of_node-1);
+    
+    pagerank.initial_pagerank_value();
+    pagerank.run_pagerank(iter);
+    pagerank.print_pr();
+    /*int n = num_of_vertex/(num_of_node-1);
     int partition;
     for(int i=1; i<num_of_node; i++){
         if(my_ip == node1[num_of_node-1]){
@@ -46,15 +50,15 @@ int main(int argc, char* argv[]){
             partition=n;
         }
     }
-    cout << partition << endl;
-    for(int i=1;i<partition+1;i++){
-        x.push_back(i);
+    if(!is_server(my_ip)){
+        for(int i=1;i<partition+1;i++){
+            x.push_back(i);
+        }
     }
-    cout << x[partition-1] << endl;
     pagerank.gather_pagerank("send",0,x);
     cout << "Done gather" << endl;
     pagerank.scatter_pagerank("send",0,x);
-    cout << "Done scatter" << endl;
+    cout << "Done scatter" << endl;*/
 
     
     

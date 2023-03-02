@@ -108,7 +108,7 @@ void Pagerank::initial_pagerank_value(){
     //pagerank.pr1.reserve(pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
-    pagerank.new_pr = pagerank.pr;
+    //pagerank.new_pr.resize();
     //pagerank.pr[0] = 1;
 
     cout << "Done" <<endl;
@@ -131,6 +131,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     double d;
     string value;
     //double sum = 0;
+    pagerank.new_pr.clear();
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int from_page : pagerank.graph[i]){// = 0; from_page< pagerank.graph[i].size();from_page++){
@@ -140,63 +141,20 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         
         if(pagerank.num_of_server != 1){
             d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
-            value = to_string(d*100000000000);
-
-            pagerank.new_pr[i] = d;
-            
-            pagerank.message += to_string(i);
-            pagerank.message += " ";
-            pagerank.message += value; 
-            pagerank.message += "\n";
+            pagerank.new_pr.push_back(d);
         }
         else{
-            pagerank.new_pr[i] = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
+            pagerank.new_pr.push_back((tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex);
         }
 
-        pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
+        //pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
     //cout << "s = " << sum <<endl;
     
 }
-/*void Pagerank::thread_combine_pr(int i){
-    string from, to;
-    size_t previous, current;
 
-    double d;
-    int f;
-    string a;
-    
-    //strcpy(tmp, pagerank.recv_buffer[i]);
-    string tmp(recv_buffer[i]);
-    current = tmp.find('\n');
-    previous = 0;
-    while(current != string::npos){
-        a = tmp.substr(previous, current - previous);
-        size_t pos = a.find(" ");
-        from = a.substr(0,pos);
-        to = a.substr(pos+1);
-        f = stoi(from);
-        
-        d = stod(to);
-        //cout <<from << ": " <<to << endl;
-        pagerank.new_pr[f] = d/100000000000;//stod(to);
-        //mutx.lock();
-        pagerank.diff += fabs(pagerank.new_pr[f] - pagerank.pr[f]);
-        //mutx.unlock();  
-        //diff += fabs(pagerank.pr[stoi(from)] - old_pr[stoi(from)]);
-        previous = current +1;
-        current = tmp.find('\n',previous);
-    }
-}*/
 void Pagerank::combine_pr(){
-    //vector<thread> worker;
-    for(int i = 0; i < 3;i++){
-        //Pagerank::thread_combine_pr(i);
-        //worker.push_back(thread(&Pagerank::thread_combine_pr,i));
-    }
-    /*for(int i=0;i<3;i++){
-        worker[i].detach();
-    }*/
+    
 }
 void Pagerank::send_recv_pagerank_value(int start, int end){
     
@@ -223,29 +181,27 @@ void Pagerank::run_pagerank(int iter){
             for (i=0;i<pagerank.num_of_vertex;i++) {
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                 if (pagerank.num_outgoing[i] == 0) {
-                    dangling_pr += pagerank.new_pr[i];
+                    dangling_pr += pagerank.pr[i];
                 }   
             }
         }
         //cout << "start calc" << endl;
         Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
+        Pagerank::gather_pagerank("send",0,pagerank.new_pr);
+        Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
         //cout << "end calc" << endl;
         //cout << pagerank.message.size()<<endl;
-        if(pagerank.num_of_server!=1){
-            myrdma1.rdma_comm("write", pagerank.message);
-            Pagerank::combine_pr();
-        }
 
-        bool z = fabs(pagerank.diff - prev_diff) < 0.0000001;
+        //bool z = fabs(pagerank.diff - prev_diff) < 0.0000001;
 
         cout.precision(numeric_limits<double>::digits10);
-        cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
+        //cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
 
-        if(pagerank.diff < 0.00001 || z){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(step == 32){//pagerank.diff < 0.00001 || z){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
-        prev_diff = pagerank.diff;
-        pagerank.pr = pagerank.new_pr;
+        //prev_diff = pagerank.diff;
+        //pagerank.pr = pagerank.new_pr;
 
     }
     
@@ -309,9 +265,6 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     else{
         myrdma1.rdma_recv_pagerank(0);
         pagerank.pr = recv_buffer[0];
-        for(int h = 0; h < pagerank.num_of_vertex; h++){
-            cout << "pr[" <<h<<"]: " << pagerank.pr[h] << endl;
-        }
         cout << endl;
     }
 }
