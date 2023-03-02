@@ -12,9 +12,10 @@ char* change(string temp){
 }
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     RDMA rdma;
+    myrdma.srecv[i] = myrdma.srecv[0];
     cout << myrdma.srecv[0].size() << endl;
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[2][i]), get<5>(myrdma.rdma_info[2][i]), myrdma.srecv[0].data(), 
-                                myrdma.srecv[0].capacity(), myrdma.qp_key1[i].first, myrdma.qp_key1[i].second);
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[2][i]), get<5>(myrdma.rdma_info[2][i]), myrdma.srecv[i].data(), 
+                                myrdma.srecv[i].capacity(), myrdma.qp_key1[i].first, myrdma.qp_key1[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[2][i])))
         cerr << "send success" << endl;
 }
@@ -27,7 +28,7 @@ void myRDMA::rdma_recv_pagerank(int i){
    
         cout.precision(numeric_limits<double>::digits10);
         cerr << "receive success" << endl;
-        
+        cerr << myrdma.srecv[i].size() << endl;
     
     //}
 }
