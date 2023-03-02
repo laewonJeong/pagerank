@@ -36,7 +36,7 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
     cout << myrdma.send[i].size() << endl;
-    cout << myrdma.send[i][partition-1] << endl;
+    //cout << myrdma.send[i][partition-1] << endl;
     //cout << myrdma.send[i][4039] << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
@@ -242,14 +242,24 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg,vector<long dou
 void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myRDMA::recv_t(opcode);
     myrdma.send[0].clear();
+    
     for(int i=0;i<4;i++){
         vector<long double> x = myrdma.recv[i];
-        cout << x[5] << endl;
+        
+        for(int j=0;j<1009;j++){
+            if(myrdma.recv[i][j] == 0.0)
+                break;
+            cout <<  "============ << i << ==========" << endl;
+            cout << myrdma.recv[i][j] << endl;
+        }
         if(i == 3)
             myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
         else
             myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition);
 
+    }
+    for(int i=0;i<4039;i++){
+        cout << myrdma.send[0][i] << endl;
     }
 }
 
