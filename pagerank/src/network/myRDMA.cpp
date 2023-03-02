@@ -10,6 +10,27 @@ char* change(string temp){
   strcpy(stc, temp.c_str());
   return stc;
 }
+void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
+    RDMA rdma;
+    cout << myrdma.srecv[i].size() << endl;
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[2][i]), get<5>(myrdma.rdma_info[2][i]), myrdma.srecv[i].data(), 
+                                myrdma.srecv[i].capacity(), myrdma.qp_key1[i].first, myrdma.qp_key1[i].second);
+    if(rdma.pollCompletion(get<3>(myrdma.rdma_info[2][i])))
+        cerr << "send success" << endl;
+}
+void myRDMA::rdma_recv_pagerank(int i){
+    RDMA rdma;
+    vector<long double> x1;
+    rdma.post_rdma_recv(get<4>(myrdma.rdma_info[2][i]), get<5>(myrdma.rdma_info[2][i]), 
+                        get<3>(myrdma.rdma_info[2][i]), myrdma.srecv[i].data(), myrdma.srecv[i].capacity());//sizeof(myrdma.recv[i].data()));
+    rdma.pollCompletion(get<3>(myrdma.rdma_info[2][i]));
+   
+        cout.precision(numeric_limits<double>::digits10);
+        cerr << "receive success" << endl;
+        
+    
+    //}
+}
 void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     RDMA rdma;
     //msg[67108865] = NULL;
@@ -220,12 +241,13 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg,vector<long dou
 }
 void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myRDMA::recv_t(opcode);
-    myrdma.aaa.clear();
+    myrdma.srecv[0].clear();
     for(int i=0;i<4;i++){
         vector<long double> x = myrdma.recv[i];
-        myrdma.aaa.insert(myrdma.aaa.end(),x.begin(),x.begin()+20);
+        myrdma.srecv[0].insert(myrdma.srecv[0].end(),x.begin(),x.begin()+20);
     }
-    for(const auto& j: myrdma.aaa) cout << j << " ";
+    for(const auto& j: myrdma.srecv[0]) cout << j << " ";
+    cout << endl;
 }
 
 void myRDMA::send_info_change_qp(){
@@ -288,7 +310,7 @@ void myRDMA::send_info_change_qp(){
                                                stoi(read_rdma_info.find("lid")->second));
                 
                 rdma.changeQueuePairStateToRTS(get<4>(myrdma.rdma_info[k][i]));
-                myrdma.qp_key.push_back(make_pair(read_rdma_info.find("addr")->second,
+                myrdma.qp_key1.push_back(make_pair(read_rdma_info.find("addr")->second,
                                                   read_rdma_info.find("rkey")->second));
             }   
         }

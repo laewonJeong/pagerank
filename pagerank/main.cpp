@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
     myrdma.initialize_rdma_connection_vector(my_ip.c_str(),node1,num_of_node,port,x1,recv,num_of_vertex);
     myrdma.create_rdma_info();
     myrdma.send_info_change_qp();
-    
+    cout << "--------------------------------------------------------" << endl;
     for(int i=0;i<20;i++){
         x.push_back(i);
     }
@@ -48,8 +48,13 @@ int main(int argc, char* argv[]){
     else{
         myrdma.rdma_many_to_one_send_msg("send","s",x);
     }
-    x.clear();
     
+    if(is_server(my_ip)){
+        myrdma.rdma_send_pagerank(x,0);
+    }
+    else{
+        myrdma.rdma_recv_pagerank(0);
+    }
 
 
     /*int partition;

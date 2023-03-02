@@ -9,6 +9,8 @@ using namespace std;
 class myRDMA{
     public:
         void rdma_send_vector(vector<long double> msg, int i);
+        void rdma_send_pagerank(vector<long double> msg, int i);
+        void rdma_recv_pagerank(int i);
         void rdma_send(string msg, int i);
         void rdma_send_with_imm(string msg, int i);
         void rdma_write(string msg, int i);
@@ -39,6 +41,7 @@ class myRDMA{
                         struct ibv_qp*, struct ibv_mr*,
                         uint16_t, uint32_t>> rdma_info[3];
         std::vector<pair<string,string>> qp_key;
+        std::vector<pair<string,string>> qp_key1;
         char (*send_buffer)[buf_size];
         char (*recv_buffer)[buf_size];
         vector<long double> send[5];
