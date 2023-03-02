@@ -35,6 +35,7 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     RDMA rdma;
     //msg[67108865] = NULL;
     myrdma.send[i] = msg;
+    cout << myrdma.send[i].size() << endl;
     //cout << myrdma.send[i][4039] << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
@@ -242,6 +243,7 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myrdma.send[0].clear();
     for(int i=0;i<4;i++){
         vector<long double> x = myrdma.recv[i];
+        cout << x[5] << endl;
         if(i == 3)
             myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
         else
