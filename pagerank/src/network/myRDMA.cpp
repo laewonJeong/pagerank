@@ -253,9 +253,9 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
             cout << myrdma.recv[i][j] << endl;
         }
         if(i == 3)
-            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+252);
+            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
         else
-            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+252);
+            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition);
 
     }
     /*for(int i=0;i<252*4;i++){
@@ -410,8 +410,8 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     }
     cout << partition << " " << partition1 << endl;
     for(int i=0;i<number_of_server-1;i++){
-        myrdma.send[i].resize(num_of_vertex*4);
-        myrdma.recv[i].resize(num_of_vertex*4);
+        myrdma.send[i].resize(num_of_vertex*9);
+        myrdma.recv[i].resize(num_of_vertex*9);
     }
     /*if(strcmp(ip,change(server[0])) == 0){
         for(int i=0;i<number_of_server-1;i++){
