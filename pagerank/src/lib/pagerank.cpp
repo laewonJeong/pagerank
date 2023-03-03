@@ -108,12 +108,22 @@ void Pagerank::create_graph_data(string path, string del){
 
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
+   
+    int n = pagerank.num_of_vertex/(pagerank.num_of_server-1);
+    
+    int n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
+    
 
     pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
     //pagerank.pr1.reserve(pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
-    //pagerank.new_pr.resize();
+    if(pagerank.my_ip == "192.168.1.104")
+        pagerank.new_pr.resize(n1);
+    else{
+        pagerank.new_pr.resize(n);
+    }
+    
     //pagerank.pr[0] = 1;
 
     cout << "Done" <<endl;
@@ -136,21 +146,16 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     double d;
     string value;
     //double sum = 0;
-    pagerank.new_pr.clear();
+    //pagerank.new_pr.clear();
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int from_page : pagerank.graph[i]){// = 0; from_page< pagerank.graph[i].size();from_page++){
             tmp += pagerank.pr[from_page]/pagerank.num_outgoing[from_page];
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
+        d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
+        pagerank.new_pr[start-i] = d;
         
-        if(pagerank.num_of_server != 1){
-            d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
-            pagerank.new_pr.push_back(d);
-        }
-        else{
-            pagerank.new_pr.push_back((tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex);
-        }
 
         //pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
     }
