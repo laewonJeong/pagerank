@@ -190,7 +190,7 @@ void Pagerank::run_pagerank(int iter){
             //double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
                 for (i=0;i<pagerank.num_of_vertex;i++) {
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
-                    pagerank.diff += fabs(prev_pr[i] - recv_buffer[0][i]);
+                    pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
                     if (pagerank.num_outgoing[i] == 0) {
                         dangling_pr += recv_buffer[0][i];
                     }   
