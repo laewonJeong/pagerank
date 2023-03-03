@@ -192,7 +192,7 @@ void Pagerank::run_pagerank(int iter){
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                     pagerank.diff += fabs(prev_pr[i] - recv_buffer[0][i]);
                     if (pagerank.num_outgoing[i] == 0) {
-                        dangling_pr += pagerank.pr[i];
+                        dangling_pr += recv_buffer[0][i];
                     }   
                 }
         }

@@ -302,12 +302,11 @@ void myRDMA::send_info_change_qp(){
         for(int j=0;j<myrdma.connect_num;j++){
             std::ostringstream oss;
 
-            cout << "wow1" << endl;
             if(k==0)
                 oss << myrdma.send[j].data();
             else if(k==1)
                 oss << myrdma.recv[j].data();
-            cout <<" wow2" <<endl;
+
             tcp.send_msg(change(oss.str()+"\n"),myrdma.sock_idx[j]);
             tcp.send_msg(change(to_string(get<5>(myrdma.rdma_info[k][j])->length)+"\n"),myrdma.sock_idx[j]);
             tcp.send_msg(change(to_string(get<5>(myrdma.rdma_info[k][j])->lkey)+"\n"),myrdma.sock_idx[j]);
