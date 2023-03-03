@@ -226,11 +226,11 @@ void Pagerank::run_pagerank(int iter){
 string Pagerank::max_pr(){
     int important = 0;
     string result = "";
-    long double important_pr = pagerank.pr[0];
+    long double important_pr = recv_buffer[0][0];
     long double tmp = important_pr;
-    double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
+    double sum1 = accumulate(recv_buffer[0].begin(), recv_buffer[0].end(), 0.0);
     for (int i=0;i< pagerank.num_of_vertex;i++){
-        important_pr = max(important_pr, pagerank.pr[i]);
+        important_pr = max(important_pr, recv_buffer[0][i]);
         if(tmp != important_pr){
             important = i;
             tmp = important_pr;
@@ -290,11 +290,11 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
 void Pagerank::print_pr(){
     size_t i;
     double sum = 0;
-    double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
+    double sum1 = accumulate(recv_buffer[0].begin(), recv_buffer[0].end(), 0.0);
     cout.precision(numeric_limits<double>::digits10);
     for(i=pagerank.num_of_vertex-200;i<pagerank.num_of_vertex;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-        sum += pagerank.pr[i];
+        cout << "pr[" <<i<<"]: " << recv_buffer[0][i] <<endl;
+        //sum += pagerank.pr[i];
     }
     cerr << "s = " <<round(sum1) << endl;
 }
