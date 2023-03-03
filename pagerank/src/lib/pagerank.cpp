@@ -296,7 +296,7 @@ void Pagerank::print_pr(){
         cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
         sum += pagerank.pr[i];
     }
-    cerr << "s = " <<round(sum) << endl;
+    cerr << "s = " <<round(sum1) << endl;
 }
 
 int Pagerank::get_num_of_vertex(){
