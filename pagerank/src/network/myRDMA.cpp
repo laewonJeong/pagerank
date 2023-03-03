@@ -30,6 +30,23 @@ void myRDMA::rdma_recv_pagerank(int i){
     
     //}
 }
+void myRDMA::rdma_write_pagerank(vector<long double> msg, int i){
+    RDMA rdma;
+    TCP tcp;
+    myrdma.send[i] = msg;
+    rdma.post_rdma_write(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
+                         sizeof(myrdma.send[i])*myrdma.num_of_vertex, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+    if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]))){
+        //cerr << "send success" << endl;
+        tcp.send_msg("1", myrdma.sock_idx[i]);
+    }
+    else
+        cerr << "send failed" << endl;
+}
+void myRDMA::rdma_wrecv_pagerank(int i){
+   TCP tcp;
+    while(tcp.recv_msg(myrdma.sock_idx[i]) <= 0);
+}
 void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     RDMA rdma;
     //msg[67108865] = NULL;
@@ -45,6 +62,20 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
         //cerr << "send success" << endl;
         //cerr << "send failed" << endl;
     
+}
+void myRDMA::rdma_write_vector(vector<long double> msg, int i){
+    RDMA rdma;
+    TCP tcp;
+    myrdma.send[i] = msg;
+    
+    rdma.post_rdma_write(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
+                         sizeof(myrdma.send[i])*myrdma.num_of_vertex, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+    if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]))){
+        //cerr << "send success" << endl;
+        tcp.send_msg("1", myrdma.sock_idx[i]);
+    }
+    else
+        cerr << "send failed" << endl;
 }
 void myRDMA::rdma_send(string msg, int i){
     RDMA rdma;
@@ -75,13 +106,14 @@ void myRDMA::rdma_send_with_imm(string msg, int i){
         //cerr << "send success" << endl;
         cerr << "send failed" << endl;
 }
+
 void myRDMA::rdma_write(string msg, int i){
     RDMA rdma;
     TCP tcp;
-    if (msg.size() > 67108863)
-        msg.replace(67108864,67108864, "\0");
+    //if (msg.size() > 67108863)
+    //    msg.replace(67108864,67108864, "\0");
     //msg[67108865] = NULL;
-    strcpy(myrdma.send_buffer[i],msg.c_str());
+    //strcpy(myrdma.send_buffer[i],msg.c_str());
     
     rdma.post_rdma_write(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send_buffer[i], 
                          sizeof(myrdma.send_buffer[i]), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
@@ -133,8 +165,8 @@ void myRDMA::rdma_send_recv(int i){
 void myRDMA::rdma_write_recv(int i){
     TCP tcp;
     while(tcp.recv_msg(myrdma.sock_idx[i]) <= 0);
-    cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
-    cerr << "recv success" << endl;
+    //cerr << strlen(myrdma.recv_buffer[i])/(1024*1024) <<"Mb data ";
+    //cerr << "recv success" << endl;
 }
 
 void myRDMA::rdma_send_msg(string opcode, string msg){
@@ -215,14 +247,14 @@ void myRDMA::rdma_one_to_many_recv_msg(string opcode){
     myRDMA::rdma_recv_msg(opcode);
 }
 
-void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg,vector<long double> msg1){
+void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg, vector<long double> msg1){
     if (opcode == "send_with_imm"){
         cerr << "rdma_send_with_imm run" <<endl;
         myRDMA::rdma_send_with_imm(msg, 0);
     }
     else if(opcode == "write"){
-        cerr << "rdma_write run" << endl;
-        myRDMA::rdma_write(msg, 0);
+        //cerr << "rdma_write run" << endl;
+        myRDMA::rdma_write_vector(msg1, 0);
 
     }
     else if(opcode == "write_with_imm"){
@@ -241,12 +273,11 @@ void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myRDMA::recv_t(opcode);
     myrdma.send[0].clear();
     
-    for(int i=0;i<4;i++){
-        vector<long double> x = myrdma.recv[i];
-        if(i == 3)
-            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition1);
+    for(int i=0;i<myrdma.connect_num;i++){
+        if(i == myrdma.connect_num-1)
+            myrdma.send[0].insert(myrdma.send[0].end(),myrdma.recv[i].begin(),myrdma.recv[i].begin()+partition1);
         else
-            myrdma.send[0].insert(myrdma.send[0].end(),x.begin(),x.begin()+partition);
+            myrdma.send[0].insert(myrdma.send[0].end(),myrdma.recv[i].begin(),myrdma.recv[i].begin()+partition);
 
     }
     /*for(int i=0;i<252*4;i++){

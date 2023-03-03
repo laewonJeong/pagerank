@@ -9,8 +9,11 @@ using namespace std;
 class myRDMA{
     public:
         void rdma_send_vector(vector<long double> msg, int i);
+        void rdma_write_vector(vector<long double>msg, int i);
         void rdma_send_pagerank(vector<long double> msg, int i);
+        void rdma_write_pagerank(vector<long double> msg, int i);
         void rdma_recv_pagerank(int i);
+        void rdma_wrecv_pagerank(int i);
         void rdma_send(string msg, int i);
         void rdma_send_with_imm(string msg, int i);
         void rdma_write(string msg, int i);
