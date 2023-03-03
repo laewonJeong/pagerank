@@ -38,7 +38,7 @@ void myRDMA::rdma_write_pagerank(vector<long double> msg, int i){
                          sizeof(myrdma.send[i])*(myrdma.num_of_vertex+1), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]))){
         cerr << "" << endl;
-        
+        tcp.send_msg("1", myrdma.sock_idx[i]);
     }
     else
         cerr << "send failed" << endl;
@@ -72,7 +72,7 @@ void myRDMA::rdma_write_vector(vector<long double> msg, int i){
                          sizeof(myrdma.send[i])*(myrdma.num_of_vertex+1), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     if(rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]))){
         cerr << "" << endl;
-        //tcp.send_msg("1", myrdma.sock_idx[i]);
+        tcp.send_msg("1", myrdma.sock_idx[i]);
     }
     else
         cerr << "send failed" << endl;
