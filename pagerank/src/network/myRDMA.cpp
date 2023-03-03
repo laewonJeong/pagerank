@@ -306,7 +306,7 @@ void myRDMA::send_info_change_qp(){
                 oss << myrdma.send[j].data();
             else if(k==1)
                 oss << myrdma.recv[j].data();
-
+            
             tcp.send_msg(change(oss.str()+"\n"),myrdma.sock_idx[j]);
             tcp.send_msg(change(to_string(get<5>(myrdma.rdma_info[k][j])->length)+"\n"),myrdma.sock_idx[j]);
             tcp.send_msg(change(to_string(get<5>(myrdma.rdma_info[k][j])->lkey)+"\n"),myrdma.sock_idx[j]);
@@ -420,9 +420,9 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     myrdma.recv = &recv[0];
     myrdma.num_of_vertex = num_of_vertex;
 
-    int n = num_of_vertex/(number_of_server);
+    int n = num_of_vertex/(number_of_server-1);
     partition=n;
-    int n1 = num_of_vertex - n*(number_of_server-1);
+    int n1 = num_of_vertex - n*(number_of_server-2);
     partition1=n1;
    
     cout << partition << " " << partition1 << endl;
