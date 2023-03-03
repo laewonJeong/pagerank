@@ -109,7 +109,7 @@ void Pagerank::create_graph_data(string path, string del){
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
-    recv_buffer[0].resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
+    pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
     //pagerank.pr1.reserve(pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
