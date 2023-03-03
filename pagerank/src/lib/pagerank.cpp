@@ -109,7 +109,7 @@ void Pagerank::create_graph_data(string path, string del){
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
 
-    pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
+    recv_buffer[0].resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
     //pagerank.pr1.reserve(pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
@@ -140,7 +140,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int from_page : pagerank.graph[i]){// = 0; from_page< pagerank.graph[i].size();from_page++){
-            tmp += pagerank.pr[from_page]/pagerank.num_outgoing[from_page];
+            tmp += recv_buffer[0][from_page]/pagerank.num_outgoing[from_page];
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         
@@ -190,7 +190,7 @@ void Pagerank::run_pagerank(int iter){
             //double sum1 = accumulate(pagerank.new_pr.begin(), pagerank.new_pr.end(), 0.0);
                 for (i=0;i<pagerank.num_of_vertex;i++) {
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
-                    pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
+                    pagerank.diff += fabs(prev_pr[i] - recv_buffer[0][i]);
                     if (pagerank.num_outgoing[i] == 0) {
                         dangling_pr += pagerank.pr[i];
                     }   
@@ -201,7 +201,7 @@ void Pagerank::run_pagerank(int iter){
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         }
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
-        prev_pr = pagerank.pr;
+        prev_pr = recv_buffer[0];
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
         //prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
         //cur_sum = accumulate(pagerank.pr.begin(),pagerank.pr.end(),0.0);
@@ -276,13 +276,13 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     vector<long double> pagerank1;
     
     if(pagerank.my_ip == "192.168.1.100"){
-        pagerank.pr = send_buffer[0];
+        recv_buffer[0] = send_buffer[0];
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_write_pagerank(send_buffer[0],i);
     }
     else{
         myrdma1.rdma_wrecv_pagerank(0);
-        pagerank.pr = recv_buffer[0];
+        //pagerank.pr = recv_buffer[0];
     }
 }
 
