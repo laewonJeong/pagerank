@@ -192,14 +192,14 @@ void Pagerank::run_pagerank(int iter){
                 //pagerank.pr[i] = pagerank.new_pr[i] /sum1;
                     pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
                     if (pagerank.num_outgoing[i] == 0) {
-                        dangling_pr += recv_buffer[0][i];
+                        dangling_pr += pagerank.pr[i];
                     }   
                 }
         }
-        //if(pagerank.my_ip != "192.168.1.100"){
+        if(pagerank.my_ip != "192.168.1.100"){
            
-        Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
-        //}
+            Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
+        }
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
         prev_pr = pagerank.pr;
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
@@ -226,11 +226,11 @@ void Pagerank::run_pagerank(int iter){
 string Pagerank::max_pr(){
     int important = 0;
     string result = "";
-    long double important_pr = recv_buffer[0][0];
+    long double important_pr = pagerank.pr[0];
     long double tmp = important_pr;
-    double sum1 = accumulate(recv_buffer[0].begin(), recv_buffer[0].end(), 0.0);
+    double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     for (int i=0;i< pagerank.num_of_vertex;i++){
-        important_pr = max(important_pr, recv_buffer[0][i]);
+        important_pr = max(important_pr, pagerank.pr[i]);
         if(tmp != important_pr){
             important = i;
             tmp = important_pr;
@@ -252,10 +252,10 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     pagerank.my_ip = str_ip; 
     pagerank.num_of_server = number_of_server;
     pagerank.diff = 1;
-    for(int i=0;i<number_of_server;i++){
+    for(int i=1;i<number_of_server;i++){
         if(ip == server[i]){
-            pagerank.start1 = pagerank.num_of_vertex/(number_of_server)*(i);
-            pagerank.end1 = pagerank.start1 + pagerank.num_of_vertex/(number_of_server);
+            pagerank.start1 = pagerank.num_of_vertex/(number_of_server-1)*(i-1);
+            pagerank.end1 = pagerank.start1 + pagerank.num_of_vertex/(number_of_server-1);
         }
         if(ip == server[number_of_server-1]){
             pagerank.end1 = pagerank.num_of_vertex;
@@ -265,7 +265,7 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
 }
 void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
     if(pagerank.my_ip == "192.168.1.100"){
-        myrdma1.rdma_many_to_one_recv_msg("write",pr);
+        myrdma1.rdma_many_to_one_recv_msg("write");
     }
     else{
         myrdma1.rdma_many_to_one_send_msg("write","s",pr);
@@ -290,11 +290,11 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
 void Pagerank::print_pr(){
     size_t i;
     double sum = 0;
-    double sum1 = accumulate(recv_buffer[0].begin(), recv_buffer[0].end(), 0.0);
+    double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     cout.precision(numeric_limits<double>::digits10);
     for(i=pagerank.num_of_vertex-200;i<pagerank.num_of_vertex;i++){
-        cout << "pr[" <<i<<"]: " << recv_buffer[0][i] <<endl;
-        //sum += pagerank.pr[i];
+        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
+        sum += pagerank.pr[i];
     }
     cerr << "s = " <<round(sum1) << endl;
 }

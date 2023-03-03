@@ -269,10 +269,9 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg, vector<long do
         exit(1);
     }
 }
-void myRDMA::rdma_many_to_one_recv_msg(string opcode, vector<long double> pr){
+void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myRDMA::recv_t(opcode);
     myrdma.send[0].clear();
-    myrdma.send[0].insert(myrdma.send[0].end(),pr.begin(), pr.end());
     
     for(int i=0;i<myrdma.connect_num;i++){
         if(i == myrdma.connect_num-1)
