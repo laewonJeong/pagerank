@@ -189,7 +189,7 @@ void Pagerank::run_pagerank(int iter){
         if(step!=0) {
             sum_pr = 0;
             dangling_pr = 0;
-            pagerank.diff = 0;
+            //pagerank.diff = 0;
             for (i=0;i<pagerank.num_of_vertex;i++) {
                 if (pagerank.num_outgoing[i] == 0) {
                     dangling_pr += pagerank.pr[i];
@@ -199,27 +199,22 @@ void Pagerank::run_pagerank(int iter){
         if(pagerank.my_ip != "192.168.1.100"){
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         }
-        else{
-            prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
-            cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
-            pagerank.diff = fabs(prev_sum - cur_sum);
-        }
+        prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
+        cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
+        pagerank.diff = fabs(prev_sum - cur_sum);
 
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
 
-        if(pagerank.my_ip == "192.168.1.100"){
-            prev_pr = pagerank.pr;
-        }
+        prev_pr = pagerank.pr;
 
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
 
-        if(pagerank.my_ip != "192.168.1.100"){
+        if(pagerank.my_ip != "192.168.1.100")
             pagerank.pr = recv_buffer[0];
-            pagerank.diff = recv_buffer[0][pagerank.num_of_vertex];
-        }
+        
         else{
             cout.precision(numeric_limits<double>::digits10);
-            cout << pagerank.diff<<endl;  //<< " " << prev_diff << " = " << z <<endl;
+            cout << pagerank.diff <<endl;  //<< " " << prev_diff << " = " << z <<endl;
         }
 
         if(pagerank.diff < 0.0001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
@@ -286,7 +281,6 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     
     if(pagerank.my_ip == "192.168.1.100"){
         pagerank.pr = send_buffer[0];
-        send_buffer[0].push_back(pagerank.diff);
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_write_pagerank(send_buffer[0],i);
     }
