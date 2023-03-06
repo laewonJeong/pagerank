@@ -199,7 +199,7 @@ void Pagerank::run_pagerank(int iter){
             cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
             pagerank.diff = fabs(prev_sum - cur_sum);
         }
-        
+
         if(pagerank.my_ip != "192.168.1.100"){
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         }
@@ -218,7 +218,7 @@ void Pagerank::run_pagerank(int iter){
             cout << pagerank.diff <<endl;  //<< " " << prev_diff << " = " << z <<endl;
         }
 
-        if(pagerank.diff < 0.0001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(step == 46){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;
