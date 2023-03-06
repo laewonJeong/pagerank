@@ -195,14 +195,15 @@ void Pagerank::run_pagerank(int iter){
                     dangling_pr += pagerank.pr[i];
                 }   
             }
+            prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
+            cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
+            pagerank.diff = fabs(prev_sum - cur_sum);
         }
+        
         if(pagerank.my_ip != "192.168.1.100"){
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         }
-        prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
-        cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
-        pagerank.diff = fabs(prev_sum - cur_sum);
-
+        
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
 
         prev_pr = pagerank.pr;
