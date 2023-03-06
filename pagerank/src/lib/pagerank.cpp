@@ -195,9 +195,9 @@ void Pagerank::run_pagerank(int iter){
                     dangling_pr += pagerank.pr[i];
                 }   
             }
-            prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
-            cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
-            pagerank.diff = fabs(prev_sum - cur_sum);
+            //prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
+            //cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
+            //pagerank.diff = fabs(prev_sum - cur_sum);
         }
 
         if(pagerank.my_ip != "192.168.1.100"){
