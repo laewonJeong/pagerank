@@ -114,7 +114,7 @@ void Pagerank::initial_pagerank_value(){
     int n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
     
 
-    pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
+    //pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
     //pagerank.pr1.reserve(pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
@@ -133,10 +133,10 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
     double tmp = 0;
     
     for(int j = 0; j<pagerank.graph[i].size();j++){
-        tmp += df*(pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
+        tmp += df*(recv_buffer[0][pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
     }
     pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
-    pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
+    pagerank.diff += fabs(pagerank.new_pr[i] - recv_buffer[0][i]);
     //cout << pagerank.new_pr[i] <<endl;    
 }
 
@@ -150,7 +150,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     for(int i=start;i<end;i++){
         tmp = 0;
         for(int from_page : pagerank.graph[i]){// = 0; from_page< pagerank.graph[i].size();from_page++){
-            tmp += pagerank.pr[from_page]/pagerank.num_outgoing[from_page];
+            tmp += recv_buffer[0][from_page]/pagerank.num_outgoing[from_page];
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
@@ -194,7 +194,7 @@ void Pagerank::run_pagerank(int iter){
             for (i=0;i<pagerank.num_of_vertex;i++) {
                 //pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
                 if (pagerank.num_outgoing[i] == 0)
-                    dangling_pr += pagerank.pr[i];   
+                    dangling_pr += recv_buffer[0][i];   
             }
             //prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
             //cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
@@ -207,17 +207,17 @@ void Pagerank::run_pagerank(int iter){
         
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
         //pagerank.pr = pagerank.new_pr;
-        prev_pr = pagerank.pr;
+        //prev_pr = recv_buffer[0];
 
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
 
-        if(pagerank.my_ip != "192.168.0.100")
-            pagerank.pr = recv_buffer[0];
+        //if(pagerank.my_ip != "192.168.0.100")
+            //pagerank.pr = recv_buffer[0];
         
-        else{
+        //else{
             cout.precision(numeric_limits<double>::digits10);
             cout << pagerank.diff <<endl;  //<< " " << prev_diff << " = " << z <<endl;
-        }
+        //}
 
         if(step == 61){//pagerank.diff < 0.00001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
@@ -282,13 +282,13 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     vector<long double> pagerank1;
     
     if(pagerank.my_ip == "192.168.0.100"){
-        pagerank.pr = send_buffer[0];
+        //pagerank.pr = send_buffer[0];
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_send_pagerank(send_buffer[0],i);
     }
     else{
         myrdma1.rdma_recv_pagerank(0);
-        pagerank.pr = recv_buffer[0];
+        //pagerank.pr = recv_buffer[0];
     }
 }
 
@@ -296,11 +296,11 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
 void Pagerank::print_pr(){
     size_t i;
     double sum = 0;
-    double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
+    double sum1 = accumulate(recv_buffer[0].begin(), recv_buffer[0].end(), 0.0);
     cout.precision(numeric_limits<double>::digits10);
     for(i=pagerank.num_of_vertex-200;i<pagerank.num_of_vertex;i++){
-        cout << "pr[" <<i<<"]: " << pagerank.pr[i] <<endl;
-        sum += pagerank.pr[i];
+        cout << "pr[" <<i<<"]: " << recv_buffer[0][i] <<endl;
+        sum += recv_buffer[0][i];
     }
     cerr << "s = " <<round(sum1) << endl;
 }
