@@ -154,7 +154,6 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         double inv_num_of_vertex = 1.0 / pagerank.num_of_vertex;
         send_buffer[0][i - start] = (tmp + x * inv_num_of_vertex) * df + (1 - df) * inv_num_of_vertex;
-        //send_buffer[0][i-start] = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
     }
 }
 
@@ -191,36 +190,36 @@ void Pagerank::run_pagerank(int iter){
         }
 
         if(pagerank.my_ip != "192.168.0.100"){
-            clock_gettime(CLOCK_MONOTONIC, &begin);
+            //clock_gettime(CLOCK_MONOTONIC, &begin);
 
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
 
-            clock_gettime(CLOCK_MONOTONIC, &end);
-            time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-            printf("PageRank 계산 시간: %Lfs.\n", time);
+            //clock_gettime(CLOCK_MONOTONIC, &end);
+            //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+            //printf("PageRank 계산 시간: %Lfs.\n", time);
         }
         
        
         
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        //clock_gettime(CLOCK_MONOTONIC, &begin);
         
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
         
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("gather 수행시간: %Lfs.\n", time);
+        //clock_gettime(CLOCK_MONOTONIC, &end);
+        //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        //printf("gather 수행시간: %Lfs.\n", time);
         
         
         //pagerank.pr = pagerank.new_pr;
         //prev_pr = recv_buffer[0];
         
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        //clock_gettime(CLOCK_MONOTONIC, &begin);
         
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
         
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("scatter 수행시간: %Lfs.\n", time);
+        //clock_gettime(CLOCK_MONOTONIC, &end);
+        //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        //printf("scatter 수행시간: %Lfs.\n", time);
         
         //if(pagerank.my_ip != "192.168.0.100")
             //pagerank.pr = recv_buffer[0];

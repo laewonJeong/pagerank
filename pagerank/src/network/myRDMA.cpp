@@ -20,6 +20,7 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
 
     if(i!=0)
         myrdma.send[i] = msg;
+        
     rdma.post_rdma_send(get<4>(rdma_info[i]), get<5>(rdma_info[i]), myrdma.send[i].data(), 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(rdma_info[i]));
