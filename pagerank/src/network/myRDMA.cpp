@@ -53,8 +53,8 @@ void myRDMA::rdma_wrecv_pagerank(int i){
 void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //RDMA rdma;
     //msg[67108865] = NULL;
-    if(i!=0)
-        myrdma.send[i] = msg;
+    //if(i!=0)
+    myrdma.send[i] = msg;
     //cout << myrdma.send[i][partition-1] << endl;
     //cout << myrdma.send[i][myrdma.num_of_vertex] << endl;
     //(*myrdma.send)[i].push_back(0.321);
