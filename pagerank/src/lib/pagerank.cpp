@@ -206,7 +206,7 @@ void Pagerank::run_pagerank(int iter){
         }
         
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
-        pagerank.pr = pagerank.new_pr;
+        //pagerank.pr = pagerank.new_pr;
         prev_pr = pagerank.pr;
 
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
