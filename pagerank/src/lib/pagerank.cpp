@@ -288,7 +288,7 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     }
     else{
         myrdma1.rdma_wrecv_pagerank(0);
-        //pagerank.pr = recv_buffer[0];
+        pagerank.pr = recv_buffer[0];
     }
 }
 
