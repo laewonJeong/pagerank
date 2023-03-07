@@ -143,17 +143,14 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 }
 
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
-    long double tmp;
-    double d;
     
     for(int i=start;i<end;i++){
-        tmp = 0;
+        double tmp = 0;
 
         for(int from_page : pagerank.graph[i])
             tmp += recv_buffer[0][from_page]/pagerank.num_outgoing[from_page];
         
-        d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
-        send_buffer[0][i-start] = d;
+        send_buffer[0][i-start] = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
        
     }
 }
@@ -287,7 +284,7 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
     if(pagerank.my_ip == "192.168.0.100"){
         myrdma1.rdma_many_to_one_recv_msg("send");
         send_buffer[0].clear();
-        send_buffer[0].reserve(pagerank.num_of_vertex);
+        //send_buffer[0].reserve(pagerank.num_of_vertex);
         for(int i=0;i<pagerank.num_of_server-1;i++){
             if(i == pagerank.num_of_server-2)
                 send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+n1);
@@ -302,13 +299,11 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
 }
 void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     if(pagerank.my_ip == "192.168.0.100"){
-        //pagerank.pr = send_buffer[0];
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_send_pagerank(send_buffer[0],i);
     }
     else{
         myrdma1.rdma_recv_pagerank(0);
-        //pagerank.pr = recv_buffer[0];
     }
 }
 
