@@ -144,7 +144,7 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     
-    for(int i=start;i<end;i++){
+    for(size_t i=start;i<end;i++){
         double tmp = 0.0;
         int graph_size = pagerank.graph[i].size();
         for(int j=0; j<graph_size; j++){
@@ -197,25 +197,25 @@ void Pagerank::run_pagerank(int iter){
         
        
         
-        //clock_gettime(CLOCK_MONOTONIC, &begin);
+        clock_gettime(CLOCK_MONOTONIC, &begin);
         
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
         
-        //clock_gettime(CLOCK_MONOTONIC, &end);
-        //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        //printf("gather 수행시간: %Lfs.\n", time);
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("gather 수행시간: %Lfs.\n", time);
         
-        
+        fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
         //pagerank.pr = pagerank.new_pr;
         //prev_pr = recv_buffer[0];
         
-        //clock_gettime(CLOCK_MONOTONIC, &begin);
+        clock_gettime(CLOCK_MONOTONIC, &begin);
         
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
         
-        //clock_gettime(CLOCK_MONOTONIC, &end);
-        //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        //printf("scatter 수행시간: %Lfs.\n", time);
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("scatter 수행시간: %Lfs.\n", time);
         
         //if(pagerank.my_ip != "192.168.0.100")
             //pagerank.pr = recv_buffer[0];

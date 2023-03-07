@@ -18,8 +18,8 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     size_t size = sizeof(long double)*(myrdma.num_of_vertex);
     auto& rdma_info = myrdma.rdma_info[0];
 
-    if(i!=0)
-        myrdma.send[i] = msg;
+    //if(i!=0)
+    //    myrdma.send[i] = msg;
 
     rdma.post_rdma_send(get<4>(rdma_info[i]), get<5>(rdma_info[i]), myrdma.send[i].data(), 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
@@ -225,6 +225,7 @@ void myRDMA::rdma_recv_msg(string opcode, int i){
 }
 void myRDMA::recv_t(string opcode){
     std::vector<std::thread> worker;
+    worker.reserve(myrdma.connect_num);
     if (opcode == "send_with_imm" || opcode == "write_with_imm" || opcode == "send"){
         for(int i=0;i<myrdma.connect_num;i++){
             worker.push_back(std::thread(&myRDMA::rdma_send_recv,myRDMA(),i));
