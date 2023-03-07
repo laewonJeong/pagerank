@@ -42,7 +42,7 @@ class myRDMA{
         std::vector<tuple<struct ibv_context*, struct ibv_pd*, 
                         int, struct ibv_cq*,
                         struct ibv_qp*, struct ibv_mr*,
-                        uint16_t, uint32_t>> rdma_info[3];
+                        uint16_t, uint32_t>> rdma_info[2];
         std::vector<pair<string,string>> qp_key;
         std::vector<pair<string,string>> qp_key1;
         char (*send_buffer)[buf_size];
