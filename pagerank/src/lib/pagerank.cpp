@@ -303,10 +303,10 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
     if(pagerank.my_ip == "192.168.0.100"){
         //pagerank.pr = send_buffer[0];
         for(int i=0;i<pagerank.num_of_server-1;i++)
-            myrdma1.rdma_write_pagerank(send_buffer[0],i);
+            myrdma1.rdma_send_pagerank(send_buffer[0],i);
     }
     else{
-        myrdma1.rdma_wrecv_pagerank(0);
+        myrdma1.rdma_recv_pagerank(0);
         //pagerank.pr = recv_buffer[0];
     }
 }
