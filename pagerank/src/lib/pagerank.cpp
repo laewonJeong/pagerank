@@ -145,10 +145,12 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     
     for(int i=start;i<end;i++){
-        double tmp = 0;
+        double tmp = 0.0;
 
-        for(int from_page : pagerank.graph[i])
+        for(int j=0; j<pagerank.graph[i].size(); j++){
+            int from_page = pagerank.graph[i][j];
             tmp += recv_buffer[0][from_page]/pagerank.num_outgoing[from_page];
+        }
         
         send_buffer[0][i-start] = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
        
