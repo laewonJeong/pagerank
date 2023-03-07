@@ -184,17 +184,12 @@ void Pagerank::run_pagerank(int iter){
         cout <<"====="<< step+1 << " step=====" <<endl;
         
         if(step!=0) {
-            sum_pr = 0;
             dangling_pr = 0;
             pagerank.diff = 0;
             for (i=0;i<pagerank.num_of_vertex;i++) {
-                //pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
                 if (pagerank.num_outgoing[i] == 0)
                     dangling_pr += recv_buffer[0][i];   
             }
-            //prev_sum = accumulate(prev_pr.begin(), prev_pr.end(), 0.0);
-            //cur_sum = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
-            //pagerank.diff = fabs(prev_sum - cur_sum);
         }
 
         if(pagerank.my_ip != "192.168.0.100"){
@@ -290,8 +285,8 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
     int j;
     if(pagerank.my_ip == "192.168.0.100"){
         myrdma1.rdma_many_to_one_recv_msg("send");
-        send_buffer[0].reserve(pagerank.num_of_vertex);
         send_buffer[0].clear();
+        send_buffer[0].reserve(pagerank.num_of_vertex);
         for(int i=0;i<pagerank.num_of_server-1;i++){
             if(i == pagerank.num_of_server-2)
                 send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+n1);
