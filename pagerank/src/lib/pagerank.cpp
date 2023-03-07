@@ -192,7 +192,7 @@ void Pagerank::run_pagerank(int iter){
             dangling_pr = 0;
             pagerank.diff = 0;
             for (i=0;i<pagerank.num_of_vertex;i++) {
-                pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
+                //pagerank.diff += fabs(prev_pr[i] - pagerank.pr[i]);
                 if (pagerank.num_outgoing[i] == 0)
                     dangling_pr += pagerank.pr[i];   
             }
@@ -219,7 +219,7 @@ void Pagerank::run_pagerank(int iter){
             cout << pagerank.diff <<endl;  //<< " " << prev_diff << " = " << z <<endl;
         }
 
-        if(pagerank.diff < 0.00001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(step == 61){//pagerank.diff < 0.00001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;
