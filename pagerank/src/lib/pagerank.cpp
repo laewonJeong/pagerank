@@ -16,6 +16,7 @@ static std::mutex mutx;
 vector<long double> send_buffer[5];
 vector<long double> recv_buffer[5];
 vector<long double> real_pr;
+int n, n1;
 //string message = "";
 
 vector<string> split(string str, char Delimiter) {
@@ -110,9 +111,9 @@ void Pagerank::create_graph_data(string path, string del){
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
    
-    int n = pagerank.num_of_vertex/(pagerank.num_of_server-1);
+    n = pagerank.num_of_vertex/(pagerank.num_of_server-1);
     
-    int n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
+    n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
     
 
     //pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
@@ -197,7 +198,13 @@ void Pagerank::run_pagerank(int iter){
         }
 
         if(pagerank.my_ip != "192.168.0.100"){
+            clock_gettime(CLOCK_MONOTONIC, &begin);
+
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
+
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+            printf("PageRank 계산 시간: %Lfs.\n", time);
         }
         
        
@@ -280,8 +287,16 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
 }
 void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
+    int j;
     if(pagerank.my_ip == "192.168.0.100"){
         myrdma1.rdma_many_to_one_recv_msg("send");
+        send_buffer[0].clear();
+        for(int i=0;i<pagerank.num_of_server-1;i++){
+            if(i == pagerank.num_of_server-2)
+                send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+n1);
+            else
+                send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+n);
+        }
     }
     else{
         myrdma1.rdma_many_to_one_send_msg("send","s",pr);
@@ -289,8 +304,6 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
 
 }
 void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
-    vector<long double> pagerank1;
-    
     if(pagerank.my_ip == "192.168.0.100"){
         //pagerank.pr = send_buffer[0];
         for(int i=0;i<pagerank.num_of_server-1;i++)

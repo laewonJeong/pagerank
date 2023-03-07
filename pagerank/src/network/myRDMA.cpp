@@ -14,7 +14,8 @@ char* change(string temp){
 }
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     RDMA rdma;
-    myrdma.send[i] = msg;
+    if(i!=0)
+        myrdma.send[i] = msg;
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
                                 sizeof(myrdma.send[i])*(myrdma.num_of_vertex+1), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
@@ -271,15 +272,6 @@ void myRDMA::rdma_many_to_one_send_msg(string opcode, string msg, vector<long do
 }
 void myRDMA::rdma_many_to_one_recv_msg(string opcode){
     myRDMA::recv_t(opcode);
-    myrdma.send[0].clear();
-    
-    for(int i=0;i<myrdma.connect_num;i++){
-        if(i == myrdma.connect_num-1)
-            myrdma.send[0].insert(myrdma.send[0].end(),myrdma.recv[i].begin(),myrdma.recv[i].begin()+partition1);
-        else
-            myrdma.send[0].insert(myrdma.send[0].end(),myrdma.recv[i].begin(),myrdma.recv[i].begin()+partition);
-
-    }
     /*for(int i=0;i<252*4;i++){
         cout << myrdma.send[0][i] << endl;
     }*/
