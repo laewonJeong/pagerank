@@ -4,6 +4,7 @@
 
 static std::mutex mutx;
 myRDMA myrdma;
+RDMA rdma;
 int partition;
 int partition1;
 
@@ -13,7 +14,7 @@ char* change(string temp){
   return stc;
 }
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
-    RDMA rdma;
+    //RDMA rdma;
     if(i!=0)
         myrdma.send[i] = msg;
     rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
@@ -22,7 +23,7 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
         //cerr << "send success" << endl;
 }
 void myRDMA::rdma_recv_pagerank(int i){
-    RDMA rdma;
+    //RDMA rdma;
     rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
                         get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), sizeof(long double)*(myrdma.num_of_vertex));//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
@@ -34,6 +35,7 @@ void myRDMA::rdma_recv_pagerank(int i){
 void myRDMA::rdma_write_pagerank(vector<long double> msg, int i){
     RDMA rdma;
     TCP tcp;
+
     myrdma.send[i] = msg;
     rdma.post_rdma_write(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
                          sizeof(long double)*(myrdma.num_of_vertex), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
@@ -49,9 +51,10 @@ void myRDMA::rdma_wrecv_pagerank(int i){
     while(tcp.recv_msg(myrdma.sock_idx[i]) <= 0);
 }
 void myRDMA::rdma_send_vector(vector<long double> msg, int i){
-    RDMA rdma;
+    //RDMA rdma;
     //msg[67108865] = NULL;
-    myrdma.send[i] = msg;
+    if(i!=0)
+        myrdma.send[i] = msg;
     //cout << myrdma.send[i][partition-1] << endl;
     //cout << myrdma.send[i][myrdma.num_of_vertex] << endl;
     //(*myrdma.send)[i].push_back(0.321);
