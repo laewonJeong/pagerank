@@ -3,6 +3,7 @@
 #include "../../includes/network/tcp.hpp"
 #include <boost/lexical_cast.hpp>
 #include <numeric>
+#include <time.h>
 //#include <mpi.hpp>
 //#include <strtk.hpp>
 
@@ -141,27 +142,19 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 }
 
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
-    //pagerank.diff = 0;
     long double tmp;
     double d;
-    string value;
-    //double sum = 0;
-    //pagerank.new_pr.clear();
+    
     for(int i=start;i<end;i++){
         tmp = 0;
-        for(int from_page : pagerank.graph[i]){// = 0; from_page< pagerank.graph[i].size();from_page++){
+
+        for(int from_page : pagerank.graph[i])
             tmp += recv_buffer[0][from_page]/pagerank.num_outgoing[from_page];
-            //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
-        }
+        
         d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
         pagerank.new_pr[i-start] = d;
-        //pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
-        
-
-        //pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
+       
     }
-    //cout << "s = " << sum <<endl;
-    
 }
 
 void Pagerank::combine_pr(){
@@ -176,10 +169,12 @@ void Pagerank::run_pagerank(int iter){
     vector<long double> prev_pr;
     long double prev_sum;
     long double cur_sum;
+    long double time;
     int step;
     size_t i;
     double sum_pr; // sum of current pagerank vector elements
     double dangling_pr; // sum of current pagerank vector elements for dangling
+    struct timespec begin, end ;
     //size_t num_rows = pagerank.graph.size();
     pagerank.diff = 1;
     cout << "progressing..." << endl;
@@ -205,12 +200,27 @@ void Pagerank::run_pagerank(int iter){
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         }
         
+       
+        
+        clock_gettime(CLOCK_MONOTONIC, &begin);
+        
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
+        
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("gather 수행시간: %Lfs.\n", time);
+        
         //pagerank.pr = pagerank.new_pr;
         //prev_pr = recv_buffer[0];
-
+        
+        clock_gettime(CLOCK_MONOTONIC, &begin);
+        
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
-
+        
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("scatter 수행시간: %Lfs.\n", time);
+        
         //if(pagerank.my_ip != "192.168.0.100")
             //pagerank.pr = recv_buffer[0];
         
