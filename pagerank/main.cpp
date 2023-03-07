@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
 
     clock_gettime(CLOCK_MONOTONIC, &end);
     long double time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-    if(is_server(my_ip)){
+    if(!is_server(my_ip)){
         pagerank.print_pr();
         cout << "Done." << endl;
         cout << "-------------------------------------" <<endl;
