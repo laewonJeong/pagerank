@@ -15,9 +15,9 @@ char* change(string temp){
 }
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     //RDMA rdma;
-    //if(i!=0)
-     //   myrdma.send[i] = msg;
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[0].data(), 
+    if(i!=0)
+        myrdma.send[i] = msg;
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
                                 sizeof(long double)*(myrdma.num_of_vertex), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
         //cerr << "send success" << endl;
