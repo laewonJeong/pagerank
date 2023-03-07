@@ -20,7 +20,7 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
 
     if(i!=0)
         myrdma.send[i] = msg;
-        
+
     rdma.post_rdma_send(get<4>(rdma_info[i]), get<5>(rdma_info[i]), myrdma.send[i].data(), 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(rdma_info[i]));
@@ -28,9 +28,11 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
 }
 void myRDMA::rdma_recv_pagerank(int i){
     //RDMA rdma;
-    rdma.post_rdma_recv(get<4>(myrdma.rdma_info[1][i]), get<5>(myrdma.rdma_info[1][i]), 
-                        get<3>(myrdma.rdma_info[1][i]), myrdma.recv[i].data(), sizeof(long double)*(myrdma.num_of_vertex));//sizeof(myrdma.recv[i].data()));
-    rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i]));
+    size_t size = sizeof(long double)*(myrdma.num_of_vertex);
+    auto& rdma_info = myrdma.rdma_info[1];
+    rdma.post_rdma_recv(get<4>(rdma_info[i]), get<5>(rdma_info[i]), 
+                        get<3>(rdma_info[i]), myrdma.recv[i].data(), size);//sizeof(myrdma.recv[i].data()));
+    rdma.pollCompletion(get<3>(rdma_info[i]));
    
         //cout.precision(numeric_limits<double>::digits10);
     
@@ -63,10 +65,12 @@ void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     //cout << myrdma.send[i][myrdma.num_of_vertex] << endl;
     //(*myrdma.send)[i].push_back(0.321);
     //cout << sizeof(myrdma.send_buffer[i]) << endl;
+    size_t size = sizeof(long double)*(myrdma.num_of_vertex);
+    auto& rdma_info = myrdma.rdma_info[0];
 
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
-                                sizeof(long double)*(myrdma.num_of_vertex), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
+    rdma.post_rdma_send(get<4>(rdma_info[i]), get<5>(rdma_info[i]), myrdma.send[i].data(), 
+                                size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+    rdma.pollCompletion(get<3>(rdma_info[i]));
         //cerr << "send success" << endl;
         //cerr << "send failed" << endl;
     

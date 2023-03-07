@@ -165,14 +165,10 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     myrdma1.rdma_comm("write", pagerank.message);
 }
 void Pagerank::run_pagerank(int iter){
-    double prev_diff =0;
     vector<long double> prev_pr;
-    long double prev_sum;
-    long double cur_sum;
     long double time;
-    int step;
     size_t i;
-    double sum_pr; 
+    int step;
     struct timespec begin, end ;
   
     pagerank.diff = 1;
