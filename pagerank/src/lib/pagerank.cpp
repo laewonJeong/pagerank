@@ -118,7 +118,7 @@ void Pagerank::initial_pagerank_value(){
     //pagerank.pr1.reserve(pagerank.num_of_vertex);
     //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
     //pagerank.new_pr1[0] = "1";
-    if(pagerank.my_ip == "192.168.1.106")
+    if(pagerank.my_ip == "192.168.0.106")
         pagerank.new_pr.resize(n1);
     else{
         pagerank.new_pr.resize(n);
@@ -154,7 +154,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
-        pagerank.new_pr[i] = d;//-start] = d;
+        pagerank.new_pr[i-start] = d;
         //pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
         
 
