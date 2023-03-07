@@ -154,7 +154,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             //tmp += pagerank.pr[pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]];
         }
         d = (tmp + x/pagerank.num_of_vertex)*df + (1-df)/pagerank.num_of_vertex;
-        pagerank.new_pr[i-start] = d;
+        pagerank.new_pr[i] = d;//-start] = d;
+        //pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
         
 
         //pagerank.diff += fabs(pagerank.new_pr[i] - pagerank.pr[i]);
@@ -205,7 +206,7 @@ void Pagerank::run_pagerank(int iter){
         }
         
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
-
+        pagerank.pr = pagerank.new_pr;
         prev_pr = pagerank.pr;
 
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
@@ -218,7 +219,7 @@ void Pagerank::run_pagerank(int iter){
             cout << pagerank.diff <<endl;  //<< " " << prev_diff << " = " << z <<endl;
         }
 
-        if(pagerank.diff < 0.0001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;

@@ -8,7 +8,7 @@
 #define port 40145
 #define server_ip "192.168.1.100"
 #define iter 100000
-string node1[num_of_node] = {server_ip,"192.168.1.101","192.168.1.102","192.168.1.103","192.168.1.104"};//,"192.168.1.102","192.168.1.103"};
+string node1[num_of_node] = {server_ip,"192.168.1.101","192.168.1.103","192.168.1.104","192.168.1.105"};//,"192.168.1.102","192.168.1.103"};
 using namespace std;
 //using namespace stdext;
 
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
 
     clock_gettime(CLOCK_MONOTONIC, &end);
     long double time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-    if(!is_server(my_ip)){
+    if(is_server(my_ip)){
         pagerank.print_pr();
         cout << "Done." << endl;
         cout << "-------------------------------------" <<endl;
