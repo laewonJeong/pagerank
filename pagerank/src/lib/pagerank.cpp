@@ -179,7 +179,7 @@ void Pagerank::run_pagerank(int iter){
     //size_t num_rows = pagerank.graph.size();
     pagerank.diff = 1;
     cout << "progressing..." << endl;
-
+    //&send_buffer[1] = &send_buffer[0].data();
     for(int step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         
@@ -212,6 +212,11 @@ void Pagerank::run_pagerank(int iter){
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
         printf("gather 수행시간: %Lfs.\n", time);
         
+        /*if(pagerank.my_ip == "192.168.0.100"){
+            send_buffer[1] = move(send_buffer[0]);
+            send_buffer[2] = move(send_buffer[0]);
+            send_buffer[3] = move(send_buffer[0]);
+        }*/
         //pagerank.pr = pagerank.new_pr;
         //prev_pr = recv_buffer[0];
         

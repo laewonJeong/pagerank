@@ -15,9 +15,9 @@ char* change(string temp){
 }
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     //RDMA rdma;
-    if(i!=0)
-        myrdma.send[i] = msg;
-    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[i].data(), 
+    //if(i!=0)
+     //   myrdma.send[i] = msg;
+    rdma.post_rdma_send(get<4>(myrdma.rdma_info[0][i]), get<5>(myrdma.rdma_info[0][i]), myrdma.send[0].data(), 
                                 sizeof(long double)*(myrdma.num_of_vertex), myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(get<3>(myrdma.rdma_info[0][i]));
         //cerr << "send success" << endl;
@@ -297,8 +297,12 @@ void myRDMA::send_info_change_qp(){
         for(int j=0;j<myrdma.connect_num;j++){
             std::ostringstream oss;
 
-            if(k==0)
+            if(k==0){
                 oss << myrdma.send[j].data();
+                if(tcp.check_my_ip() == "192.168.0.100"){
+                    oss << myrdma.send[0].data();
+                }
+            }
             else if(k==1)
                 oss << myrdma.recv[j].data();
             
