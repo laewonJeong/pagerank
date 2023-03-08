@@ -143,17 +143,21 @@ void Pagerank::thread_calc_pr(int i, double x, double y){
 }
 
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
-    
+    const int num_of_vertex = pagerank.num_of_vertex;
+    double df_inv = 1.0 - df;
+    double inv_num_of_vertex = 1.0 / num_of_vertex;
+
     for(size_t i=start;i<end;i++){
         double tmp = 0.0;
-        int graph_size = pagerank.graph[i].size();
-        for(int j=0; j<graph_size; j++){
-            int from_page = pagerank.graph[i][j];
-            double inv_num_outgoing = 1.0 / pagerank.num_outgoing[from_page];
+        const size_t graph_size = pagerank.graph[i].size();
+        const size_t* graph_ptr = pagerank.graph[i].data();
+        for(size_t j=0; j<graph_size; j++){
+            const size_t from_page = graph_ptr[j];
+            const double inv_num_outgoing = 1.0 / pagerank.num_outgoing[from_page];
             tmp += recv_buffer[0][from_page] * inv_num_outgoing;
         }
         double inv_num_of_vertex = 1.0 / pagerank.num_of_vertex;
-        send_buffer[0][i - start] = (tmp + x * inv_num_of_vertex) * df + (1 - df) * inv_num_of_vertex;
+        send_buffer[0][i - start] = (tmp + x * inv_num_of_vertex) * df + df_inv * inv_num_of_vertex;
     }
 }
 
@@ -205,7 +209,8 @@ void Pagerank::run_pagerank(int iter){
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
         printf("gather 수행시간: %Lfs.\n", time);
         
-        //fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
+        if(pagerank.my_ip == "192.168.0.100")
+            fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
         //pagerank.pr = pagerank.new_pr;
         //prev_pr = recv_buffer[0];
         
