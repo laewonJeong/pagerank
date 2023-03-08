@@ -146,8 +146,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     const int num_of_vertex = pagerank.num_of_vertex;
     double df_inv = 1.0 - df;
     double inv_num_of_vertex = 1.0 / num_of_vertex;
-    size_t l = end-start;
-    for(size_t i=0;i<l;i++){
+    
+    for(size_t i=start;i<end;i++){
         double tmp = 0.0;
         const size_t graph_size = pagerank.graph[i].size();
         const size_t* graph_ptr = pagerank.graph[i].data();
@@ -157,7 +157,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
             tmp += recv_buffer[0][from_page] * inv_num_outgoing;
         }
         double inv_num_of_vertex = 1.0 / pagerank.num_of_vertex;
-        send_buffer[0][i] = (tmp + x * inv_num_of_vertex) * df + df_inv * inv_num_of_vertex;
+        send_buffer[0][i-start] = (tmp + x * inv_num_of_vertex) * df + df_inv * inv_num_of_vertex;
     }
 }
 
