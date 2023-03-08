@@ -40,9 +40,11 @@ void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
 void myRDMA::rdma_recv_pagerank(int i){
     //RDMA rdma;
     size_t size = sizeof(long double)*(myrdma.num_of_vertex);
-    
+    void* data_ptr = rdma_info1[1][i].mr->addr;
+    memcpy(data_ptr, myrdma.recv[i].data(), size);
+
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
-                        rdma_info1[1][i].cq, myrdma.recv[i].data(), size);//sizeof(myrdma.recv[i].data()));
+                        rdma_info1[1][i].cq,data_ptr, size);//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(rdma_info1[1][i].cq);
    
         //cout.precision(numeric_limits<double>::digits10);
@@ -70,8 +72,10 @@ void myRDMA::rdma_wrecv_pagerank(int i){
 void myRDMA::rdma_send_vector(vector<long double> msg, int i){
     
     size_t size = sizeof(long double)*(myrdma.num_of_vertex);
+    void* data_ptr = rdma_info1[0][i].mr->addr;
+    memcpy(data_ptr, myrdma.send[i].data(), size);
 
-    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, myrdma.send[i].data(), 
+    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, data_ptr, 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(rdma_info1[0][i].cq);
         //cerr << "send success" << endl;
@@ -158,8 +162,10 @@ void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
     //vector<long double> x1;
     size_t size = sizeof(long double)*(myrdma.num_of_vertex);
+    void* data_ptr = rdma_info1[1][i].mr->addr;
+    memcpy(data_ptr, myrdma.recv[i].data(), size);
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
-                        rdma_info1[1][i].cq, myrdma.recv[i].data(), size);//sizeof(myrdma.recv[i].data()));
+                        rdma_info1[1][i].cq, data_ptr, size);//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(rdma_info1[1][i].cq);
     //if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
     //    cerr << "recv failed" << endl;
