@@ -29,14 +29,13 @@ char* change(string temp){
 void myRDMA::rdma_send_pagerank(vector<long double> msg, int i){
     //RDMA rdma;
     size_t size = sizeof(long double)*(myrdma.num_of_vertex);
+    void* data_ptr = rdma_info1[0][i].mr->addr;
+    memcpy(data_ptr, myrdma.send[0].data(), size);
 
-    //if(i!=0)
-    //    myrdma.send[i] = msg;
-
-    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, myrdma.send[i].data(), 
+    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, data_ptr, 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(rdma_info1[0][i].cq);
-        //cerr << "send success" << endl;
+ 
 }
 void myRDMA::rdma_recv_pagerank(int i){
     //RDMA rdma;
