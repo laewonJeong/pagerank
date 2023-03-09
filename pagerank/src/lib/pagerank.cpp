@@ -149,14 +149,15 @@ void Pagerank::run_pagerank(int iter){
     string my_ip = pagerank.my_ip;
     string server_ip = pagerank.server_ip;
     int start = pagerank.start1;
-    int end = pagerank.end1;
+    int end1 = pagerank.end1;
     int num_of_vertex = pagerank.num_of_vertex;
     double diff;
     double dangling_pr = 0.0;
     const vector<int>& num_outgoing = pagerank.num_outgoing;
     double* recv_buffer_ptr = recv_buffer[0].data();    
     double* send_buffer_ptr = send_buffer[0].data();
-
+    struct timespec begin, end;
+    long double time;
 
     for(step =0; step < iter ;step++){
         
@@ -178,16 +179,29 @@ void Pagerank::run_pagerank(int iter){
             }
             
         }
-
+        clock_gettime(CLOCK_MONOTONIC, &begin);
         if(my_ip != server_ip)
-            Pagerank::calc_pagerank_value(start,end,dangling_pr,0.0);
+            Pagerank::calc_pagerank_value(start,end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
-        
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("calc 수행시간: %Lfs.\n", time);
+
+
+        clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::gather_pagerank("send");
-        
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("gather 수행시간: %Lfs.\n", time);
+
+
+        clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::scatter_pagerank();
-        
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("scatter 수행시간: %Lfs.\n", time);
+
         if(my_ip == server_ip)
             cout << pagerank.diff << endl;
 
