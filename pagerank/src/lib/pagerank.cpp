@@ -171,7 +171,6 @@ void Pagerank::run_pagerank(int iter){
         cout <<"====="<< step+1 << " step=====" <<endl;
         double dangling_pr = 0.0;
         if(step!=0) {
-            pagerank.diff = 0;
             if(pagerank.my_ip != "192.168.0.100"){
                 for (i=0;i<pagerank.num_of_vertex;i++) {
                     if (pagerank.num_outgoing[i] == 0)
@@ -179,6 +178,7 @@ void Pagerank::run_pagerank(int iter){
                 }
             }
             else{
+                pagerank.diff = 0;
                 for (i=0;i<pagerank.num_of_vertex;i++) 
                     pagerank.diff += fabs(prev_pr[i] - send_buffer[0][i]);
             }
@@ -265,7 +265,7 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<double> pr){
         if(pagerank.diff < 0.00001){
             send_buffer[0][0] = 1;
         }    
-        
+
         fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
         
     }
