@@ -135,14 +135,16 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     const int num_of_vertex = pagerank.num_of_vertex;
     double df_inv = 1.0 - df;
     double inv_num_of_vertex = 1.0 / num_of_vertex;
-    
+    const vector<vector<size_t>>& graph = pagerank.graph;
+    const vector<int>& num_outgoing = pagerank.num_outgoing;
+
     for(size_t i=start;i<end;i++){
         double tmp = 0.0;
-        const size_t graph_size = pagerank.graph[i].size();
-        const size_t* graph_ptr = pagerank.graph[i].data();
+        const size_t graph_size = graph[i].size();
+        const size_t* graph_ptr = graph[i].data();
         for(size_t j=0; j<graph_size; j++){
             const size_t from_page = graph_ptr[j];
-            const double inv_num_outgoing = 1.0 / pagerank.num_outgoing[from_page];
+            const double inv_num_outgoing = 1.0 / num_outgoing[from_page];
             tmp += recv_buffer[0][from_page] * inv_num_outgoing;
         }
         double inv_num_of_vertex = 1.0 / pagerank.num_of_vertex;
@@ -159,27 +161,23 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
 }
 void Pagerank::run_pagerank(int iter){
     vector<double> prev_pr;
-    long double time;
-    size_t i;
-    int step;
-    struct timespec begin, end ;
-  
+    size_t step;
     pagerank.diff = 1;
     cout << "progressing..." << endl;
   
-    for(int step =0; step < iter ;step++){
+    for(step =0; step < iter ;step++){
         cout <<"====="<< step+1 << " step=====" <<endl;
         double dangling_pr = 0.0;
         if(step!=0) {
             if(pagerank.my_ip != "192.168.0.100"){
-                for (i=0;i<pagerank.num_of_vertex;i++) {
+                for (size_t i=0;i<pagerank.num_of_vertex;i++) {
                     if (pagerank.num_outgoing[i] == 0)
                         dangling_pr += recv_buffer[0][i];   
                 }
             }
             else{
                 pagerank.diff = 0;
-                for (i=0;i<pagerank.num_of_vertex;i++) 
+                for (size_t i=0;i<pagerank.num_of_vertex;i++) 
                     pagerank.diff += fabs(prev_pr[i] - send_buffer[0][i]);
             }
         }
