@@ -429,8 +429,8 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
         myrdma.send[i].resize(num_of_vertex);
         myrdma.recv[i].resize(num_of_vertex);
     }
-    rdma_info1[0].reserve(100000);
-    rdma_info1[1].reserve(100000);
+    rdma_info1[0].reserve(10000);
+    rdma_info1[1].reserve(10000);
     
     myrdma.connect_num = number_of_server - 1;
 }

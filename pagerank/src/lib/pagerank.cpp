@@ -154,6 +154,10 @@ void Pagerank::run_pagerank(int iter){
     double diff;
     double dangling_pr = 0.0;
     const vector<int>& num_outgoing = pagerank.num_outgoing;
+    double* recv_buffer_ptr = recv_buffer[0].data();    
+    double* send_buffer_ptr = send_buffer[0].data();
+
+
     for(step =0; step < iter ;step++){
         
         cout <<"====="<< step+1 << " step=====" <<endl;
@@ -163,13 +167,13 @@ void Pagerank::run_pagerank(int iter){
             if(my_ip != server_ip){
                 for (size_t i=0;i<num_of_vertex;i++) {
                     if (num_outgoing[i] == 0)
-                        dangling_pr += recv_buffer[0][i];   
+                        dangling_pr += recv_buffer_ptr[i];   
                 }
             }
             else{
                 diff = 0;
                 for (size_t i=0;i<num_of_vertex;i++) 
-                    diff += fabs(prev_pr[i] - send_buffer[0][i]);
+                    diff += fabs(prev_pr[i] - send_buffer_ptr[i]);
                 pagerank.diff = diff;
             }
             
@@ -187,7 +191,7 @@ void Pagerank::run_pagerank(int iter){
         if(my_ip == server_ip)
             cout << pagerank.diff << endl;
 
-        if(pagerank.diff < 0.00001 || recv_buffer[0][0] > 1){
+        if(pagerank.diff < 0.00001 || recv_buffer_ptr[0] > 1){
             break;
         }
 
