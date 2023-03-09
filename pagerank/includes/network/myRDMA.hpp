@@ -8,10 +8,10 @@
 using namespace std;
 class myRDMA{
     public:
-        void rdma_send_vector(vector<long double> msg, int i);
-        void rdma_write_vector(vector<long double>msg, int i);
-        void rdma_send_pagerank(vector<long double> msg, int i);
-        void rdma_write_pagerank(vector<long double> msg, int i);
+        void rdma_send_vector(vector<double> msg, int i);
+        void rdma_write_vector(vector<double>msg, int i);
+        void rdma_send_pagerank(vector<double> msg, int i);
+        void rdma_write_pagerank(vector<double> msg, int i);
         void rdma_recv_pagerank(int i);
         void rdma_wrecv_pagerank(int i);
         void rdma_send(string msg, int i);
@@ -25,7 +25,7 @@ class myRDMA{
         void recv_t(string opcode);
         void rdma_one_to_many_send_msg(string opcode, string msg);
         void rdma_one_to_many_recv_msg(string opcode);
-        void rdma_many_to_one_send_msg(string opcode, string msg,vector<long double> msg1);
+        void rdma_many_to_one_send_msg(string opcode, string msg,vector<double> msg1);
         void rdma_many_to_one_recv_msg(string opcode);
         void rdma_comm(string opcode, string msg);
         void create_rdma_info();
@@ -36,7 +36,7 @@ class myRDMA{
                                         char send[][buf_size], char recv[][buf_size]);
         void initialize_rdma_connection_vector(const char* ip, string server[], 
                                         int number_of_server, int Port,
-                                        vector<long double> *send, vector<long double> *recv, int num_of_vertex);
+                                        vector<double> *send, vector<double> *recv, int num_of_vertex);
         void exit_rdma();
     private:
         std::vector<tuple<struct ibv_context*, struct ibv_pd*, 
@@ -48,8 +48,8 @@ class myRDMA{
         std::vector<pair<string,string>> qp_key1;
         char (*send_buffer)[buf_size];
         char (*recv_buffer)[buf_size];
-        vector<long double> *send;
-        vector<long double> *recv;
+        vector<double> *send;
+        vector<double> *recv;
         vector<long double> srecv[5];
         vector<long double> aaa;
         vector<int> sock_idx;

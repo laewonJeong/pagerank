@@ -13,8 +13,8 @@ Pagerank pagerank;
 vector<int> sock_idx;
 vector<long double> old_pr;
 static std::mutex mutx;
-vector<long double> send_buffer[5];
-vector<long double> recv_buffer[5];
+vector<double> send_buffer[4];
+vector<double> recv_buffer[4];
 vector<long double> real_pr;
 int n, n1;
 //string message = "";
@@ -243,8 +243,8 @@ void Pagerank::run_pagerank(int iter){
 string Pagerank::max_pr(){
     int important = 0;
     string result = "";
-    long double important_pr = recv_buffer[0][0];
-    long double tmp = important_pr;
+    double important_pr = recv_buffer[0][0];
+    double tmp = important_pr;
     //double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     for (int i=0;i< pagerank.num_of_vertex;i++){
         important_pr = max(important_pr, recv_buffer[0][i]);
@@ -289,7 +289,7 @@ void fill_send_buffer(int num_of_server, int index){
     }        
  
 }
-void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
+void Pagerank::gather_pagerank(string opcode, int i, vector<double> pr){
     int j;
     if(pagerank.my_ip == "192.168.0.100"){
         myrdma1.rdma_many_to_one_recv_msg("send");
@@ -303,7 +303,7 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<long double> pr){
 
 }
 
-void Pagerank::scatter_pagerank(string opcode, int i, vector<long double> pr){
+void Pagerank::scatter_pagerank(string opcode, int i, vector<double> pr){
     if(pagerank.my_ip == "192.168.0.100"){
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_send_pagerank(send_buffer[0],i);
