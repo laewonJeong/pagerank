@@ -173,6 +173,7 @@ void Pagerank::run_pagerank(int iter){
         
         Pagerank::gather_pagerank("send");
         
+        
         if(pagerank.diff < 0.00001)
             send_buffer[0][0] += 1; 
         
