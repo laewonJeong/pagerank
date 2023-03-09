@@ -173,6 +173,9 @@ void Pagerank::run_pagerank(int iter){
         
         Pagerank::gather_pagerank("send");
         
+        if(pagerank.diff < 0.00001)
+            send_buffer[0][0] += 1; 
+        
         Pagerank::scatter_pagerank();
         
         if(pagerank.my_ip == pagerank.server_ip)
@@ -229,25 +232,21 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
 }
 void fill_send_buffer(int num_of_server, int index){
     int size = n;
+    
     for(int i=0;i<num_of_server-1;i++){
         if(i == index)
             size = n1;
         send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+size);
-    }    
+    }   
+    
+    fill(&send_buffer[1], &send_buffer[num_of_server-1], send_buffer[0]); 
  
 }
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
         myrdma1.rdma_many_to_one_recv_msg(opcode);
         send_buffer[0].clear();
-        fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
-        
-        if(pagerank.diff < 0.00001){
-            send_buffer[0][0] += 1;
-        }    
-
-        fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);
-        
+        fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);   
     }
     else{
         myrdma1.rdma_many_to_one_send_msg(opcode,"s",send_buffer[0]);
