@@ -15,7 +15,6 @@ static std::mutex mutx;
 vector<double> send_buffer[4];
 vector<double> recv_buffer[4];
 int n, n1;
-//string message = "";
 
 vector<string> split(string str, char Delimiter) {
     istringstream iss(str);             
@@ -110,7 +109,7 @@ void Pagerank::initial_pagerank_value(){
     n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
     
 
-    if(pagerank.my_ip == "192.168.0.106")
+    if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1])
         send_buffer[0].resize(n1);
     else{
         send_buffer[0].resize(n);
@@ -118,17 +117,6 @@ void Pagerank::initial_pagerank_value(){
     
 
     cout << "Done" <<endl;
-}
-
-void Pagerank::thread_calc_pr(int i, double x, double y){
-    double tmp = 0;
-    
-    for(int j = 0; j<pagerank.graph[i].size();j++){
-        tmp += df*(recv_buffer[0][pagerank.graph[i][j]]/pagerank.num_outgoing[pagerank.graph[i][j]]);
-    }
-    pagerank.new_pr[i] = stod(to_string((1-df)/pagerank.num_of_vertex + tmp));
-    pagerank.diff += fabs(pagerank.new_pr[i] - recv_buffer[0][i]);
-    //cout << pagerank.new_pr[i] <<endl;    
 }
 
 void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
@@ -152,13 +140,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     }
 }
 
-void Pagerank::combine_pr(){
-    
-}
-void Pagerank::send_recv_pagerank_value(int start, int end){
-    
-    myrdma1.rdma_comm("write", pagerank.message);
-}
+
 void Pagerank::run_pagerank(int iter){
     vector<double> prev_pr;
     size_t step;
@@ -166,23 +148,25 @@ void Pagerank::run_pagerank(int iter){
     cout << "progressing..." << endl;
   
     for(step =0; step < iter ;step++){
+        double diff;
         cout <<"====="<< step+1 << " step=====" <<endl;
         double dangling_pr = 0.0;
         if(step!=0) {
-            if(pagerank.my_ip != "192.168.0.100"){
+            if(pagerank.my_ip != pagerank.server_ip){
                 for (size_t i=0;i<pagerank.num_of_vertex;i++) {
                     if (pagerank.num_outgoing[i] == 0)
                         dangling_pr += recv_buffer[0][i];   
                 }
             }
             else{
-                pagerank.diff = 0;
+                diff = 0;
                 for (size_t i=0;i<pagerank.num_of_vertex;i++) 
-                    pagerank.diff += fabs(prev_pr[i] - send_buffer[0][i]);
+                    diff += fabs(prev_pr[i] - send_buffer[0][i]);
             }
+            pagerank.diff = diff;
         }
 
-        if(pagerank.my_ip != "192.168.0.100")
+        if(pagerank.my_ip != pagerank.server_ip)
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
@@ -191,10 +175,10 @@ void Pagerank::run_pagerank(int iter){
         
         Pagerank::scatter_pagerank();
         
-        if(pagerank.my_ip == "192.168.0.100")
+        if(pagerank.my_ip == pagerank.server_ip)
             cout << pagerank.diff << endl;
 
-        if(pagerank.diff < 0.00001 || recv_buffer[0][0] > 1){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001 || recv_buffer[0][0] > 1){
             break;
         }
 
@@ -223,10 +207,15 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     myrdma1.initialize_rdma_connection_vector(ip,server,number_of_server,Port,send_buffer,recv_buffer,num_of_vertex);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
+
     string str_ip(ip);
+
     pagerank.my_ip = str_ip; 
     pagerank.num_of_server = number_of_server;
     pagerank.diff = 1;
+    pagerank.node = server;
+    pagerank.server_ip = server[0];
+
     for(int i=1;i<number_of_server;i++){
         if(ip == server[i]){
             pagerank.start1 = pagerank.num_of_vertex/(number_of_server-1)*(i-1);
@@ -248,7 +237,7 @@ void fill_send_buffer(int num_of_server, int index){
  
 }
 void Pagerank::gather_pagerank(string opcode){
-    if(pagerank.my_ip == "192.168.0.100"){
+    if(pagerank.my_ip == pagerank.server_ip){
         myrdma1.rdma_many_to_one_recv_msg(opcode);
         send_buffer[0].clear();
         fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
@@ -267,7 +256,7 @@ void Pagerank::gather_pagerank(string opcode){
 }
 
 void Pagerank::scatter_pagerank(){
-    if(pagerank.my_ip == "192.168.0.100"){
+    if(pagerank.my_ip == pagerank.server_ip){
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_send_pagerank(send_buffer[0],i);
     }

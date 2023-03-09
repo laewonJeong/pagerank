@@ -21,10 +21,6 @@ class Pagerank{
        void create_graph_data(string path, string del);
        void initial_pagerank_value();
        static void calc_pagerank_value(int start, int end, double x, double y);
-       static void thread_calc_pr(int index, double x, double y);
-       static void combine_pr();
-       static void thread_combine_pr(int i);
-       void send_recv_pagerank_value(int start, int end);
        void run_pagerank(int iter);
        void gather_pagerank(string opcode);
        void scatter_pagerank();
@@ -35,21 +31,16 @@ class Pagerank{
        int get_num_of_vertex(); 
     private:
         vector<vector<size_t>> graph;
-        unordered_map<size_t, vector<size_t>> graph1;
-        unordered_map<string, double> pr1;
-        unordered_map<string, double> new_pr1;
         vector<vector<size_t>> outgoing;
-        vector<double> pr;
-        vector<double> new_pr;
-        vector<long double> my_pr;
         string my_ip;
         int num_of_vertex;
         int num_of_server;
+        string *node;
+        string server_ip;
         int start1;
         int end1;
-        string message;
-        vector<int> num_outgoing;
         double diff;
+        vector<int> num_outgoing;
         bool add_arc(size_t from, size_t to);
         template <class Vector, class T> bool insert_into_vector(Vector& v,
                                                              const T& t);
