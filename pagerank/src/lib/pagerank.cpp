@@ -208,22 +208,18 @@ void Pagerank::run_pagerank(int iter){
 
 string Pagerank::max_pr(){
     int important = 0;
-    string result = "";
     double important_pr = recv_buffer[0][0]-1;
-    double tmp = important_pr;
-    //double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
-    for (int i=1;i< pagerank.num_of_vertex;i++){
-        important_pr = max(important_pr, recv_buffer[0][i]);
-        if(tmp != important_pr){
+
+    for (int i = 1; i < pagerank.num_of_vertex; ++i) {
+        if (recv_buffer[0][i] > important_pr) {
             important = i;
-            tmp = important_pr;
+            important_pr = recv_buffer[0][i];
         }
     }
 
-    cout << "important page is " << important << " and value is " << tmp << endl;
-
-    result += to_string(important);
-    return result;
+    stringstream ss;
+    ss << "important page is " << important << " and value is " << important_pr;
+    return ss.str();
 }
 
 void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port, int num_of_vertex)
