@@ -10,8 +10,8 @@ myRDMA myrdma1;
 Pagerank pagerank;
 vector<int> sock_idx;
 static std::mutex mutx;
-vector<double> *send_buffer;
-vector<double> *recv_buffer;
+vector<double> send_buffer[4];
+vector<double> recv_buffer[4];
 int n, n1;
 
 vector<string> split(string str, char Delimiter) {
@@ -204,12 +204,6 @@ string Pagerank::max_pr(){
 
 void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port, int num_of_vertex)
 {
-    vector<double> x[number_of_server-1];
-    vector<double> y[number_of_server-1];
-
-    send_buffer = &x[0];
-    recv_buffer = &y[0];
-    
     myrdma1.initialize_rdma_connection_vector(ip,server,number_of_server,Port,send_buffer,recv_buffer,num_of_vertex);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
