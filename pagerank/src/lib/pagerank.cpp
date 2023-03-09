@@ -141,34 +141,42 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
 
 
 void Pagerank::run_pagerank(int iter){
+    cout << "progressing..." << endl;
+    
     vector<double> prev_pr;
     size_t step;
     pagerank.diff = 1;
-    cout << "progressing..." << endl;
-  
+    string my_ip = pagerank.my_ip;
+    string server_ip = pagerank.server_ip;
+    int start = pagerank.start1;
+    int end = pagerank.end1;
+    int num_of_vertex = pagerank.num_of_vertex;
+    double diff;
+    double dangling_pr = 0.0;
+    vector<int> num_outgoing = pagerank.num_outgoing;
     for(step =0; step < iter ;step++){
-        double diff;
-        cout <<"====="<< step+1 << " step=====" <<endl;
-        double dangling_pr = 0.0;
         
+        cout <<"====="<< step+1 << " step=====" <<endl;
+        
+        dangling_pr = 0.0;
         if(step!=0) {
-            if(pagerank.my_ip != pagerank.server_ip){
-                for (size_t i=0;i<pagerank.num_of_vertex;i++) {
-                    if (pagerank.num_outgoing[i] == 0)
+            if(my_ip != server_ip){
+                for (size_t i=0;i<num_of_vertex;i++) {
+                    if (num_outgoing[i] == 0)
                         dangling_pr += recv_buffer[0][i];   
                 }
             }
             else{
                 diff = 0;
-                for (size_t i=0;i<pagerank.num_of_vertex;i++) 
+                for (size_t i=0;i<num_of_vertex;i++) 
                     diff += fabs(prev_pr[i] - send_buffer[0][i]);
                 pagerank.diff = diff;
             }
             
         }
 
-        if(pagerank.my_ip != pagerank.server_ip)
-            Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
+        if(my_ip != server_ip)
+            Pagerank::calc_pagerank_value(start,end,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
         
@@ -176,7 +184,7 @@ void Pagerank::run_pagerank(int iter){
         
         Pagerank::scatter_pagerank();
         
-        if(pagerank.my_ip == pagerank.server_ip)
+        if(my_ip == server_ip)
             cout << pagerank.diff << endl;
 
         if(pagerank.diff < 0.00001 || recv_buffer[0][0] > 1){
