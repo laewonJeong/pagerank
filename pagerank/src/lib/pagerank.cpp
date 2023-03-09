@@ -184,27 +184,27 @@ void Pagerank::run_pagerank(int iter){
             Pagerank::calc_pagerank_value(start,end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
-        clock_gettime(CLOCK_MONOTONIC, &end);
+        /*clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("calc 수행시간: %Lfs.\n", time);
+        printf("calc 수행시간: %Lfs.\n", time);*/
 
 
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        //clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::gather_pagerank("send");
-        clock_gettime(CLOCK_MONOTONIC, &end);
+        /*clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("gather 수행시간: %Lfs.\n", time);
+        printf("gather 수행시간: %Lfs.\n", time);*/
 
 
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        //clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::scatter_pagerank();
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("scatter 수행시간: %Lfs.\n", time);
+        //printf("1 step 수행시간: %Lfs.\n", time);
 
         if(my_ip == server_ip)
             cout << pagerank.diff << endl;
-
+        printf("1 step 수행시간: %Lfs.\n", time);
         if(pagerank.diff < 0.00001 || recv_buffer_ptr[0] > 1){
             break;
         }
