@@ -173,10 +173,6 @@ void Pagerank::run_pagerank(int iter){
         
         Pagerank::gather_pagerank("send");
         
-        
-        if(pagerank.diff < 0.00001)
-            send_buffer[0][0] += 1; 
-        
         Pagerank::scatter_pagerank();
         
         if(pagerank.my_ip == pagerank.server_ip)
@@ -248,6 +244,10 @@ void Pagerank::gather_pagerank(string opcode){
         send_buffer[0].clear();
 
         fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
+
+        if(pagerank.diff < 0.00001)
+            send_buffer[0][0] += 1; 
+            
         fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);    
     }
     else{
