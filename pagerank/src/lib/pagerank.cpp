@@ -11,11 +11,9 @@ TCP tcp1;
 myRDMA myrdma1;
 Pagerank pagerank;
 vector<int> sock_idx;
-vector<long double> old_pr;
 static std::mutex mutx;
 vector<double> send_buffer[4];
 vector<double> recv_buffer[4];
-vector<long double> real_pr;
 int n, n1;
 //string message = "";
 
@@ -47,14 +45,11 @@ bool Pagerank::add_arc(size_t from, size_t to) {
     if (pagerank.graph.size() <= max_dim) {
         max_dim = max_dim + 1;
         
-        pagerank.graph.resize(max_dim);
-        //pagerank.outgoing.resize(max_dim);
+        pagerank.graph.resize(max_dim);;
         if (pagerank.num_outgoing.size() <= max_dim) {
             pagerank.num_outgoing.resize(max_dim,0);
         }
     }
-    //pagerank.graph[to].push_back(from);
-    //cout << pagerank.graph[to] << endl;
 
     ret = insert_into_vector(pagerank.graph[to], from);
 
@@ -98,8 +93,7 @@ void Pagerank::create_graph_data(string path, string del){
 		cout << "Unable to open file" <<endl;
         exit(1);
 	}
-    //agerank.new_pr1 = pagerank.pr1;
-    //pagerank.pr1["0"] = 1;
+
     pagerank.num_of_vertex = pagerank.graph.size();
     cerr << "Create " << line_num << " lines, "
          << pagerank.num_of_vertex << " vertices graph." << endl;
@@ -116,17 +110,12 @@ void Pagerank::initial_pagerank_value(){
     n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
     
 
-    //pagerank.pr.resize(pagerank.num_of_vertex, 1/pagerank.num_of_vertex);
-    //pagerank.pr1.reserve(pagerank.num_of_vertex);
-    //pagerank.new_pr1.resize(pagerank.num_of_vertex,"0");
-    //pagerank.new_pr1[0] = "1";
     if(pagerank.my_ip == "192.168.0.106")
         send_buffer[0].resize(n1);
     else{
         send_buffer[0].resize(n);
     }
     
-    //pagerank.pr[0] = 1;
 
     cout << "Done" <<endl;
 }
@@ -169,7 +158,7 @@ void Pagerank::send_recv_pagerank_value(int start, int end){
     myrdma1.rdma_comm("write", pagerank.message);
 }
 void Pagerank::run_pagerank(int iter){
-    vector<long double> prev_pr;
+    vector<double> prev_pr;
     long double time;
     size_t i;
     int step;
@@ -183,54 +172,31 @@ void Pagerank::run_pagerank(int iter){
         double dangling_pr = 0.0;
         if(step!=0) {
             pagerank.diff = 0;
-            for (i=0;i<pagerank.num_of_vertex;i++) {
-                if (pagerank.num_outgoing[i] == 0)
-                    dangling_pr += recv_buffer[0][i];   
+            if(pagerank.my_ip != "192.168.0.100"){
+                for (i=0;i<pagerank.num_of_vertex;i++) {
+                    if (pagerank.num_outgoing[i] == 0)
+                        dangling_pr += recv_buffer[0][i];   
+                }
+            }
+            else{
+                for (i=0;i<pagerank.num_of_vertex;i++) 
+                    pagerank.diff += fabs(prev_pr[i] - send_buffer[0][i]);
             }
         }
 
-        if(pagerank.my_ip != "192.168.0.100"){
-            //clock_gettime(CLOCK_MONOTONIC, &begin);
-
+        if(pagerank.my_ip != "192.168.0.100")
             Pagerank::calc_pagerank_value(pagerank.start1,pagerank.end1,dangling_pr,0.0);
-
-            //clock_gettime(CLOCK_MONOTONIC, &end);
-            //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-            //printf("PageRank 계산 시간: %Lfs.\n", time);
-        }
-        
-       
-        
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        else
+            prev_pr = send_buffer[0];
         
         Pagerank::gather_pagerank("send",0,pagerank.new_pr);
         
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("gather 수행시간: %Lfs.\n", time);
-        
-        if(pagerank.my_ip == "192.168.0.100")
-            fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
-        //pagerank.pr = pagerank.new_pr;
-        //prev_pr = recv_buffer[0];
-        
-        clock_gettime(CLOCK_MONOTONIC, &begin);
-        
         Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
         
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("scatter 수행시간: %Lfs.\n", time);
-        
-        //if(pagerank.my_ip != "192.168.0.100")
-            //pagerank.pr = recv_buffer[0];
-        
-        //else{
-        //cout.precision(numeric_limits<double>::digits10);
-        //cout << pagerank.diff <<endl;  //<< " " << prev_diff << " = " << z <<endl;
-        //}
+        if(pagerank.my_ip == "192.168.0.100")
+            cout << pagerank.diff << endl;
 
-        if(step == 61){//pagerank.diff < 0.00001){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001 || recv_buffer[0][0] == 1){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;
@@ -286,7 +252,7 @@ void fill_send_buffer(int num_of_server, int index){
         if(i == index)
             size = n1;
         send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+size);
-    }        
+    }    
  
 }
 void Pagerank::gather_pagerank(string opcode, int i, vector<double> pr){
@@ -295,6 +261,12 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<double> pr){
         myrdma1.rdma_many_to_one_recv_msg("send");
         send_buffer[0].clear();
         fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
+        
+        if(pagerank.diff < 0.00001){
+            send_buffer[0][0] = 1;
+        }    
+        
+        fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
         
     }
     else{
