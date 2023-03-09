@@ -196,7 +196,7 @@ void Pagerank::run_pagerank(int iter){
         if(pagerank.my_ip == "192.168.0.100")
             cout << pagerank.diff << endl;
 
-        if(pagerank.diff < 0.00001 || recv_buffer[0][0] == 1){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
+        if(pagerank.diff < 0.00001 || recv_buffer[0][0] > 1){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
         //prev_diff = pagerank.diff;
@@ -209,7 +209,7 @@ void Pagerank::run_pagerank(int iter){
 string Pagerank::max_pr(){
     int important = 0;
     string result = "";
-    double important_pr = recv_buffer[0][0];
+    double important_pr = recv_buffer[0][0]-1;
     double tmp = important_pr;
     //double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
     for (int i=0;i< pagerank.num_of_vertex;i++){
@@ -263,7 +263,7 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<double> pr){
         fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
         
         if(pagerank.diff < 0.00001){
-            send_buffer[0][0] = 1;
+            send_buffer[0][0] += 1;
         }    
 
         fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
@@ -289,7 +289,7 @@ void Pagerank::scatter_pagerank(string opcode, int i, vector<double> pr){
 void Pagerank::print_pr(){
     size_t i;
     double sum = 0;
-    double sum1 = accumulate(recv_buffer[0].begin(), recv_buffer[0].end(), 0.0);
+    double sum1 = accumulate(recv_buffer[0].begin(), recv_buffer[0].end(), -1.0);
     cout.precision(numeric_limits<double>::digits10);
     for(i=pagerank.num_of_vertex-200;i<pagerank.num_of_vertex;i++){
         cout << "pr[" <<i<<"]: " << recv_buffer[0][i] <<endl;
