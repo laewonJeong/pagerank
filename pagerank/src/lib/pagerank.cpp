@@ -189,9 +189,9 @@ void Pagerank::run_pagerank(int iter){
         else
             prev_pr = send_buffer[0];
         
-        Pagerank::gather_pagerank("send",0,pagerank.new_pr);
+        Pagerank::gather_pagerank("send");
         
-        Pagerank::scatter_pagerank("send",0,pagerank.new_pr);
+        Pagerank::scatter_pagerank();
         
         if(pagerank.my_ip == "192.168.0.100")
             cout << pagerank.diff << endl;
@@ -199,8 +199,6 @@ void Pagerank::run_pagerank(int iter){
         if(pagerank.diff < 0.00001 || recv_buffer[0][0] > 1){//pagerank.diff < 0.00001){//fabs(pagerank.diff - prev_diff) <0.0000001){
             break;
         }
-        //prev_diff = pagerank.diff;
-        //pagerank.pr = pagerank.new_pr;
 
     }
     
@@ -216,7 +214,7 @@ string Pagerank::max_pr(){
             important_pr = recv_buffer[0][i];
         }
     }
-    
+
     stringstream ss;
     ss << "important page is " << important << " and value is " << important_pr;
     return ss.str();
@@ -251,10 +249,9 @@ void fill_send_buffer(int num_of_server, int index){
     }    
  
 }
-void Pagerank::gather_pagerank(string opcode, int i, vector<double> pr){
-    int j;
+void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == "192.168.0.100"){
-        myrdma1.rdma_many_to_one_recv_msg("send");
+        myrdma1.rdma_many_to_one_recv_msg(opcode);
         send_buffer[0].clear();
         fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
         
@@ -266,12 +263,12 @@ void Pagerank::gather_pagerank(string opcode, int i, vector<double> pr){
         
     }
     else{
-        myrdma1.rdma_many_to_one_send_msg("send","s",pr);
+        myrdma1.rdma_many_to_one_send_msg(opcode,"s",send_buffer[0]);
     }
 
 }
 
-void Pagerank::scatter_pagerank(string opcode, int i, vector<double> pr){
+void Pagerank::scatter_pagerank(){
     if(pagerank.my_ip == "192.168.0.100"){
         for(int i=0;i<pagerank.num_of_server-1;i++)
             myrdma1.rdma_send_pagerank(send_buffer[0],i);
