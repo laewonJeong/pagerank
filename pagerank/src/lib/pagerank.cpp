@@ -216,7 +216,7 @@ string Pagerank::max_pr(){
             important_pr = recv_buffer[0][i];
         }
     }
-
+    
     stringstream ss;
     ss << "important page is " << important << " and value is " << important_pr;
     return ss.str();

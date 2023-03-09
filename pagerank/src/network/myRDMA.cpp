@@ -161,7 +161,7 @@ void myRDMA::rdma_write_with_imm(string msg, int i){
 void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
     //vector<long double> x1;
-    size_t size = sizeof(long double)*(myrdma.num_of_vertex);
+    size_t size = sizeof(double)*(myrdma.num_of_vertex);
     void* data_ptr = rdma_info1[1][i].mr->addr;
     memcpy(data_ptr, myrdma.recv[i].data(), size);
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
@@ -358,7 +358,6 @@ void myRDMA::send_info_change_qp(){
     cerr << "Completely success" << endl;
 }
 void myRDMA::create_rdma_info(){
-    long double x;
     RDMA rdma;
     TCP tcp;
     cerr << "Creating rdma info...   ";
@@ -367,21 +366,7 @@ void myRDMA::create_rdma_info(){
     //vector<double> **r_buf;
 
     for(int j =0;j<2;j++){
-        /*if(j==1){
-            buf = &myrdma.recv;
-            if(!buf){
-                cerr << "Error please set_buffer() recv_buffer" << endl;
-                exit(-1);
-            }
-        }
-        else{
-            buf = &myrdma.send;
-            if(!buf){
-                cerr << "\n";
-                cerr << "Error please set_buffer() send_buffer" << endl;
-                exit(-1);
-            }
-        }*/
+        
         if(j == 1){
             for(int i =0;i<myrdma.connect_num;i++){
                 struct ibv_context* context = rdma.createContext();
@@ -393,8 +378,6 @@ void myRDMA::create_rdma_info(){
                                                         myrdma.recv[i].data(), sizeof(double)*(myrdma.num_of_vertex));//sizeof(myrdma.recv[i].data()));
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
-                //myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
-                //                                completion_queue,qp,mr,lid,qp_num));
                 rdma_info1[j].emplace_back(RdmaInfo{context,protection_domain,cq_size,completion_queue,qp,mr,lid,qp_num});
             }
         }
@@ -409,8 +392,6 @@ void myRDMA::create_rdma_info(){
                                                         myrdma.send[i].data(), sizeof(double)*(myrdma.num_of_vertex));//sizeof(myrdma.send[i].data()));
                 uint16_t lid = rdma.getLocalId(context, PORT);
                 uint32_t qp_num = rdma.getQueuePairNumber(qp);
-                //myrdma.rdma_info[j].push_back(make_tuple(context,protection_domain,cq_size,
-                //                                completion_queue,qp,mr,lid,qp_num));
                 rdma_info1[j].emplace_back(RdmaInfo{context,protection_domain,cq_size,completion_queue,qp,mr,lid,qp_num});
             }
         }

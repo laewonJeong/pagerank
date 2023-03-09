@@ -50,8 +50,6 @@ class myRDMA{
         char (*recv_buffer)[buf_size];
         vector<double> *send;
         vector<double> *recv;
-        vector<long double> srecv[5];
-        vector<long double> aaa;
         vector<int> sock_idx;
         int connect_num;
         int num_of_vertex;
