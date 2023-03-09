@@ -212,7 +212,7 @@ string Pagerank::max_pr(){
     double important_pr = recv_buffer[0][0]-1;
     double tmp = important_pr;
     //double sum1 = accumulate(pagerank.pr.begin(), pagerank.pr.end(), 0.0);
-    for (int i=0;i< pagerank.num_of_vertex;i++){
+    for (int i=1;i< pagerank.num_of_vertex;i++){
         important_pr = max(important_pr, recv_buffer[0][i]);
         if(tmp != important_pr){
             important = i;
