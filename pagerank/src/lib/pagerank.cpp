@@ -162,8 +162,9 @@ void Pagerank::run_pagerank(int iter){
                 diff = 0;
                 for (size_t i=0;i<pagerank.num_of_vertex;i++) 
                     diff += fabs(prev_pr[i] - send_buffer[0][i]);
+                pagerank.diff = diff;
             }
-            pagerank.diff = diff;
+            
         }
 
         if(pagerank.my_ip != pagerank.server_ip)
