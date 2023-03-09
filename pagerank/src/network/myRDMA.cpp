@@ -19,7 +19,8 @@ struct RdmaInfo{
     uint32_t qp_num;
 };
 std::array<std::vector<RdmaInfo>, 2> rdma_info1;
-
+vector<double*> send_adrs;
+vector<double*> recv_adrs;
 char* change(string temp){
   static char stc[buf_size];
   strcpy(stc, temp.c_str());
@@ -29,7 +30,7 @@ char* change(string temp){
 void myRDMA::rdma_send_pagerank(vector<double> msg, int i){
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
     
-    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, myrdma.send[i].data(), 
+    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(rdma_info1[0][i].cq);
  
@@ -41,7 +42,7 @@ void myRDMA::rdma_recv_pagerank(int i){
     //memcpy(data_ptr, myrdma.recv[i].data(), size);
 
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
-                        rdma_info1[1][i].cq,myrdma.recv[i].data(), size);//sizeof(myrdma.recv[i].data()));
+                        rdma_info1[1][i].cq,recv_adrs[i], size);//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(rdma_info1[1][i].cq);
    
         //cout.precision(numeric_limits<double>::digits10);
@@ -69,10 +70,8 @@ void myRDMA::rdma_wrecv_pagerank(int i){
 void myRDMA::rdma_send_vector(vector<double> msg, int i){
     
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
-    void* data_ptr = rdma_info1[0][i].mr->addr;
-    memcpy(data_ptr, myrdma.send[i].data(), size);
 
-    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, data_ptr, 
+    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(rdma_info1[0][i].cq);
         //cerr << "send success" << endl;
@@ -159,10 +158,9 @@ void myRDMA::rdma_send_recv(int i){
     RDMA rdma;
     //vector<long double> x1;
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
-    void* data_ptr = rdma_info1[1][i].mr->addr;
-    memcpy(data_ptr, myrdma.recv[i].data(), size);
+   
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
-                        rdma_info1[1][i].cq, data_ptr, size);//sizeof(myrdma.recv[i].data()));
+                        rdma_info1[1][i].cq, recv_adrs[i], size);//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(rdma_info1[1][i].cq);
     //if(!rdma.pollCompletion(get<3>(myrdma.rdma_info[1][i])))
     //    cerr << "recv failed" << endl;
@@ -425,9 +423,11 @@ void myRDMA::initialize_rdma_connection_vector(const char* ip, string server[], 
     partition1=n1;
    
     cout << partition << " " << partition1 << endl;
-    for(int i=0;i<number_of_server;i++){
+    for(int i=0;i<number_of_server-1;i++){
         myrdma.send[i].resize(num_of_vertex);
         myrdma.recv[i].resize(num_of_vertex);
+        send_adrs.push_back(myrdma.send[i].data());
+        recv_adrs.push_back(myrdma.recv[i].data());
     }
     rdma_info1[0].reserve(10000);
     rdma_info1[1].reserve(10000);
