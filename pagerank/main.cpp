@@ -53,7 +53,7 @@ int main(int argc, char* argv[]){
 
         // important thing
         cout << "-------------------------------------" <<endl;
-        string important = pagerank.max_pr();
+        cout << pagerank.max_pr() << endl;
         cout << "-------------------------------------" <<endl;
     }
     //
