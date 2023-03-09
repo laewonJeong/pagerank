@@ -10,8 +10,8 @@ myRDMA myrdma1;
 Pagerank pagerank;
 vector<int> sock_idx;
 static std::mutex mutx;
-vector<double> send_buffer[4];
-vector<double> recv_buffer[4];
+vector<double> send_buffer[3];
+vector<double> recv_buffer[3];
 int n, n1;
 
 vector<string> split(string str, char Delimiter) {
