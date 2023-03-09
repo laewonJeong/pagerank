@@ -153,7 +153,7 @@ void Pagerank::run_pagerank(int iter){
     int num_of_vertex = pagerank.num_of_vertex;
     double diff;
     double dangling_pr = 0.0;
-    vector<int> num_outgoing = pagerank.num_outgoing;
+    const vector<int>& num_outgoing = pagerank.num_outgoing;
     for(step =0; step < iter ;step++){
         
         cout <<"====="<< step+1 << " step=====" <<endl;
