@@ -27,11 +27,8 @@ char* change(string temp){
 }
 
 void myRDMA::rdma_send_pagerank(vector<double> msg, int i){
-    //RDMA rdma;
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
-    //void* data_ptr = rdma_info1[0][i].mr->addr;
-    //memcpy(data_ptr, myrdma.send[i].data(), size);
-
+    
     rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, myrdma.send[i].data(), 
                                 size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     rdma.pollCompletion(rdma_info1[0][i].cq);
