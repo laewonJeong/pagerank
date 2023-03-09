@@ -37,11 +37,11 @@ void myRDMA::rdma_send_pagerank(vector<double> msg, int i){
 void myRDMA::rdma_recv_pagerank(int i){
     //RDMA rdma;
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
-    void* data_ptr = rdma_info1[1][i].mr->addr;
-    memcpy(data_ptr, myrdma.recv[i].data(), size);
+    //void* data_ptr = rdma_info1[1][i].mr->addr;
+    //memcpy(data_ptr, myrdma.recv[i].data(), size);
 
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
-                        rdma_info1[1][i].cq,data_ptr, size);//sizeof(myrdma.recv[i].data()));
+                        rdma_info1[1][i].cq,myrdma.recv[i].data(), size);//sizeof(myrdma.recv[i].data()));
     rdma.pollCompletion(rdma_info1[1][i].cq);
    
         //cout.precision(numeric_limits<double>::digits10);
