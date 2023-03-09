@@ -4,16 +4,14 @@
 #include <boost/lexical_cast.hpp>
 #include <numeric>
 #include <time.h>
-//#include <mpi.hpp>
-//#include <strtk.hpp>
 
 TCP tcp1;
 myRDMA myrdma1;
 Pagerank pagerank;
 vector<int> sock_idx;
 static std::mutex mutx;
-vector<double> send_buffer[4];
-vector<double> recv_buffer[4];
+vector<double> *send_buffer;
+vector<double> *recv_buffer;
 int n, n1;
 
 vector<string> split(string str, char Delimiter) {
@@ -78,10 +76,7 @@ void Pagerank::create_graph_data(string path, string del){
             }
             from = line.substr(0,pos);
             to = line.substr(pos+1);
-            /*if(pagerank.pr1.find(from) == pagerank.pr1.end()){
-                pagerank.pr1[from] = 0.0;
-                //cout << from << ": " <<pagerank.pr1[from] << endl;
-            }*/
+           
             add_arc(strtol(from.c_str(), NULL, 10),strtol(to.c_str(), NULL, 10));
             line_num++;
             if(line_num%500000 == 0)
@@ -130,11 +125,14 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         double tmp = 0.0;
         const size_t graph_size = graph[i].size();
         const size_t* graph_ptr = graph[i].data();
+
         for(size_t j=0; j<graph_size; j++){
             const size_t from_page = graph_ptr[j];
             const double inv_num_outgoing = 1.0 / num_outgoing[from_page];
+
             tmp += recv_buffer[0][from_page] * inv_num_outgoing;
         }
+
         double inv_num_of_vertex = 1.0 / pagerank.num_of_vertex;
         send_buffer[0][i-start] = (tmp + x * inv_num_of_vertex) * df + df_inv * inv_num_of_vertex;
     }
@@ -151,6 +149,7 @@ void Pagerank::run_pagerank(int iter){
         double diff;
         cout <<"====="<< step+1 << " step=====" <<endl;
         double dangling_pr = 0.0;
+        
         if(step!=0) {
             if(pagerank.my_ip != pagerank.server_ip){
                 for (size_t i=0;i<pagerank.num_of_vertex;i++) {
@@ -205,6 +204,12 @@ string Pagerank::max_pr(){
 
 void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port, int num_of_vertex)
 {
+    vector<double> x[number_of_server-1];
+    vector<double> y[number_of_server-1];
+
+    send_buffer = &x[0];
+    recv_buffer = &y[0];
+    
     myrdma1.initialize_rdma_connection_vector(ip,server,number_of_server,Port,send_buffer,recv_buffer,num_of_vertex);
     myrdma1.create_rdma_info();
     myrdma1.send_info_change_qp();
@@ -247,7 +252,7 @@ void Pagerank::gather_pagerank(string opcode){
             send_buffer[0][0] += 1;
         }    
 
-        fill(&send_buffer[1], &send_buffer[4], send_buffer[0]);
+        fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);
         
     }
     else{
