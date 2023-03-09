@@ -239,15 +239,16 @@ void fill_send_buffer(int num_of_server, int index){
             size = n1;
         send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+size);
     }   
-    
-    fill(&send_buffer[1], &send_buffer[num_of_server-1], send_buffer[0]); 
  
 }
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
         myrdma1.rdma_many_to_one_recv_msg(opcode);
+        
         send_buffer[0].clear();
-        fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);   
+
+        fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
+        fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);    
     }
     else{
         myrdma1.rdma_many_to_one_send_msg(opcode,"s",send_buffer[0]);
