@@ -179,12 +179,13 @@ void Pagerank::run_pagerank(int iter){
             }
             
         }
-        clock_gettime(CLOCK_MONOTONIC, &begin);
         if(my_ip != server_ip)
             Pagerank::calc_pagerank_value(start,end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
-      
+
+
+        clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::gather_pagerank("send");
        
         Pagerank::scatter_pagerank();
