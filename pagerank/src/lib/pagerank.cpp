@@ -181,15 +181,18 @@ void Pagerank::run_pagerank(int iter){
             }
             
         }
+        cout << "hello" <<endl;
         if(my_ip != server_ip)
             Pagerank::calc_pagerank_value(start,end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
 
-
+        cout << "hello" <<endl;
         clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::gather_pagerank("send");
        
+
+       cout << "hello" <<endl;
         Pagerank::scatter_pagerank();
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
@@ -272,19 +275,18 @@ void Pagerank::gather_pagerank(string opcode){
     else{
         myrdma1.rdma_many_to_one_send_msg(opcode,"s",send_buffer[0]);
     }
-
+    cout << "hello" <<endl;
 }
 
 void Pagerank::scatter_pagerank(){
         omp_set_num_threads(pagerank.num_of_server-1);
-        #pragma omp parallel if(pagerank.my_ip == pagerank.server_ip)
+        if(pagerank.my_ip == pagerank.server_ip)
         {
-            #pragma omp for
+            #pragma omp parallel for
             for(int i=0;i<pagerank.num_of_server-1;i++)
                 myrdma1.rdma_send_pagerank(send_buffer[0],i);
         }
-
-        if(pagerank.my_ip!=pagerank.server_ip)
+        else
             myrdma1.rdma_recv_pagerank(0);
         
     
