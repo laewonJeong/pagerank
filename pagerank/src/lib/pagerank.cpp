@@ -151,7 +151,7 @@ void Pagerank::run_pagerank(int iter){
     int start = pagerank.start1;
     int end1 = pagerank.end1;
     int num_of_vertex = pagerank.num_of_vertex;
-    double diff;
+    double diff=1;
     double dangling_pr = 0.0;
     const vector<int>& num_outgoing = pagerank.num_outgoing;
     double* recv_buffer_ptr = recv_buffer[0].data();    
@@ -192,9 +192,9 @@ void Pagerank::run_pagerank(int iter){
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
 
         if(my_ip == server_ip)
-            cout << pagerank.diff << endl;
+            cout << diff << endl;
         printf("step 수행시간: %Lfs.\n", time);
-        if(pagerank.diff < 0.00001 || recv_buffer_ptr[0] > 1){
+        if(diff < 0.00001 || recv_buffer_ptr[0] > 1){
             break;
         }
 
