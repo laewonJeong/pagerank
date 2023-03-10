@@ -4,6 +4,8 @@
 #include <boost/lexical_cast.hpp>
 #include <numeric>
 #include <time.h>
+#include <omp.h>
+//#include <mpi.h>
 
 TCP tcp1;
 myRDMA myrdma1;
@@ -274,13 +276,18 @@ void Pagerank::gather_pagerank(string opcode){
 }
 
 void Pagerank::scatter_pagerank(){
-    if(pagerank.my_ip == pagerank.server_ip){
-        for(int i=0;i<pagerank.num_of_server-1;i++)
-            myrdma1.rdma_send_pagerank(send_buffer[0],i);
-    }
-    else{
-        myrdma1.rdma_recv_pagerank(0);
-    }
+        omp_set_num_threads(pagerank.num_of_server-1);
+        #pragma omp parallel if(pagerank.my_ip == pagerank.server_ip)
+        {
+            #pragma omp for
+            for(int i=0;i<pagerank.num_of_server-1;i++)
+                myrdma1.rdma_send_pagerank(send_buffer[0],i);
+        }
+
+        if(pagerank.my_ip!=pagerank.server_ip)
+            myrdma1.rdma_recv_pagerank(0);
+        
+    
 }
 
 
