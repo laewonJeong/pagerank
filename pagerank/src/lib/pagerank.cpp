@@ -202,7 +202,7 @@ void Pagerank::run_pagerank(int iter){
         Pagerank::scatter_pagerank();
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("communication 수행시간: %Lfs.\n", time);
+        printf("comm 수행시간: %Lfs.\n", time);
         if(my_ip == server_ip)
             cout << diff << endl;
         //printf("step 수행시간: %Lfs.\n", time);
