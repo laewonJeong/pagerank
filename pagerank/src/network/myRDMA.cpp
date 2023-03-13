@@ -1,6 +1,7 @@
 #include "tcp.hpp"
 #include "RDMA.hpp"
 #include "myRDMA.hpp"
+#include <omp.h>
 
 static std::mutex mutx;
 myRDMA myrdma;
@@ -231,14 +232,17 @@ void myRDMA::rdma_recv_msg(string opcode, int i){
 void myRDMA::recv_t(string opcode){
     std::vector<std::thread> worker;
     worker.reserve(myrdma.connect_num);
+    //omp_set_num_threads(myrdma.connect_num);
     if (opcode == "send_with_imm" || opcode == "write_with_imm" || opcode == "send"){
+        //#pragma omp parallel
         for(int i=0;i<myrdma.connect_num;i++){
+            //myRDMA::rdma_send_recv(i);
             worker.push_back(std::thread(&myRDMA::rdma_send_recv,myRDMA(),i));
         }
     }
     else if(opcode == "write"){
         for(int i=0;i<myrdma.connect_num;i++){
-            worker.push_back(std::thread(&myRDMA::rdma_write_recv,myRDMA(),i));
+            //worker.push_back(std::thread(&myRDMA::rdma_write_recv,myRDMA(),i));
         }
     }
     else{
