@@ -30,30 +30,21 @@ char* change(string temp){
 
 void myRDMA::rdma_send_pagerank(vector<double> msg, int i){
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
-    
-    
+    struct ibv_wc wc;
     rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
                         size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    rdma.pollCompletion(rdma_info1[0][i].cq);
- 
+    //rdma.pollCompletion(rdma_info1[0][i].cq);
+    while(ibv_poll_cq(rdma_info1[0][i].cq,1,&wc)==0){}
 }
 void myRDMA::rdma_recv_pagerank(int i){
-    //RDMA rdma;
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
-    //void* data_ptr = rdma_info1[1][i].mr->addr;
-    //memcpy(data_ptr, myrdma.recv[i].data(), size);
-
+    struct ibv_wc wc;
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
                         rdma_info1[1][i].cq,recv_adrs[i], size);//sizeof(myrdma.recv[i].data()));
-    //vector<thread> worker;
-    //worker.reserve(1);
-    rdma.pollCompletion(rdma_info1[1][i].cq);
-    //worker.push_back(thread(&RDMA::pollCompletion,RDMA(),rdma_info1[1][i].cq));
-    //worker[0].detach();
-   
-        //cout.precision(numeric_limits<double>::digits10);
+    //rdma.pollCompletion(rdma_info1[1][i].cq);
+    while(ibv_poll_cq(rdma_info1[0][i].cq,1,&wc)==0){}
     
-    //}
+    
 }
 void myRDMA::rdma_write_pagerank(vector<double> msg, int i){
     //RDMA rdma;
