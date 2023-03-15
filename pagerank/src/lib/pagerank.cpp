@@ -8,7 +8,7 @@
 //#include <mpi.h>
 
 TCP tcp1;
-myRDMA myrdma1;
+myRDMA *myrdma1 = new myRDMA();
 Pagerank pagerank;
 vector<int> sock_idx;
 static std::mutex mutx;
@@ -237,9 +237,9 @@ string Pagerank::max_pr(){
 
 void Pagerank::init_connection(const char* ip, string server[], int number_of_server, int Port, int num_of_vertex)
 {
-    myrdma1.initialize_rdma_connection_vector(ip,server,number_of_server,Port,send_buffer,recv_buffer,num_of_vertex);
-    myrdma1.create_rdma_info();
-    myrdma1.send_info_change_qp();
+    myrdma1->initialize_rdma_connection_vector(ip,server,number_of_server,Port,send_buffer,recv_buffer,num_of_vertex);
+    myrdma1->create_rdma_info();
+    myrdma1->send_info_change_qp();
 
     string str_ip(ip);
 
@@ -272,7 +272,7 @@ void fill_send_buffer(int num_of_server, int index){
 }
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
-        myrdma1.rdma_many_to_one_recv_msg(opcode);
+        myrdma1->rdma_many_to_one_recv_msg(opcode);
         
         send_buffer[0].clear();
 
@@ -284,22 +284,21 @@ void Pagerank::gather_pagerank(string opcode){
         fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);    
     }
     else{
-        myrdma1.rdma_many_to_one_send_msg(opcode,"s",send_buffer[0]);
-        myrdma1.rdma_recv_pagerank(0);
+        myrdma1->rdma_many_to_one_send_msg(opcode,"s",send_buffer[0]);
     }
     //cout << "hello" <<endl;
 }
 
+void send_pagerank(int num_of_server){
+    for(size_t i = 0; i<num_of_server-1;i++)
+        myrdma1->rdma_send_pagerank(send_buffer[0],i);
+}
 void Pagerank::scatter_pagerank(){
         omp_set_num_threads(pagerank.num_of_server-1);
         if(pagerank.my_ip == pagerank.server_ip)
-        {
-            #pragma omp parallel for
-            for(int i=0;i<pagerank.num_of_server-1;i++)
-                myrdma1.rdma_send_pagerank(send_buffer[0],i);
-        }
-        /*else
-            myrdma1.rdma_recv_pagerank(0);*/
+            send_pagerank(pagerank.num_of_server);
+        else
+            myrdma1->rdma_recv_pagerank(0);
         
     
 }
