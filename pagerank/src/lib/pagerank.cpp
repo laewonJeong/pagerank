@@ -198,7 +198,7 @@ void Pagerank::run_pagerank(int iter){
         //cout << "hello" <<endl;
         clock_gettime(CLOCK_MONOTONIC, &begin);
         
-        if(pagerank.my_ip != server_ip){
+        if(pagerank.my_ip == server_ip){
             thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
        
             clock_gettime(CLOCK_MONOTONIC, &end);
