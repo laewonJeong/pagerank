@@ -298,10 +298,10 @@ void Pagerank::gather_pagerank(string opcode){
         //x.join();   
     }
     else{
-        thread sen = thread(&myRDMA::rdma_recv_pagerank,myRDMA(),0);
+        //thread sen = thread(&myRDMA::rdma_recv_pagerank,myRDMA(),0);
         myrdma1.rdma_send_vector(send_buffer[0],0);
-        //myrdma1.rdma_recv_pagerank(0);
-        sen.join();
+        myrdma1.rdma_recv_pagerank(0);
+        //sen.join();
     }
     //cout << "hello" <<endl;
 }
