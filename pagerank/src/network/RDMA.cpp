@@ -192,7 +192,7 @@ void RDMA::post_rdma_write_with_imm(struct ibv_qp *qp, struct ibv_mr *mr, void *
       .next       = NULL,
       .sg_list    = &sge,
       .num_sge    = 1,
-      .opcode     = IBV_WR_RDMA_WRITE_WITH_IMM,
+      .opcode     = IBV_WR_RDMA_READ,
       .send_flags = 0,
       .imm_data   = rand(),
       .wr = {

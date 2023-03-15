@@ -46,22 +46,20 @@ void myRDMA::rdma_recv_pagerank(int i){
     
 }
 void myRDMA::rdma_write_pagerank(vector<double> msg, int i){
-    //RDMA rdma;
     TCP tcp;
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
-    //myrdma.send[i] = msg;
-    rdma.post_rdma_write(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
+    struct ibv_wc wc;
+    rdma.post_rdma_write_with_imm(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
                         size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    /*rdma.pollCompletion(rdma_info1[0][i].cq)
-        //cerr << "" << endl;
-        //tcp.send_msg("1", myrdma.sock_idx[i]);
-    
-    else
-        cerr << "send failed" << endl;*/
+    while(ibv_poll_cq(rdma_info1[0][i].cq,1,&wc)==0){}
 }
 void myRDMA::rdma_wrecv_pagerank(int i){
    //TCP tcp;
-   struct ibv_wc wc;
+    struct ibv_wc wc;
+    size_t size = sizeof(double)*(myrdma.num_of_vertex);
+    //struct ibv_wc wc;
+    rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
+                        rdma_info1[1][i].cq,recv_adrs[i], size);
     while (ibv_poll_cq(rdma_info1[1][i].cq, 1, &wc) == 0);
     if (wc.opcode != IBV_WC_RDMA_WRITE) {
         cout << "rdma_wrecv_pagerank error" << endl;
