@@ -291,12 +291,9 @@ void Pagerank::gather_pagerank(string opcode){
         fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);    
     }
     else{
-        thread sen = thread(&myRDMA::rdma_send_vector,myRDMA(),send_buffer[0],0);
-        //thread rev = thread(&myRDMA::rdma_recv_pagerank,myRDMA(),0);
-        //myrdma1.rdma_send_vector(send_buffer[0],0);//rdma_many_to_one_send_msg(opcode,"s",send_buffer[0]);
+        //thread sen = thread(&myRDMA::rdma_send_vector,myRDMA(),send_buffer[0],0);
+        myrdma1.rdma_send_vector(send_buffer[0],0);
         myrdma1.rdma_recv_pagerank(0);
-        sen.detach();
-        //rev.join();
     }
     //cout << "hello" <<endl;
 }
