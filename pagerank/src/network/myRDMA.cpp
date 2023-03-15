@@ -52,16 +52,20 @@ void myRDMA::rdma_write_pagerank(vector<double> msg, int i){
     //myrdma.send[i] = msg;
     rdma.post_rdma_write(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
                         size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    if(rdma.pollCompletion(rdma_info1[0][i].cq)){
+    /*rdma.pollCompletion(rdma_info1[0][i].cq)
         //cerr << "" << endl;
-        tcp.send_msg("1", myrdma.sock_idx[i]);
-    }
+        //tcp.send_msg("1", myrdma.sock_idx[i]);
+    
     else
-        cerr << "send failed" << endl;
+        cerr << "send failed" << endl;*/
 }
 void myRDMA::rdma_wrecv_pagerank(int i){
-   TCP tcp;
-    while(tcp.recv_msg(myrdma.sock_idx[i]) <= 0);
+   //TCP tcp;
+   struct ibv_wc wc;
+    while (ibv_poll_cq(rdma_info1[1][i].cq, 1, &wc) == 0);
+    if (wc.opcode != IBV_WC_RDMA_WRITE) {
+        cout << "rdma_wrecv_pagerank error" << endl;
+    }
 }
 void myRDMA::rdma_send_vector(vector<double> msg, int i){
     
