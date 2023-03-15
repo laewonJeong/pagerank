@@ -197,13 +197,20 @@ void Pagerank::run_pagerank(int iter){
 
         //cout << "hello" <<endl;
         clock_gettime(CLOCK_MONOTONIC, &begin);
-        Pagerank::gather_pagerank("send");
+        
+        thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
+       
        clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
         printf("gath 수행시간: %Lfs.\n", time);
        //cout << "hello" <<endl;
        clock_gettime(CLOCK_MONOTONIC, &begin);
-        Pagerank::scatter_pagerank();
+        
+        thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
+        
+        gather.join();
+        scatter.join();
+        
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
         printf("scat 수행시간: %Lfs.\n", time);

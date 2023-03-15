@@ -44,7 +44,6 @@ void myRDMA::rdma_recv_pagerank(int i){
     //rdma.pollCompletion(rdma_info1[1][i].cq);
     while(ibv_poll_cq(rdma_info1[1][i].cq,1,&wc)==0){}
     
-    
 }
 void myRDMA::rdma_write_pagerank(vector<double> msg, int i){
     //RDMA rdma;
