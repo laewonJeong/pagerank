@@ -218,8 +218,8 @@ void Pagerank::run_pagerank(int iter){
         }
         else{
             clock_gettime(CLOCK_MONOTONIC, &begin);
-            //Pagerank::gather_pagerank("send");
-            thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
+            Pagerank::gather_pagerank("send");
+            //thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
             clock_gettime(CLOCK_MONOTONIC, &end);
             time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
             printf("gath 수행시간: %Lfs.\n", time);
@@ -229,7 +229,7 @@ void Pagerank::run_pagerank(int iter){
             clock_gettime(CLOCK_MONOTONIC, &end);
             time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
             printf("scat 수행시간: %Lfs.\n", time);
-            gather.join();
+            //gather.join();
         }
         if(my_ip == server_ip)
             cout << diff << endl;
