@@ -105,11 +105,14 @@ void Pagerank::initial_pagerank_value(){
     
     n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
     
-
-    if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1])
-        send_buffer[0].resize(n1);
+    if(pagerank.my_ip == pagerank.node[0]){
+        send_buffer[0].resize(pagerank.num_of_vertex);
+    }
     else{
-        send_buffer[0].resize(n);
+        if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1])
+            send_buffer[0].resize(n1);
+        else
+            send_buffer[0].resize(n);
     }
     
 
@@ -125,7 +128,8 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
     
     double* recv_buffer_ptr = recv_buffer[0].data();    
     double* send_buffer_ptr = send_buffer[0].data();
-
+    
+    #pragma omp parallel for
     for(size_t i=start;i<end;i++){
         double tmp = 0.0;
         const size_t graph_size = graph[i].size();
@@ -139,6 +143,7 @@ void Pagerank::calc_pagerank_value(int start, int end, double x, double y){
         }
         send_buffer_ptr[i-start] = (tmp + x * inv_num_of_vertex) * df + df_inv * inv_num_of_vertex;
     }
+    
 }
 
 
@@ -181,12 +186,12 @@ void Pagerank::run_pagerank(int iter){
             }
             
         }
-        //cout << "hello" <<endl;
         clock_gettime(CLOCK_MONOTONIC, &begin);
         if(my_ip != server_ip)
             Pagerank::calc_pagerank_value(start,end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
+
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
         printf("calc 수행시간: %Lfs.\n", time);

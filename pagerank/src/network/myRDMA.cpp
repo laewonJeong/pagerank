@@ -242,7 +242,7 @@ void myRDMA::recv_t(string opcode){
     }
     else if(opcode == "write"){
         for(int i=0;i<myrdma.connect_num;i++){
-            //worker.push_back(std::thread(&myRDMA::rdma_write_recv,myRDMA(),i));
+            worker.push_back(std::thread(&myRDMA::rdma_write_recv,myRDMA(),i));
         }
     }
     else{
