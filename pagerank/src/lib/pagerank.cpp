@@ -204,15 +204,15 @@ void Pagerank::run_pagerank(int iter){
 
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("comm 수행시간: %Lfs.\n", time);
+        printf("gath 수행시간: %Lfs.\n", time);
         //cout << "hello" <<endl;
-        /*clock_gettime(CLOCK_MONOTONIC, &begin); 
+        clock_gettime(CLOCK_MONOTONIC, &begin); 
             //thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
-        //Pagerank::scatter_pagerank();
+        Pagerank::scatter_pagerank();
 
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("scat 수행시간: %Lfs.\n", time);*/
+        printf("scat 수행시간: %Lfs.\n", time);
 
        
         if(my_ip == server_ip)
@@ -278,8 +278,8 @@ void fill_send_buffer(int num_of_server, int index){
  
 }
 void send_pagerank(int num_of_server){
-    //for(size_t i = 0; i<num_of_server-1;i++)
-        myrdma1.rdma_send_pagerank(send_buffer[0],0);
+    for(size_t i = 0; i<num_of_server-1;i++)
+        myrdma1.rdma_send_pagerank(send_buffer[0],i);
 }
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
@@ -293,14 +293,14 @@ void Pagerank::gather_pagerank(string opcode){
             send_buffer[0][0] += 1; 
             
         fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);
-        send_pagerank(pagerank.num_of_server);
+        //send_pagerank(pagerank.num_of_server);
         //thread x = thread(send_pagerank,pagerank.num_of_server); 
         //x.join();   
     }
     else{
         //thread sen = thread(&myRDMA::rdma_recv_pagerank,myRDMA(),0);
         myrdma1.rdma_send_vector(send_buffer[0],0);
-        myrdma1.rdma_recv_pagerank(0);
+        //myrdma1.rdma_recv_pagerank(0);
         //sen.join();
     }
     //cout << "hello" <<endl;
@@ -310,8 +310,8 @@ void Pagerank::gather_pagerank(string opcode){
 void Pagerank::scatter_pagerank(){
         if(pagerank.my_ip == pagerank.server_ip)
             send_pagerank(pagerank.num_of_server);
-        //else
-        //    myrdma1.rdma_recv_pagerank(0);
+        else
+            myrdma1.rdma_recv_pagerank(0);
         
     
 }
