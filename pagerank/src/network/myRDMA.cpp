@@ -45,7 +45,11 @@ void myRDMA::rdma_recv_pagerank(int i){
 
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
                         rdma_info1[1][i].cq,recv_adrs[i], size);//sizeof(myrdma.recv[i].data()));
-    rdma.pollCompletion(rdma_info1[1][i].cq);
+    vector<thread> worker;
+    worker.reserve(1);
+    //rdma.pollCompletion(rdma_info1[1][i].cq);
+    worker.push_back(thread(&RDMA::pollCompletion,RDMA(),rdma_info1[1][i].cq));
+    worker[0].detach();
    
         //cout.precision(numeric_limits<double>::digits10);
     
