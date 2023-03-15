@@ -199,24 +199,26 @@ void Pagerank::run_pagerank(int iter){
         
         if(pagerank.my_ip == server_ip){
             clock_gettime(CLOCK_MONOTONIC, &begin);
-            thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
-       
+            //thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
+            Pagerank::gather_pagerank("send");
             clock_gettime(CLOCK_MONOTONIC, &end);
             time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
             printf("gath 수행시간: %Lfs.\n", time);
             //cout << "hello" <<endl;
             clock_gettime(CLOCK_MONOTONIC, &begin);
         
-            thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
-            //Pagerank::scatter_pagerank();
+            //thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
+            Pagerank::scatter_pagerank();
             clock_gettime(CLOCK_MONOTONIC, &end);
             time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
             printf("scat 수행시간: %Lfs.\n", time);
 
-            gather.join();
-            scatter.join();
+            //gather.join();
+            //scatter.join();
         }
         else{
+            thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
+
             clock_gettime(CLOCK_MONOTONIC, &begin);
             Pagerank::gather_pagerank("send");
             //thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
@@ -224,12 +226,8 @@ void Pagerank::run_pagerank(int iter){
             time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
             printf("gath 수행시간: %Lfs.\n", time);
 
-            clock_gettime(CLOCK_MONOTONIC, &begin);
-            Pagerank::scatter_pagerank();
-            clock_gettime(CLOCK_MONOTONIC, &end);
-            time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-            printf("scat 수행시간: %Lfs.\n", time);
-            //gather.join();
+            
+            scatter.join();
         }
         if(my_ip == server_ip)
             cout << diff << endl;
