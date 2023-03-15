@@ -278,8 +278,8 @@ void fill_send_buffer(int num_of_server, int index){
  
 }
 void send_pagerank(int num_of_server){
-    for(size_t i = 0; i<num_of_server-1;i++)
-        myrdma1.rdma_send_pagerank(send_buffer[0],i);
+    //for(size_t i = 0; i<num_of_server-1;i++)
+        myrdma1.rdma_send_pagerank(send_buffer[0],0);
 }
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
