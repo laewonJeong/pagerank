@@ -42,7 +42,7 @@ void myRDMA::rdma_recv_pagerank(int i){
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
                         rdma_info1[1][i].cq,recv_adrs[i], size);//sizeof(myrdma.recv[i].data()));
     //rdma.pollCompletion(rdma_info1[1][i].cq);
-    while(ibv_poll_cq(rdma_info1[0][i].cq,1,&wc)==0){}
+    while(ibv_poll_cq(rdma_info1[1][i].cq,1,&wc)==0){}
     
     
 }
