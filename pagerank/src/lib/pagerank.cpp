@@ -199,15 +199,15 @@ void Pagerank::run_pagerank(int iter){
         //cout << "hello" <<endl;
         clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::gather_pagerank("send");
-       /*clock_gettime(CLOCK_MONOTONIC, &end);
+       clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("gather 수행시간: %Lfs.\n", time);*/
+        printf("gath 수행시간: %Lfs.\n", time);
        //cout << "hello" <<endl;
-       //clock_gettime(CLOCK_MONOTONIC, &begin);
+       clock_gettime(CLOCK_MONOTONIC, &begin);
         Pagerank::scatter_pagerank();
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("comm 수행시간: %Lfs.\n", time);
+        printf("scat 수행시간: %Lfs.\n", time);
         if(my_ip == server_ip)
             cout << diff << endl;
         //printf("step 수행시간: %Lfs.\n", time);
@@ -293,7 +293,7 @@ void Pagerank::scatter_pagerank(){
         omp_set_num_threads(pagerank.num_of_server-1);
         if(pagerank.my_ip == pagerank.server_ip)
         {
-            #pragma omp parallel
+            //#pragma omp parallel
             for(int i=0;i<pagerank.num_of_server-1;i++)
                 myrdma1.rdma_send_pagerank(send_buffer[0],i);
         }
