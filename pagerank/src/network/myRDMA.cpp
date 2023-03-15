@@ -46,10 +46,10 @@ void myRDMA::rdma_recv_pagerank(int i){
     
 }
 void myRDMA::rdma_write_pagerank(vector<double> msg, int i){
-    TCP tcp;
+    //TCP tcp;
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
     struct ibv_wc wc;
-    rdma.post_rdma_write_with_imm(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
+    rdma.post_rdma_write(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
                         size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
     while(ibv_poll_cq(rdma_info1[0][i].cq,1,&wc)==0){}
 }
