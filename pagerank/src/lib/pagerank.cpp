@@ -196,9 +196,9 @@ void Pagerank::run_pagerank(int iter){
         printf("calc 수행시간: %Lfs.\n", time);
 
         //cout << "hello" <<endl;
-        clock_gettime(CLOCK_MONOTONIC, &begin);
         
         if(pagerank.my_ip == server_ip){
+            clock_gettime(CLOCK_MONOTONIC, &begin);
             thread gather = thread(&Pagerank::gather_pagerank,Pagerank(),"send");
        
             clock_gettime(CLOCK_MONOTONIC, &end);
@@ -209,16 +209,25 @@ void Pagerank::run_pagerank(int iter){
         
             thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
             //Pagerank::scatter_pagerank();
-            gather.join();
-            scatter.join();
-        
             clock_gettime(CLOCK_MONOTONIC, &end);
             time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
             printf("scat 수행시간: %Lfs.\n", time);
+
+            gather.join();
+            scatter.join();
         }
         else{
+            clock_gettime(CLOCK_MONOTONIC, &begin);
             Pagerank::gather_pagerank("send");
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+            printf("gath 수행시간: %Lfs.\n", time);
+
+            clock_gettime(CLOCK_MONOTONIC, &begin);
             Pagerank::scatter_pagerank();
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+            printf("scat 수행시간: %Lfs.\n", time);
         }
         if(my_ip == server_ip)
             cout << diff << endl;
