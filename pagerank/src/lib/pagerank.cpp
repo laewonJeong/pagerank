@@ -206,10 +206,10 @@ void Pagerank::run_pagerank(int iter){
        //cout << "hello" <<endl;
        clock_gettime(CLOCK_MONOTONIC, &begin);
         
-        thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
-        
+        //scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
+        Pagerank::scatter_pagerank();
         gather.join();
-        scatter.join();
+
         
         clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
