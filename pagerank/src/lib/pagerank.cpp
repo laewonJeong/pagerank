@@ -294,7 +294,7 @@ void send_pagerank(int num_of_server){
     for(size_t i = 0; i<num_of_server-1;i++)
         worker.push_back(thread(&myRDMA::rdma_send_pagerank,myRDMA(),send_buffer[0],i));
     for(int i=0;i<num_of_server-1;i++){
-        worker[i].join();
+        worker[i].detach();
     }
         //myrdma1.rdma_send_pagerank(send_buffer[0],i);
 }
@@ -302,11 +302,11 @@ void Pagerank::scatter_pagerank(){
         if(pagerank.my_ip == pagerank.server_ip)
             send_pagerank(pagerank.num_of_server);
         else{
-            vector<thread> worker;
-            worker.reserve(1);
-            //myrdma1.rdma_recv_pagerank(0);
-            worker.push_back(thread(&myRDMA::rdma_recv_pagerank,myRDMA(),0));
-            worker[0].join();
+            //vector<thread> worker;
+            //worker.reserve(1);
+            myrdma1.rdma_recv_pagerank(0);
+            //worker.push_back(thread(&myRDMA::rdma_recv_pagerank,myRDMA(),0));
+            //worker[0].join();
         }
     
 }
