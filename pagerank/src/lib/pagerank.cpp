@@ -289,11 +289,10 @@ void Pagerank::gather_pagerank(string opcode){
 }
 
 void send_pagerank(int num_of_server){
-    for(size_t i = 0; i<num_of_server-1;i++)
-        myrdma1.rdma_send_pagerank(send_buffer[0],i);
+    //for(size_t i = 0; i<num_of_server-1;i++)
+        myrdma1.rdma_send_pagerank(send_buffer[0],0);
 }
 void Pagerank::scatter_pagerank(){
-        omp_set_num_threads(pagerank.num_of_server-1);
         if(pagerank.my_ip == pagerank.server_ip)
             send_pagerank(pagerank.num_of_server);
         else

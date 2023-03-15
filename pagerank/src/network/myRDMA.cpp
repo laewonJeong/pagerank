@@ -28,12 +28,16 @@ char* change(string temp){
   return stc;
 }
 
-void myRDMA::rdma_send_pagerank(vector<double> msg, int i){
+void myRDMA::rdma_send_pagerank(vector<double> msg, int h){
     size_t size = sizeof(double)*(myrdma.num_of_vertex);
     
-    rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
-                                size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
-    rdma.pollCompletion(rdma_info1[0][i].cq);
+    for(int i =0; i<3;i++){
+        rdma.post_rdma_send(rdma_info1[0][i].qp, rdma_info1[0][i].mr, send_adrs[i], 
+                                    size, myrdma.qp_key[i].first, myrdma.qp_key[i].second);
+    }
+    /*#pragma parallel for
+    for(int i=0;i<3;i++)
+        rdma.pollCompletion(rdma_info1[0][i].cq);*/
  
 }
 void myRDMA::rdma_recv_pagerank(int i){
@@ -44,7 +48,7 @@ void myRDMA::rdma_recv_pagerank(int i){
 
     rdma.post_rdma_recv(rdma_info1[1][i].qp, rdma_info1[1][i].mr, 
                         rdma_info1[1][i].cq,recv_adrs[i], size);//sizeof(myrdma.recv[i].data()));
-    rdma.pollCompletion(rdma_info1[1][i].cq);
+    //rdma.pollCompletion(rdma_info1[1][i].cq);
    
         //cout.precision(numeric_limits<double>::digits10);
     
