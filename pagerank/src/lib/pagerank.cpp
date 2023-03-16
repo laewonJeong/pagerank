@@ -192,13 +192,14 @@ void Pagerank::run_pagerank(int iter){
             prev_pr = send_buffer[0];
 
 
-        //cout << "hello" <<endl;
+        cout << "finish calc" <<endl;
         
       
         //clock_gettime(CLOCK_MONOTONIC, &begin);
         
         Pagerank::gather_pagerank("send");
 
+        cout << "finish gath" << endl;
         //clock_gettime(CLOCK_MONOTONIC, &end);
         //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
         //printf("gath 수행시간: %Lfs.\n", time);
@@ -206,6 +207,8 @@ void Pagerank::run_pagerank(int iter){
         //clock_gettime(CLOCK_MONOTONIC, &begin); 
             //thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
         Pagerank::scatter_pagerank();
+
+        cout << "finish scat" << endl;
 
        
         if(my_ip == server_ip)
@@ -292,7 +295,7 @@ void Pagerank::gather_pagerank(string opcode){
        
     }
     else
-        myrdma1.rdma_write_vector(send_buffer[0],0); 
+        myrdma1.rdma_send_vector(send_buffer[0],0); 
 }
 
 
