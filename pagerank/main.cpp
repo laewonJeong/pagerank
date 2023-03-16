@@ -6,9 +6,9 @@
 
 #define num_of_node 4
 #define port 40145
-#define server_ip "192.168.0.100"
+#define server_ip "192.168.0.101"
 #define iter 100000
-string node1[num_of_node] = {server_ip,"192.168.0.101","192.168.0.103","192.168.0.104"};//,"192.168.0.106"};//,"192.168.1.102","192.168.1.103"};
+string node1[num_of_node] = {server_ip,"192.168.0.103","192.168.0.104","192.168.0.106"};//,"192.168.0.106"};//,"192.168.1.102","192.168.1.103"};
 using namespace std;
 //using namespace stdext;
 

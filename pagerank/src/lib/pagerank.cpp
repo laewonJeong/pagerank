@@ -275,7 +275,7 @@ void fill_send_buffer(int num_of_server, int index){
 }
 void send_pagerank(int num_of_server){
     for(size_t i = 0; i<num_of_server-1;i++)
-        myrdma1.rdma_send_pagerank(send_buffer[0],i);
+        myrdma1.rdma_write_pagerank(send_buffer[0],i);
 }
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
@@ -292,7 +292,7 @@ void Pagerank::gather_pagerank(string opcode){
        
     }
     else
-        myrdma1.rdma_send_vector(send_buffer[0],0); 
+        myrdma1.rdma_write_vector(send_buffer[0],0); 
 }
 
 
@@ -300,7 +300,7 @@ void Pagerank::scatter_pagerank(){
         if(pagerank.my_ip == pagerank.server_ip)
             send_pagerank(pagerank.num_of_server);
         else
-            myrdma1.rdma_recv_pagerank(0);
+            myrdma1.rdma_wrecv_pagerank(0);
         
     
 }
