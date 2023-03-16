@@ -166,7 +166,7 @@ void Pagerank::run_pagerank(int iter){
     long double time;
 
     for(step =0; step < iter ;step++){
-        
+        clock_gettime(CLOCK_MONOTONIC, &begin);
         cout <<"====="<< step+1 << " step=====" <<endl;
         
         dangling_pr = 0.0;
@@ -185,34 +185,27 @@ void Pagerank::run_pagerank(int iter){
             }
             
         }
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        
         if(my_ip != server_ip)
             Pagerank::calc_pagerank_value(start,end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
 
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("calc 수행시간: %Lfs.\n", time);
 
         //cout << "hello" <<endl;
         
       
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        //clock_gettime(CLOCK_MONOTONIC, &begin);
         
         Pagerank::gather_pagerank("send");
 
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("gath 수행시간: %Lfs.\n", time);
+        //clock_gettime(CLOCK_MONOTONIC, &end);
+        //time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        //printf("gath 수행시간: %Lfs.\n", time);
         //cout << "hello" <<endl;
-        clock_gettime(CLOCK_MONOTONIC, &begin); 
+        //clock_gettime(CLOCK_MONOTONIC, &begin); 
             //thread scatter = thread(&Pagerank::scatter_pagerank,Pagerank());
         Pagerank::scatter_pagerank();
-
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("scat 수행시간: %Lfs.\n", time);
 
        
         if(my_ip == server_ip)
@@ -221,6 +214,9 @@ void Pagerank::run_pagerank(int iter){
         if(diff < 0.00001 || recv_buffer_ptr[0] > 1){
             break;
         }
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+        printf("step 수행시간: %Lfs.\n", time);
 
     }
     
@@ -283,7 +279,7 @@ void send_pagerank(int num_of_server){
 }
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
-        myrdma1.rdma_many_to_one_recv_msg(opcode);
+        myrdma1.recv_t("send");
         
         send_buffer[0].clear();
 
@@ -293,17 +289,10 @@ void Pagerank::gather_pagerank(string opcode){
             send_buffer[0][0] += 1; 
             
         fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);
-        //send_pagerank(pagerank.num_of_server);
-        //thread x = thread(send_pagerank,pagerank.num_of_server); 
-        //x.join();   
+       
     }
-    else{
-        //thread sen = thread(&myRDMA::rdma_recv_pagerank,myRDMA(),0);
-        myrdma1.rdma_send_vector(send_buffer[0],0);
-        //myrdma1.rdma_recv_pagerank(0);
-        //sen.join();
-    }
-    //cout << "hello" <<endl;
+    else
+        myrdma1.rdma_send_vector(send_buffer[0],0); 
 }
 
 

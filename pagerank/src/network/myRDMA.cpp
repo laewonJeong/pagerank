@@ -251,6 +251,15 @@ void myRDMA::recv_t(string opcode){
         worker[i].join();
     }
 }
+void myRDMA::send_t(string opcode){
+    std::vector<std::thread> worker;
+    worker.reserve(myrdma.connect_num);
+    for(int i=0;i<myrdma.connect_num;i++)
+         worker.push_back(std::thread(&myRDMA::rdma_send_pagerank,myRDMA(),myrdma.send[0],i));
+    for(int i=0;i<myrdma.connect_num;i++)
+        worker[i].join();
+      
+}
 
 void myRDMA::rdma_comm(string opcode, string msg){;
     thread snd_msg = thread(&myRDMA::rdma_send_msg,myRDMA(),opcode,msg);

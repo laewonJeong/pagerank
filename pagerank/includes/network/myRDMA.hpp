@@ -23,6 +23,7 @@ class myRDMA{
         void rdma_send_msg(string opcode, string msg);
         void rdma_recv_msg(string opcode, int i=0);
         void recv_t(string opcode);
+        void send_t(string opcode);
         void rdma_one_to_many_send_msg(string opcode, string msg);
         void rdma_one_to_many_recv_msg(string opcode);
         void rdma_many_to_one_send_msg(string opcode, string msg,vector<double> msg1);
