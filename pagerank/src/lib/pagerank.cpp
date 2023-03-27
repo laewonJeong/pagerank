@@ -185,14 +185,14 @@ void Pagerank::run_pagerank(int iter){
             }
             
         }
-        clock_gettime(CLOCK_MONOTONIC, &begin);
+        //clock_gettime(CLOCK_MONOTONIC, &begin);
         if(my_ip != server_ip)
             Pagerank::calc_pagerank_value(start,end1,dangling_pr,0.0);
         else
             prev_pr = send_buffer[0];
-        clock_gettime(CLOCK_MONOTONIC, &end);
+        /*clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("calc 수행시간: %Lfs.\n", time);
+        printf("calc 수행시간: %Lfs.\n", time);*/
 
         //cout << "finish calc" <<endl;
         
@@ -219,9 +219,9 @@ void Pagerank::run_pagerank(int iter){
         if(diff < 0.00001 || recv_buffer_ptr[0] > 1){
             break;
         }
-        clock_gettime(CLOCK_MONOTONIC, &end);
+        /*clock_gettime(CLOCK_MONOTONIC, &end);
         time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-        printf("step 수행시간: %Lfs.\n", time);
+        printf("step 수행시간: %Lfs.\n", time);*/
 
     }
     
@@ -285,7 +285,7 @@ void send_pagerank(int num_of_server){
 void Pagerank::gather_pagerank(string opcode){
     if(pagerank.my_ip == pagerank.server_ip){
         myrdma1.recv_t("send");
-        
+        cout << "recv success" << endl;
         send_buffer[0].clear();
 
         fill_send_buffer(pagerank.num_of_server, pagerank.num_of_server-2);
@@ -296,17 +296,22 @@ void Pagerank::gather_pagerank(string opcode){
         fill(&send_buffer[1], &send_buffer[pagerank.num_of_server-1], send_buffer[0]);
        
     }
-    else
-        myrdma1.rdma_write_vector(send_buffer[0],0); 
+    else{
+        myrdma1.rdma_write_vector(send_buffer[0],0);
+        cout << "send success" << endl;
+    } 
 }
 
 
 void Pagerank::scatter_pagerank(){
-        if(pagerank.my_ip == pagerank.server_ip)
+        if(pagerank.my_ip == pagerank.server_ip){
             send_pagerank(pagerank.num_of_server);
-        else
+            cout << "send success" << endl;
+        }
+        else{
             myrdma1.rdma_recv_pagerank(0);
-        
+            cout << "recv success" << endl;
+        }
     
 }
 
