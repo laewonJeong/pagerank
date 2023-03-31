@@ -140,12 +140,22 @@ void Pagerank::initial_pagerank_value(){
         send_buffer[0].resize(pagerank.num_of_vertex);
     }
     else{
-        if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1])
-            send_buffer[0].resize(n1);
-        else
-            send_buffer[0].resize(n);
+        send_buffer[0].resize(n);
     }
-    
+    init=0;
+    for(int i=1;i<pagerank.num_of_server-1;i++){
+        if(pagerank.my_ip == pagerank.node[i]){
+            pagerank.start1 = init;
+            pagerank.end1 = n2[i-1];
+        }
+        init = n2[i-1];
+        
+    }
+    if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1]){
+        pagerank.start1 = init;
+        pagerank.end1 = pagerank.num_of_vertex;
+    }
+    cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
 
     cout << "Done" <<endl;
 }
@@ -288,7 +298,7 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
     pagerank.node = server;
     pagerank.server_ip = server[0];
 
-    for(int i=1;i<number_of_server;i++){
+    /*for(int i=1;i<number_of_server;i++){
         if(ip == server[i]){
             pagerank.start1 = pagerank.num_of_vertex/(number_of_server-1)*(i-1);
             pagerank.end1 = pagerank.start1 + pagerank.num_of_vertex/(number_of_server-1);
@@ -297,14 +307,14 @@ void Pagerank::init_connection(const char* ip, string server[], int number_of_se
             pagerank.end1 = pagerank.num_of_vertex;
         }
     }
-    cout << pagerank.start1 << " " <<pagerank.end1 <<endl;
+    cout << pagerank.start1 << " " <<pagerank.end1 <<endl;*/
 }
 void fill_send_buffer(int num_of_server, int index){
     int size = n;
     
     for(int i=0;i<num_of_server-1;i++){
         if(i == index)
-            size = n1;
+            size = n;
         send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+size);
     }   
  
