@@ -112,7 +112,7 @@ void Pagerank::create_graph_data(string path, string del){
         }
         
     }
-    n2[1] = n2[1] - 10000;
+    n2[1] = n2[1] -200000;
     int xx = pagerank.num_of_vertex - (n2[1]+n2[0]);
     n2.push_back(xx/4 * 3);
     n2.push_back(pagerank.num_of_vertex - (n2[1]+n2[0]+n2[2]));
