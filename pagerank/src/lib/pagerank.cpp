@@ -113,7 +113,7 @@ void Pagerank::create_graph_data(string path, string del){
         
     }
     int xx = pagerank.num_of_vertex - n2[1];
-    n2.push_back(xx);
+    n2.push_back(xx/2);
     for(int i=0;i<n2.size();i++){
         cout << n2[i] << endl;
     }
