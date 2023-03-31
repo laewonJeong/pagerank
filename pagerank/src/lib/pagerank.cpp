@@ -142,6 +142,7 @@ void Pagerank::initial_pagerank_value(){
     else{
         send_buffer[0].resize(n);
     }
+    recv_buffer[0].resize(pagerank.num_of_vertex,1/pagerank.num_of_vertex);
     init=0;
     for(int i=1;i<pagerank.num_of_server-1;i++){
         if(pagerank.my_ip == pagerank.node[i]){
