@@ -15,6 +15,8 @@ static std::mutex mutx;
 vector<double> send_buffer[4];
 vector<double> recv_buffer[4];
 int n, n1;
+vector<int> n2;
+//int number_outgoing = 0;
 
 vector<string> split(string str, char Delimiter) {
     istringstream iss(str);             
@@ -54,6 +56,7 @@ bool Pagerank::add_arc(size_t from, size_t to) {
 
     if (ret) {
         pagerank.num_outgoing[from]++;
+        //number_outgoing++;
     }
 
     return ret;
@@ -81,7 +84,7 @@ void Pagerank::create_graph_data(string path, string del){
            
             add_arc(strtol(from.c_str(), NULL, 10),strtol(to.c_str(), NULL, 10));
             line_num++;
-            if(line_num%500000 == 0)
+            if(line_num%5000000 == 0)
                 cerr << "Create " << line_num << " lines" << endl;
 		}
 	} 
@@ -91,20 +94,47 @@ void Pagerank::create_graph_data(string path, string del){
 	}
 
     pagerank.num_of_vertex = pagerank.graph.size();
+    cerr << "partition number_outgoing: " << line_num/4 << endl;
     cerr << "Create " << line_num << " lines, "
          << pagerank.num_of_vertex << " vertices graph." << endl;
     
     cerr << "----------------------------------" <<endl;
+    
+    int n3 = 0;
+    int number_outgoing = line_num/4;
+    for(int i=0;i<pagerank.num_of_vertex;i++){
+
+        n3 += pagerank.graph[i].size();
+        if(n3 > number_outgoing){
+            n2.push_back(i);
+            n3 = 0;
+        }
+        
+    }
+    for(int i=0;i<n2.size();i++){
+        cout << n2[i] << endl;
+    }
+    
     delete infile;
 }
 
 void Pagerank::initial_pagerank_value(){
     cout << "init pagerank value" << endl;
    
-    n = pagerank.num_of_vertex/(pagerank.num_of_server-1);
+    /*n = pagerank.num_of_vertex/(pagerank.num_of_server-1);
     
-    n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);
-    
+    n1 = pagerank.num_of_vertex - n*(pagerank.num_of_server-2);*/
+    int init = 0;
+    for(int i=1;i<4;i++){
+        if(pagerank.my_ip == pagerank.node[i]){
+            n = n2[i-1] - init;
+            init = n2[i-1];
+        }
+    }
+    if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1]){
+        n = pagerank.num_of_vertex - init;
+    }
+    cout << "n: " << n << endl;
     if(pagerank.my_ip == pagerank.node[0]){
         send_buffer[0].resize(pagerank.num_of_vertex);
     }
