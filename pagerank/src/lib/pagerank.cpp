@@ -101,7 +101,7 @@ void Pagerank::create_graph_data(string path, string del){
     cerr << "----------------------------------" <<endl;
     
     int n3 = 0;
-    int number_outgoing = line_num/4;
+    int number_outgoing = line_num/4 + 1;
     for(int i=0;i<pagerank.num_of_vertex;i++){
 
         n3 += pagerank.graph[i].size();
@@ -140,7 +140,7 @@ void Pagerank::initial_pagerank_value(){
         send_buffer[0].resize(pagerank.num_of_vertex);
     }
     else{
-        send_buffer[0].resize(n,1/pagerank.num_of_vertex);
+        //send_buffer[0].resize(n);
         recv_buffer[0].resize(pagerank.num_of_vertex,1/pagerank.num_of_vertex);
     }
     init=0;
