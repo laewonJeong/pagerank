@@ -16,6 +16,7 @@ vector<double> send_buffer[4];
 vector<double> recv_buffer[4];
 int n, n1;
 vector<int> n2;
+vector<int> nn;
 //int number_outgoing = 0;
 
 vector<string> split(string str, char Delimiter) {
@@ -105,7 +106,7 @@ void Pagerank::create_graph_data(string path, string del){
     for(int i=0;i<pagerank.num_of_vertex;i++){
 
         n3 += pagerank.graph[i].size();
-        if(n3 > number_outgoing){
+        if(n3 >= number_outgoing){
             n2.push_back(i);
             n3 = 0;
         }
@@ -130,11 +131,14 @@ void Pagerank::initial_pagerank_value(){
             n = n2[i-1] - init;
             
         }
+        nn.push_back(n2[i-1] - init);
         init = n2[i-1];
+        
     }
     if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1]){
         n = pagerank.num_of_vertex - init;
     }
+    nn.push_back(pagerank.num_of_vertex - init);
     cout << "n: " << n << endl;
     if(pagerank.my_ip == pagerank.node[0]){
         send_buffer[0].resize(pagerank.num_of_vertex);
@@ -142,7 +146,9 @@ void Pagerank::initial_pagerank_value(){
     else{
         send_buffer[0].resize(n);
     }
-    recv_buffer[0].resize(pagerank.num_of_vertex,1/pagerank.num_of_vertex);
+    
+    //recv_buffer[0].resize(pagerank.num_of_vertex,1/pagerank.num_of_vertex);
+    
     init=0;
     for(int i=1;i<pagerank.num_of_server-1;i++){
         if(pagerank.my_ip == pagerank.node[i]){
@@ -314,8 +320,7 @@ void fill_send_buffer(int num_of_server, int index){
     int size = n;
     
     for(int i=0;i<num_of_server-1;i++){
-        if(i == index)
-            size = n;
+        size = nn[i];
         send_buffer[0].insert(send_buffer[0].end(),recv_buffer[i].begin(),recv_buffer[i].begin()+size);
     }   
  
