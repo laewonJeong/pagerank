@@ -102,7 +102,7 @@ void Pagerank::create_graph_data(string path, string del){
     cerr << "----------------------------------" <<endl;
     
     int n3 = 0;
-    int number_outgoing = line_num/4 + 1;
+    int number_outgoing = line_num/3 + 1;
     for(int i=0;i<pagerank.num_of_vertex;i++){
 
         n3 += pagerank.graph[i].size();
@@ -264,7 +264,7 @@ void Pagerank::run_pagerank(int iter){
         if(my_ip == server_ip)
             cout << "diff: " <<diff << endl;
         //printf("step 수행시간: %Lfs.\n", time);
-        if(step == 61){//diff < 0.00001 || recv_buffer_ptr[0] > 1){
+        if(diff < 0.00001 || recv_buffer_ptr[0] > 1){
             break;
         }
         /*clock_gettime(CLOCK_MONOTONIC, &end);
