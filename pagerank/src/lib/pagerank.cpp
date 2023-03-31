@@ -128,8 +128,9 @@ void Pagerank::initial_pagerank_value(){
     for(int i=1;i<4;i++){
         if(pagerank.my_ip == pagerank.node[i]){
             n = n2[i-1] - init;
-            init = n2[i-1];
+            
         }
+        init = n2[i-1];
     }
     if(pagerank.my_ip == pagerank.node[pagerank.num_of_server-1]){
         n = pagerank.num_of_vertex - init;
